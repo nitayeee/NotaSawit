@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Notasawit"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Admin.Lapangan.CobaActivity"
+            android:exported="false" />
+        <activity
             android:name=".Admin.AuditInternal.Section5Activity"
             android:exported="false" />
         <activity
