@@ -1,0 +1,54 @@
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/bg_card_question"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Apakah Bapak/Ibu tahu Prosedur Keanggotaan?"
+            android:textColor="#333333"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <RadioGroup
+            android:id="@+id/rgAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <RadioButton
+                android:id="@+id/rbYa"
+                android:layout_width="0dp"
+                android:textSize="15dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ya"/>
+
+            <RadioButton
+                android:id="@+id/rbTidak"
+                android:layout_width="0dp"
+                android:textSize="15dp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tidak"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

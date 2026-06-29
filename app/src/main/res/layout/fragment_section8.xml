@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!--        SOP-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="#4CAF50"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Keselamatan dan Kesehatan Kerja (K3)"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Apakah Bapak/Ibu sudah mengetahui terkait Hasil Identifikasi dan Mitigasi Resiko Kerja (HIRA) yang ada di Asosiasi?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q1Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q1Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Apakah Bapak/ibu (Petani terdaftar) sudah ikut program BPJS ketenagakerjaan ?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q2Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q2Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. Apakah Bapak/Ibu (Petani Terdaftar) sudah memiliki dan menggunakan Alat Pelindung Diri (APD) untuk seluruh jenis pekerjaan?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q3Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q3Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. Apakah pekerja Bapak/Ibu sudah memiliki dan menggunakan Alat Pelindung Diri (APD) untuk seluruh jenis pekerjaan?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q4Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q4Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. Apakah Bapak/ibu (petani terdaftar) memastikan tidak pernah mengalami kecelakaan kerja sewaktu melakukan aktivitas di lahan?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q5Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3QTidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6. Apakah pekerja Bapak/ibu memastikan tidak pernah mengalami kecelakaan kerja sewaktu melakukan aktivitas di lahan (jika memiliki pekerja)?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q6Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q6Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7. Apakah Bapak/Ibu tahu cara penggunaan isi kotak Pertolongan Pertama Pada Kecelakaan Kerja (P3K)?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q7Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q7Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="8. Apakah Bapak/Ibu tahu apa yang harus dilakukan jika terjadi keadaan Darurat (Kebakaran, Gempa Bumi, Banjir)?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q8Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q8Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="9. Apakah Bapak/Ibu sudah mengetahui tindakan jika terjadi kecelakaan kerja?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/k3Q9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/k3Q9Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/k3Q9Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLanjutSection3"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="LANJUT KE SECTION 3"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

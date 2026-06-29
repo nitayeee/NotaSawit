@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="Beranda" />
+    <item
+        android:id="@+id/audit"
+        android:icon="@drawable/ic_audit2"
+        android:title="Audit Internal" />
+    <item
+        android:id="@+id/lainnya"
+        android:icon="@drawable/ic_more"
+        android:title="Setelan" />
+
+</menu>

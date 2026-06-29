@@ -3,15 +3,20 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/ic_home"
-        android:title="Home" />
-    <item
-        android:id="@+id/audit"
-        android:icon="@drawable/ic_audit"
-        android:title="Audit" />
+        android:title="Beranda" />
     <item
         android:id="@+id/notification"
         android:icon="@drawable/ic_notification"
-        android:title="Destination" />
+        android:title="Notifikasi" />
+    <item
+        android:id="@+id/riwayat"
+        android:icon="@drawable/ic_riwayat"
+        android:title="Riwayat" />
+    <item
+        android:id="@+id/pengaturan"
+        android:icon="@drawable/ic_settings"
+        android:title="Setelan" />
+
 
 
 

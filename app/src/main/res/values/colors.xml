@@ -2,7 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="agri_green_dark">#2B462C</color> <color name="agri_green_light">#E2EBE2</color> <color name="text_primary">#1D1D1D</color>
+    <color name="agri_green_dark">#1B5E20</color> <color name="agri_green_light">#E2EBE2</color> <color name="text_primary">#1D1D1D</color>
     <color name="text_secondary">#7A7A7A</color>
     <color name="bg_input">#F5F7F5</color>
     <color name="stroke_input">#DCDEDC</color>

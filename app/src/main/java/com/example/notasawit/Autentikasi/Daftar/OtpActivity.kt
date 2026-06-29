@@ -14,11 +14,10 @@ import android.os.CountDownTimer
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Autentikasi.Daftar.DataDiri.DataDiriActivity
-import com.example.notasawit.supabase.SupabaseHelper
+import com.example.notasawit.Network.PetaniApi
 import io.github.jan.supabase.auth.OtpType
 import java.util.Locale
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.OTP
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 
@@ -69,11 +68,11 @@ class OtpActivity : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     // Minta Supabase mencocokkan OTP
-                    SupabaseHelper.client.auth.verifyEmailOtp(
-                        type = OtpType.Email.EMAIL,
-                        email = email,
-                        token = otpInput
-                    )
+//                    PetaniApi.client.auth.verifyEmailOtp(
+//                        type = OtpType.Email.EMAIL,
+//                        email = email,
+//                        token = otpInput
+//                    )
 
                     // JIKA KODE BENAR (Supabase mengonfirmasi)
                     runOnUiThread {

@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.R
 import com.example.notasawit.databinding.ActivityDaftarBinding
-import com.example.notasawit.supabase.SupabaseHelper
+import com.example.notasawit.Network.PetaniApi
 import kotlinx.coroutines.launch
 
 // 1. TAMBAHKAN IMPORT SUPABASE INI
@@ -33,7 +33,7 @@ class DaftarActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-        val emailPetani = sharedPref.getString("emailPetani", "")
+        val sp_emailPetani = sharedPref.getString("emailPetani", "")
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -49,9 +49,9 @@ class DaftarActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     try {
                         // 1. Meminta Supabase mengirimkan OTP ke email tersebut
-                        SupabaseHelper.client.auth.signInWith(OTP) {
-                            email = emailUser
-                        }
+//                        PetaniApi.client.auth.signInWith(OTP) {
+//                            email = emailUser
+//                        }
                         val inputEmail =binding.etEmailOtp.text.toString().trim()
 
                         // 2. Kalau sukses, pindah ke halaman untuk memasukkan 6 digit angka

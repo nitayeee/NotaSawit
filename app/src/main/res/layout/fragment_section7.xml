@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!--        SOP-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="#4CAF50"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sosial dan Tenaga Kerja"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Apakah Bapak/ibu tahu berapa Upah Minimum Kabupaten (UMK) atau Upah Minimum Provinsi (UMP) sekarang?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ1Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ1Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Apakah Bapak/ibu tahu bahwa ada larangan mempekerjakan anak di bawah umur?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ2Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ2Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. Apakah Bapak/ibu tahu bahwa ada larangan diskriminasi atau ketidakadilan terhadap tenaga kerja?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ3Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ3Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. Apakah Bapak/ibu tahu bahwa tidak boleh terjadi perbudakan atau tenaga kerja paksa dan pelecehan seksual?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ4Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ4Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. Apakah Bapak/ibu tahu jika memiliki pekerja wajib dan sudah membuat kontrak kerja dengan pekerja (khusus bagi yang memiliki pekerja)?\nNB : Bagi Petani yang tidak memiliki pekerja silahkan memilih pilihan (Ya)."
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ5Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQTidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6.Apakah Bapak/ibu tahu bahwa pekerja berhak berserikat/berorganisasi?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/sosialTenagaKerjaQ6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ6Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/sosialTenagaKerjaQ6Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLanjutSection3"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="LANJUT KE SECTION 3"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

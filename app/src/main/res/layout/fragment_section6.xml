@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!--        SOP-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="#4CAF50"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tentang Nilai Konversi Tinggi (NKT)"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1. Apakah Bapak/ibu tahu bahwa asosiasi sudah melakukan identifikasi dan memiliki laporan Nilai Konservasi Tinggi (NKT)?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ1Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ1Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. Apakah Bapak/ibu tahu daftar hewan dan tumbuhan yang dilindungi?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ2Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ2Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3. Apakah Bapak/ibu tahu penanganan jika menjumpai hewan dan tumbuhan yang dilindungi?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ3Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ3Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4. Apakah Bapak/ibu tahu terdapat larangan membuka lahan dengan cara bakar?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ4Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ4Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5. Apakah Bapak/ibu tahu  terdapat larangan membuang sampah ke sungai?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ5Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQTidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card_question"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="6. Apakah Bapak/ibu tahu bahwa menangkap ikan dengan cara meracuni sungai itu dilarang?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ6Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ6Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_question"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="7. Apakah Bapak/ibu tahu pengeloaan lahan jika ditemukan areal lahan miring?"
+                android:textColor="#333333"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/nktQ7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+                <RadioButton android:id="@+id/nktQ7Ya" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ya"/>
+                <RadioButton android:id="@+id/nktQ7Tidak" android:textSize="12dp" android:fontFamily="@font/poppins_medium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tidak"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLanjutSection3"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="LANJUT KE SECTION 3"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

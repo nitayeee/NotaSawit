@@ -1,132 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
+    android:fillViewport="true"
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true"
     tools:context=".Autentikasi.Daftar.DataDiri.DataDiri1Fragment">
 
-
-<!--    Nama Depan-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/NamaDepanLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="0dp"
-        android:hint="Nama Depan"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:startIconDrawable="@drawable/ic_name">
+        android:paddingHorizontal="24dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNamaDepan"
+        <LinearLayout
+            android:id="@+id/form_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-<!--    Nama Belakang-->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/NamaBelakangLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="0dp"
-        android:layout_marginTop="20dp"
-        android:hint="Nama Belakang"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NamaDepanLayout"
-        app:startIconDrawable="@drawable/ic_name">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Ayo Isi Data Diri Anda"
+                android:textAlignment="center"
+                android:textColor="#212121"
+                android:textSize="22sp" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etNamaBelakang"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TanggalLahirLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="0dp"
-        android:layout_marginTop="20dp"
-        android:hint="Tanggal Lahir"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NamaBelakangLayout"
-        app:startIconDrawable="@drawable/ic_calendar_month">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etTanggalLahir"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnNext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="250dp"
-        android:layout_marginBottom="308dp"
-        android:backgroundTint="@color/agri_green_dark"
-        android:text="Login"
-        app:icon="@drawable/ic_login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/rowJenisKelaminUsia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TanggalLahirLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Lengkapi data diri Anda dalam 3 tahap"
+                android:textColor="#8E8E8E"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/JenisKelaminLayout"
+            android:id="@+id/NamaDepanLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:hint="Jenis Kelamin"
-            app:startIconDrawable="@drawable/ic_man">
+            android:layout_marginTop="20dp"
+            android:hint="Nama Depan"
+            android:textColorHint="#555555"
+            app:boxStrokeColor="@color/agri_green_dark"
+            app:boxStrokeWidth="1.5dp"
+            app:boxStrokeWidthFocused="2.5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/form_header"
+            app:startIconDrawable="@drawable/ic_name"
+            app:startIconTint="#444444">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etJenisKelamin"
+                android:id="@+id/etNamaDepan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="textPersonName"
+                android:textColor="#222222" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/UsiaLayout"
+            android:id="@+id/UsernameLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:hint="Usia"
-            app:startIconDrawable="@drawable/ic_calendar_month"> <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etUsia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:layout_marginTop="20dp"
+            android:hint="Username"
+            android:textColorHint="#555555"
+            app:boxStrokeColor="@color/agri_green_dark"
+            app:boxStrokeWidth="1.5dp"
+            app:boxStrokeWidthFocused="2.5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/NamaDepanLayout"
+            app:startIconDrawable="@drawable/ic_name"
+            app:startIconTint="#444444">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:textColor="#222222" />
         </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TanggalLahirLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="Tanggal Lahir"
+            android:textColorHint="#555555"
+            app:boxStrokeColor="@color/agri_green_dark"
+            app:boxStrokeWidth="1.5dp"
+            app:boxStrokeWidthFocused="2.5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/UsernameLayout"
+            app:startIconDrawable="@drawable/ic_calendar_month"
+            app:startIconTint="#444444">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTanggalLahir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:textColor="#222222"
+                android:focusable="false"
+                android:clickable="true"
+                android:cursorVisible="false"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/rowJenisKelaminUsia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TanggalLahirLayout">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/JenisKelaminLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Jenis Kelamin"
+                android:textColorHint="#555555"
+                app:boxStrokeColor="@color/agri_green_dark"
+                app:boxStrokeWidth="1.5dp"
+                app:boxStrokeWidthFocused="2.5dp"
+                app:startIconDrawable="@drawable/ic_man"
+                app:startIconTint="#444444">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etJenisKelamin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:textColor="#222222" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/UsiaLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="Usia"
+                android:textColorHint="#555555"
+                app:boxStrokeColor="@color/agri_green_dark"
+                app:boxStrokeWidth="1.5dp"
+                app:boxStrokeWidthFocused="2.5dp"
+                app:startIconDrawable="@drawable/ic_calendar_month"
+                app:startIconTint="#444444">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUsia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="#222222" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/agri_green_dark"
+            android:text="Lanjut"
+            app:icon="@drawable/ic_login"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rowJenisKelaminUsia"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

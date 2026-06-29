@@ -24,53 +24,68 @@
         app:layout_constraintBottom_toBottomOf="@id/iv_header" />
 
     <LinearLayout
-        android:id="@+id/form_header"
-        android:layout_width="match_parent"
+        android:id="@+id/indicatorContainer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/iv_header">
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/iv_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_bold"
-            android:text="Ayo Isi Data Diri Anda"
-            android:textColor="#212121"
-            android:textSize="22sp" />
+            android:id="@+id/tvStep1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_indicator"
+            android:text="1"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/lineStep1"
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="#D6D6D6"
+            android:layout_marginHorizontal="8dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_regular"
-            android:text="Lengkapi data diri Anda dalam 3 tahap"
-            android:textColor="#8E8E8E"
-            android:textSize="14sp" />
+            android:id="@+id/tvStep2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_indicator"
+            android:text="2"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/lineStep2"
+            android:layout_width="40dp"
+            android:layout_height="3dp"
+            android:background="#D6D6D6"
+            android:layout_marginHorizontal="8dp" />
+
+        <TextView
+            android:id="@+id/tvStep3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_indicator"
+            android:text="3"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/tutorialMessageViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/dot_indicator"
-        app:layout_constraintTop_toBottomOf="@+id/form_header" />
-
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dot_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        app:dotsColor="#E0E0E0"
-        app:selectedDotColor="@color/agri_green_dark"
-        app:dotsSize="10dp"
-        app:dotsSpacing="6dp"
-        app:dotsCornerRadius="5dp"
-        app:dotsWidthFactor="3.5"
-        app:progressMode="true"
+        app:layout_constraintTop_toBottomOf="@id/indicatorContainer"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,4 +2,9 @@
     <string name="app_name">Notasawit</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="web_client_id">
+888782626699-hsjt4p1e2j67m6c9idb4mgj9rdelorfo.apps.googleusercontent.com
+    </string>
 </resources>
+

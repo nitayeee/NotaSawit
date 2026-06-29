@@ -1,0 +1,212 @@
+package com.example.notasawit.Network
+
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Callback
+import okhttp3.MultipartBody
+
+object PetaniApi {
+
+    private const val BASE_URL = "http://160.187.144.157/api"
+
+    fun registerPetani(
+        nama: String,
+        username: String,
+        tglLahir: String,
+        jk: String,
+        email: String,
+        noHp: String,
+        alamat: String,
+        desa: Int,
+        pin: String,
+        callback: Callback
+    ) {
+
+        val json = """
+        {
+          "petani_nama": "$nama",
+          "petani_username": "$username",
+          "petani_tanggal_lahir": "$tglLahir",
+          "petani_jenis_kelamin": "$jk",
+          "petani_email": "$email",
+          "petani_no_hp": "$noHp",
+          "petani_status": 0,
+          "petani_alamat": "$alamat",
+          "desa_id": "$desa",
+          "petani_pin": "$pin"
+        }
+        """.trimIndent()
+
+        val body = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("$BASE_URL/register")
+            .post(body)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+    fun getDesa(callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/desa")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+    fun getJenisKegiatan(callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/jenis-kegiatan")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+    fun login(
+        username: String,
+        password: String,
+        callback: Callback
+    ) {
+
+        val json = """
+    {
+        "username": "$username",
+        "password": "$password"
+    }
+    """.trimIndent()
+
+        val body = json.toRequestBody(
+            "application/json".toMediaType()
+        )
+
+        val request = Request.Builder()
+            .url("$BASE_URL/login")
+            .post(body)
+            .build()
+
+        ApiClient.client.newCall(request)
+            .enqueue(callback)
+    }
+    fun getLahanByPetani(
+        petaniId: Int,
+        callback: Callback
+    ) {
+
+        val request = Request.Builder()
+            .url("$BASE_URL/lahan/petani/$petaniId")
+            .get()
+            .build()
+
+        ApiClient.client.newCall(request)
+            .enqueue(callback)
+    }
+    fun getRiwayatKeuangan(
+        petaniId: Int,
+        bulan: Int?,
+        tahun: Int?,
+        lahanId: Int?,
+        tipe: String,
+        callback: Callback
+    ) {
+
+        val url = buildString {
+
+            append("$BASE_URL/riwayat-keuangan?")
+            append("petani_id=$petaniId")
+
+            bulan?.let {
+                append("&bulan=$it")
+            }
+
+            tahun?.let {
+                append("&tahun=$it")
+            }
+
+            lahanId?.let {
+                append("&lahan_id=$it")
+            }
+
+            append("&tipe=$tipe")
+        }
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
+
+    fun postProduksi(
+        context: Context,
+        produksiTanggal: String,
+        jumlahTbs: Int,
+        hargaTbs: Double,
+        petaniId: Int,
+        lahanId: Int,
+        produksiKet: String,
+        imageUri: Uri?,
+        callback: Callback
+    )
+    {
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("produksi_tanggal", produksiTanggal)
+            .addFormDataPart("jumlah_tbs", jumlahTbs.toString())
+            .addFormDataPart("harga_tbs", hargaTbs.toString())
+            .addFormDataPart("petani_id", petaniId.toString())
+            .addFormDataPart("lahan_id", lahanId.toString())
+            .addFormDataPart("produksi_ket", produksiKet)
+
+        imageUri?.let {
+
+            Log.d("UPLOAD_IMAGE", "Image Uri: $it")
+
+            val inputStream = context.contentResolver.openInputStream(it)
+
+            val bytes = inputStream?.readBytes()
+
+            Log.d(
+                "UPLOAD_IMAGE",
+                "Image size: ${bytes?.size}"
+            )
+
+            if (bytes != null) {
+
+                builder.addFormDataPart(
+                    "produksi_bukti",
+                    "bukti.jpg",
+                    bytes.toRequestBody("image/*".toMediaType())
+                )
+            }
+        }
+
+        val requestBody = builder.build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/produksi")
+            .post(requestBody)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+    fun getDetailProduksi(
+        produksiId: Int,
+        callback: Callback
+    ) {
+
+        val request = Request.Builder()
+            .url("$BASE_URL/produksi/$produksiId")
+            .get()
+            .build()
+
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
+}
