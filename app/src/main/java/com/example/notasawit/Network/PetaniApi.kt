@@ -8,6 +8,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Callback
 import okhttp3.MultipartBody
+import java.io.File
 
 object PetaniApi {
 
@@ -162,18 +163,23 @@ object PetaniApi {
             .addFormDataPart("lahan_id", lahanId.toString())
             .addFormDataPart("produksi_ket", produksiKet)
 
-        imageUri?.let {
+        imageUri?.let { uri ->
 
-            Log.d("UPLOAD_IMAGE", "Image Uri: $it")
+            Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
 
-            val inputStream = context.contentResolver.openInputStream(it)
+            val bytes = if (uri.scheme == "file") {
 
-            val bytes = inputStream?.readBytes()
+                File(uri.path!!).readBytes()
 
-            Log.d(
-                "UPLOAD_IMAGE",
-                "Image size: ${bytes?.size}"
-            )
+            } else {
+
+                context.contentResolver.openInputStream(uri)?.use {
+                    it.readBytes()
+                }
+
+            }
+
+            Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
 
             if (bytes != null) {
 
@@ -194,6 +200,62 @@ object PetaniApi {
 
         ApiClient.client.newCall(request).enqueue(callback)
     }
+    fun postPengeluaran(
+        context: Context,
+        biayaTanggal: String,
+        biayaJenis: String,
+        biayaJumlah: Int,
+        biayaNama: String,
+        biayaKet: String,
+        petaniId: Int,
+        biayaTotal: Double,
+        lahanId: Int,
+        imageUri: Uri?,
+        callback: Callback
+    ) {
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("biaya_tanggal", biayaTanggal)
+            .addFormDataPart("biaya_jenis", biayaJenis)
+            .addFormDataPart("biaya_jumlah", biayaJumlah.toString())
+            .addFormDataPart("biaya_ket", biayaKet)
+            .addFormDataPart("biaya_nama", biayaNama)
+            .addFormDataPart("biaya_total", biayaTotal.toString())
+            .addFormDataPart("petani_id", petaniId.toString())
+            .addFormDataPart("lahan_id", lahanId.toString())
+
+        imageUri?.let { uri ->
+
+            Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
+
+            val bytes = if (uri.scheme == "file") {
+                File(uri.path!!).readBytes()
+            } else {
+                context.contentResolver.openInputStream(uri)?.use {
+                    it.readBytes()
+                }
+            }
+
+            Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
+
+            if (bytes != null) {
+                builder.addFormDataPart(
+                    "biaya_bukti",
+                    "bukti.jpg",
+                    bytes.toRequestBody("image/*".toMediaType())
+                )
+            }
+        }
+
+        val requestBody = builder.build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/biaya-operasional")
+            .post(requestBody)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
     fun getDetailProduksi(
         produksiId: Int,
         callback: Callback
@@ -201,6 +263,21 @@ object PetaniApi {
 
         val request = Request.Builder()
             .url("$BASE_URL/produksi/$produksiId")
+            .get()
+            .build()
+
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
+    fun getDetailBiayaOperasional(
+        biayaOperasionalId: Int,
+        callback: Callback
+    ) {
+
+        val request = Request.Builder()
+            .url("$BASE_URL/biaya-operasional/$biayaOperasionalId")
             .get()
             .build()
 

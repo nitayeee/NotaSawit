@@ -16,6 +16,21 @@ data class ProduksiDetail(
     val lahan: LahanDetail?
 )
 
+data class PengeluaranDetail(
+    val id: Int,
+    val biaya_tanggal: String,
+    val biaya_jumlah: Int,
+    val biaya_total: Double,
+    val biaya_jenis: String,
+    val biaya_nama: String,
+    val biaya_ket: String?,
+    val biaya_bukti: String?,
+    val biaya_bukti_url: String?,
+
+    val petani: PetaniDetail?,
+    val lahan: LahanDetail?
+)
+
 
 data class PetaniDetail(
     val id: Int,

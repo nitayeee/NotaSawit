@@ -130,6 +130,7 @@ data class AuditForm(
     val ringkasanTemuan: String = "",
     val rencanaPerbaikan: String = "",
     val rencanaPemeriksaan: String = "",
+    val fotoPath: String = "",
 
         // ID Unik (UUID) untuk laporan ini
     val isSynced: Boolean = false    // Penanda apakah sudah terkirim ke Laravel atau belum

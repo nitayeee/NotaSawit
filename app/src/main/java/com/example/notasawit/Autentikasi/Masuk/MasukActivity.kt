@@ -20,13 +20,22 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.lifecycleScope
+import com.example.notasawit.Admin.BaseAdminActivity
 import com.example.notasawit.Autentikasi.Daftar.DataDiri.DataDiriActivity
+import com.example.notasawit.Autentikasi.Daftar.DataDiri.Desa.DesaApiResponse
 import com.example.notasawit.BaseActivity
+import com.example.notasawit.InputKegiatan.JenisKegiatan.JenisKegiatanApiResponse
+import com.example.notasawit.Model.LahanResponse
 import com.example.notasawit.Model.LoginResponse
 import com.example.notasawit.Network.PetaniApi
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.DesaEntity
+import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
+import com.example.notasawit.Room.Lahan.LahanEntity
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
@@ -38,19 +47,15 @@ import java.security.MessageDigest
 class MasukActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMasukBinding
     private lateinit var credentialManager: CredentialManager
+    private lateinit var database: AppDatabase
 
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
-
     private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
-
     private val sp_namaPetani by lazy { sharedPref.getString("namaPetani", "") }
-
     private val username by lazy { sharedPref.getString("username", "") }
     private val sp_tanggalLahir by lazy { sharedPref.getString("tanggalLahir", "") }
     private val sp_jenisKelamin by lazy { sharedPref.getString("jenisKelamin", "") }
-
     private val sp_desaPetani by lazy { sharedPref.getInt("desa_petani", 0) }
-
     private val sp_role by lazy { sharedPref.getString("role", "") }
     private val sp_noHpPetani by lazy { sharedPref.getString("noHpPetani", "") }
     private val sp_emailPetani by lazy { sharedPref.getString("emailPetani", "") }
@@ -68,7 +73,8 @@ class MasukActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        database = AppDatabase.getDatabase(this)
+getJenisKegiatan()
         credentialManager = CredentialManager.create(this)
 
         // 1. Cek apakah user ini sudah pernah login sebelumnya
@@ -98,7 +104,6 @@ class MasukActivity : AppCompatActivity() {
                     ) {
 
                     }
-
                     override fun onResponse(
                         call: Call,
                         response: Response
@@ -129,18 +134,48 @@ class MasukActivity : AppCompatActivity() {
 
                             if (loginResponse.success) {
 
-                                sharedPref.edit().apply {
+                                if(loginResponse.role == "petani"){
+                                    sharedPref.edit().apply {
 
-                                    putString("role", loginResponse.role)
+                                        putString("role", loginResponse.role)
 
-                                    putInt("petani_id", data?.petani_id ?: 0)
-                                    putString("namaPetani", data?.petani_nama ?: "")
-                                    putString("username", data?.petani_username ?: "")
-                                    putString("profilPetani", data?.petani_profil ?: "")
-                                    putInt("desaPetani", data?.desa_id ?: 0)
+                                        putInt("petani_id", data?.petani_id ?: 0)
+                                        putString("namaPetani", data?.petani_nama ?: "")
+                                        putString("username", data?.petani_username ?: "")
+                                        putString("profilPetani", data?.petani_profil ?: "")
+                                        putInt("desaPetani", data?.desa_id ?: 0)
+                                        getLahan()
+                                        apply()
+                                    }
+                                    startActivity(
+                                        Intent(
+                                            this@MasukActivity,
+                                            BaseActivity::class.java
+                                        )
+                                    )
+                                }else {
 
-                                    apply()
+                                    sharedPref.edit().apply {
+
+                                        putString("role", "admin")
+
+                                        putInt("user_id", data?.user_id ?: 0)
+                                        putString("username", data?.user_username ?: "")
+                                        putString("user_role", data?.user_role ?: "")
+
+                                        apply()
+                                    }
+                                    startActivity(
+                                        Intent(
+                                            this@MasukActivity,
+                                            BaseAdminActivity::class.java
+                                        )
+                                    )
+
                                 }
+
+
+                                getDesa()
 
                                 runOnUiThread {
 
@@ -150,15 +185,9 @@ class MasukActivity : AppCompatActivity() {
                                         Toast.LENGTH_SHORT
                                     ).show()
 
-                                    startActivity(
-                                        Intent(
-                                            this@MasukActivity,
-                                            BaseActivity::class.java
-                                        )
-                                    )
-
                                     finish()
                                 }
+
 
                             } else {
 
@@ -187,6 +216,14 @@ class MasukActivity : AppCompatActivity() {
                     }
                 }
             )
+//            getDesa()
+//            getLahan()
+//            startActivity(
+//                                        Intent(
+//                                           this@MasukActivity,
+//                                            BaseActivity::class.java
+//                                       ))
+
         }
         binding.btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
@@ -332,6 +369,123 @@ class MasukActivity : AppCompatActivity() {
             )
         )
         finish()
+    }
+    private fun getDesa(){
+        PetaniApi.getDesa(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                if (response.isSuccessful) {
+
+                    val json = response.body!!.string()
+
+                    val desaResponse = Gson().fromJson(
+                        json,
+                        DesaApiResponse::class.java
+                    )
+
+                    val desaEntity = desaResponse.data.map {
+
+                        DesaEntity(
+                            idDesa = it.desa_id,
+                            namaDesa = it.desa_nama
+                        )
+
+                    }
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+
+                        database.masterDao().insertDesa(desaEntity)
+
+                    }
+
+                }
+
+            }
+
+        })
+    }
+
+    private fun getJenisKegiatan(){
+        PetaniApi.getJenisKegiatan(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                if (response.isSuccessful) {
+
+                    val json = response.body!!.string()
+
+                    val jenisKegaitanResponse = Gson().fromJson(
+                        json,
+                        JenisKegiatanApiResponse::class.java
+                    )
+
+                    val jenisKegiatanEntity = jenisKegaitanResponse.data.map {
+
+                        JenisKegiatanEntity(
+                            id_jenis = it.id_jenis,
+                            nama_jenis = it.nama_jenis,
+                            ikon = it.ikon
+                        )
+
+                    }
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+
+                        database.JenisKegiatanDao().insertJenisKegiatan(jenisKegiatanEntity)
+
+                    }
+
+                }
+
+            }
+
+        })
+    }
+    private fun getLahan(){
+        PetaniApi.getLahanByPetani(sp_petaniId, object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                if (response.isSuccessful) {
+
+                    val json = response.body!!.string()
+
+                    val lahanResponse = Gson().fromJson(
+                        json,
+                        LahanResponse::class.java
+                    )
+
+                    val lahanEntity = lahanResponse.data.map {
+
+                        LahanEntity(
+                            lahan_id = it.lahan_id,
+                            petani_id = sp_petaniId,
+                            lahan_nama = it.lahan_nama
+                        )
+
+                    }
+
+                    lifecycleScope.launch(Dispatchers.IO) {
+
+                        database.LahanDao().insertLahan(lahanEntity)
+
+                    }
+
+                }
+
+            }
+
+        })
     }
 
 

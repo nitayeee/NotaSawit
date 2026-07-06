@@ -13,12 +13,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.InputKegiatan.InputKegiatanActivity
 import com.example.notasawit.Pemasukan.InputPemasukanActivity
 import com.example.notasawit.databinding.FragmentBerandaBinding
 import com.example.notasawit.Model.QuoteResponse
 import com.example.notasawit.Network.RetrofitClient
 import com.example.notasawit.Pengeluaran.InputPengeluaranActivity
+import com.example.notasawit.Repository.SyncProduksiRepository
+import com.example.notasawit.Room.AppDatabase
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +36,7 @@ class BerandaFragment : Fragment() {
     private val sharedPref by lazy {
         requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
     }
+    private lateinit var database: AppDatabase
     private val quoteRunnable = object : Runnable {
         override fun run() {
 
@@ -75,6 +80,7 @@ class BerandaFragment : Fragment() {
         binding.username.setTextColor(Color.parseColor("#1B5E20"))
         // quote pertama
         loadQuote()
+        database = AppDatabase.getDatabase(requireContext())
 
         // mulai auto refresh quote
         handler.postDelayed(quoteRunnable, 10000)
@@ -176,4 +182,16 @@ class BerandaFragment : Fragment() {
         handler.removeCallbacks(quoteRunnable)
         _binding = null
     }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        lifecycleScope.launch {
+//
+//            SyncProduksiRepository(
+//                requireContext(),
+//                database
+//            ).syncProduksi()
+//
+//        }
+//    }
 }

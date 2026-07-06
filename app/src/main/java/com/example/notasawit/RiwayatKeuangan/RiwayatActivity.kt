@@ -45,8 +45,6 @@ class RiwayatActivity : AppCompatActivity() {
     private val lahanList = mutableListOf<Lahan>()
     private var selectedLahanId: Int? = null
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -97,11 +95,9 @@ class RiwayatActivity : AppCompatActivity() {
 
         adapter = RiwayatAdapter(riwayatList.toMutableList())
 
-
         adapter.onItemClick = { item ->
 
             when(item.sourceTable.lowercase()) {
-
 
                 "produksi" -> {
 
@@ -117,7 +113,8 @@ class RiwayatActivity : AppCompatActivity() {
 
                     startActivity(intent)
                 }
-                "biaya_operasional" -> {
+                "biaya" -> {
+
 
                     val intent = Intent(
                         this,

@@ -50,8 +50,6 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
         PetaniApi.getDetailProduksi(
             id,
             object : Callback {
-
-
                 override fun onFailure(
                     call: Call,
                     e: IOException
@@ -68,7 +66,6 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
                     call: Call,
                     response: Response
                 ) {
-
                     val json =
                         response.body?.string()
                     Log.d(
@@ -82,7 +79,6 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
 
 
                     if (json != null && response.isSuccessful) {
-
                         val result =
                             Gson().fromJson(
                                 json,

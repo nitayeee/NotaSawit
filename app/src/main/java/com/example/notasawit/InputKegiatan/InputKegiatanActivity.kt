@@ -22,19 +22,31 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import android.app.DatePickerDialog
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Model.LahanResponse
+import com.example.notasawit.Repository.SyncProduksiRepository
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
+import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
+import com.example.notasawit.Room.KegiatanPetani.KegiatanEntity
+import com.example.notasawit.Room.Lahan.LahanEntity
+import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Utils.NetworkUtil
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class InputKegiatanActivity : AppCompatActivity() {
     private lateinit var binding: ActivityInputKegiatanBinding
-    private val jenisKegiatanList = mutableListOf<JenisKegiatan>()
-    private val listLahan = mutableListOf<Lahan>()
+    private val jenisKegiatanList = mutableListOf<JenisKegiatanEntity>()
+    private val listLahan = mutableListOf<LahanEntity>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
 
     private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
-    private var selectedLahan: Int? = null
+    private val selectedLahanIds = mutableListOf<Int>()
+    private val selectedLahanNames = mutableListOf<String>()
     private var selectedJKId: Int? = null
+    private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +59,7 @@ class InputKegiatanActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        database = AppDatabase.getDatabase(this)
         loadJenisKegiatan()
         loadLahan()
         //Ambil ID Desa
@@ -54,122 +67,163 @@ class InputKegiatanActivity : AppCompatActivity() {
 
             selectedJKId = jenisKegiatanList[position].id_jenis
         }
-        binding.spinnerLahan.setOnItemClickListener { _, _, position, _ ->
-
-            selectedLahan = listLahan[position].lahan_id
+//        binding.spinnerLahan.setOnItemClickListener { _, _, position, _ ->
+//
+//            selectedLahan = listLahan[position].lahan_id
+//        }
+        binding.etPilihLahan.setOnClickListener {
+            showLahanDialog()
         }
         binding.etTanggal.setOnClickListener {
             showDatePicker()
         }
+        binding.btnSimpan.setOnClickListener {
+
+            lifecycleScope.launch {
+
+                if (selectedLahanIds.isEmpty()) {
+                    Toast.makeText(
+                        this@InputKegiatanActivity,
+                        "Pilih minimal satu lahan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+
+                val kegiatan = KegiatanEntity(
+
+                    kegiatan_tanggal = binding.etTanggal.text.toString(),
+
+                    kegiatan_jumlah = binding.etDosis.text.toString().toInt(),
+
+                    kegiatan_satuan = "Kg",
+
+                    kegiatan_jenis = binding.spinnerKegiatan.text.toString(),
+
+                    petani_id = sp_petaniId,
+
+                    kegiatan_ket = binding.etBahan.text.toString()
+
+                )
+
+                // Simpan kegiatan
+                val kegiatanId = database.KegiatanDao().insert(kegiatan)
+
+                // Simpan semua lahan yang dipilih
+                selectedLahanIds.forEach { lahanId ->
+
+                    database.DetailKegiatanDao().insert(
+
+                        DetailKegiatanEntity(
+                            kegiatanId = kegiatanId.toInt(),
+                            lahanId  = lahanId
+                        )
+
+                    )
+
+                }
+
+                Toast.makeText(
+                    this@InputKegiatanActivity,
+                    "Data berhasil disimpan",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                finish()
+            }
+        }
 
 
+
+    }
+    private fun showLahanDialog() {
+
+        val items = listLahan.map { it.lahan_nama }.toTypedArray()
+        val checked = BooleanArray(items.size)
+
+        //menandai yang sudah dipilih
+        listLahan.forEachIndexed { index, lahan ->
+            checked[index] = selectedLahanIds.contains(lahan.lahan_id)
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Pilih Lahan")
+            .setMultiChoiceItems(items, checked) { _, which, isChecked ->
+
+                val lahan = listLahan[which]
+
+                if (isChecked) {
+
+                    selectedLahanIds.add(lahan.lahan_id)
+                    selectedLahanNames.add(lahan.lahan_nama)
+
+                } else {
+
+                    selectedLahanIds.remove(lahan.lahan_id)
+                    selectedLahanNames.remove(lahan.lahan_nama)
+
+                }
+
+            }
+            .setPositiveButton("Simpan") { _, _ ->
+
+                binding.chipGroupLahan.removeAllViews()
+
+                selectedLahanNames.forEach { nama ->
+
+                    val chip = com.google.android.material.chip.Chip(this)
+                    chip.text = nama
+                    chip.isCloseIconVisible = true
+
+                    chip.setOnCloseIconClickListener {
+
+                        val index = selectedLahanNames.indexOf(nama)
+
+                        if (index != -1) {
+                            selectedLahanNames.removeAt(index)
+                            selectedLahanIds.removeAt(index)
+                        }
+
+                        binding.chipGroupLahan.removeView(chip)
+                    }
+
+                    binding.chipGroupLahan.addView(chip)
+                }
+
+            }
+            .setNegativeButton("Batal", null)
+            .show()
 
     }
     private fun loadJenisKegiatan() {
 
-        PetaniApi.getJenisKegiatan(object : Callback {
+        lifecycleScope.launch {
 
-            override fun onFailure(
-                call: Call,
-                e: IOException
-            ) {
+            jenisKegiatanList.clear()
+            jenisKegiatanList.addAll(
+                database.JenisKegiatanDao().getAllJenisKegiatan()
+            )
 
-                runOnUiThread {
+            val adapter = ArrayAdapter(
+                this@InputKegiatanActivity,
+                android.R.layout.simple_dropdown_item_1line,
+                jenisKegiatanList.map { it.nama_jenis }
+            )
 
-                    Toast.makeText(
-                        this@InputKegiatanActivity,
-                        "Gagal mengambil jenis kegiatan",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            override fun onResponse(
-                call: Call,
-                response: Response
-            ) {
-
-                val json = response.body?.string()
-
-                val JKResponse =
-                    Gson().fromJson(
-                        json,
-                        JenisKegiatanApiResponse::class.java
-                    )
-
-                jenisKegiatanList.clear()
-                jenisKegiatanList.addAll(JKResponse.data)
-
-                val namaDesa =
-                    jenisKegiatanList.map { it.nama_jenis }
-
-                runOnUiThread {
-
-                    val adapter = ArrayAdapter(
-                        this@InputKegiatanActivity,
-                        android.R.layout.simple_dropdown_item_1line,
-                        namaDesa
-                    )
-
-                    binding.spinnerKegiatan.setAdapter(adapter)
-                }
-            }
-        })
+            binding.spinnerKegiatan.setAdapter(adapter)
+        }
     }
 
     private fun loadLahan() {
-        val petaniId = sp_petaniId
-        PetaniApi.getLahanByPetani(
-            petaniId,
-            object : Callback {
 
-                override fun onFailure(
-                    call: Call,
-                    e: IOException
-                ) {
+        lifecycleScope.launch {
 
-                    runOnUiThread {
+            listLahan.clear()
+            listLahan.addAll(
+                database.LahanDao().getAllLahan()
+            )
 
-                        Toast.makeText(
-                            this@InputKegiatanActivity,
-                            "Gagal mengambil jenis kegiatan",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onResponse(
-                    call: Call,
-                    response: Response
-                ) {
-
-                    val json = response.body?.string()
-
-                    val JKResponse =
-                        Gson().fromJson(
-                            json,
-                            LahanResponse::class.java
-                        )
-
-                    listLahan.clear()
-                    listLahan.addAll(JKResponse.data)
-
-                    val namaLahan =
-                        listLahan.map { it.lahan_nama }
-
-                    runOnUiThread {
-
-                        val adapter = ArrayAdapter(
-                            this@InputKegiatanActivity,
-                            android.R.layout.simple_dropdown_item_1line,
-                            namaLahan
-                        )
-
-                        binding.spinnerLahan.setAdapter(adapter)
-                    }
-                }
-            }
-        )
+        }
     }
 
 //    Untuk tanggal

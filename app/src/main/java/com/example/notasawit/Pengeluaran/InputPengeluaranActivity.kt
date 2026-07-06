@@ -3,6 +3,7 @@ package com.example.notasawit.Pengeluaran
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -13,16 +14,26 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Model.LahanResponse
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
+import com.example.notasawit.Repository.SyncProduksiRepository
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.Pengeluaran.PengeluaranEntity
+import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Sync.SyncPengeluaranRepository
+import com.example.notasawit.Utils.NetworkUtil
 import com.example.notasawit.databinding.ActivityInputPemasukanBinding
 import com.example.notasawit.databinding.ActivityInputPengeluaranBinding
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -38,16 +49,20 @@ class InputPengeluaranActivity : AppCompatActivity() {
 
     // Untuk Nota
     private var imageUri: Uri? = null
+    private lateinit var database: AppDatabase
 
     // Pilih dari galeri
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 
             uri?.let {
-                imageUri = it
+
+                val localPath = copyImageToInternalStorage(it)
+
+                imageUri = Uri.fromFile(File(localPath))
 
                 binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageURI(it)
+                binding.imgNotaPreview.setImageURI(imageUri)
             }
         }
 
@@ -70,10 +85,12 @@ class InputPengeluaranActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        database = AppDatabase.getDatabase(this)
         // Klik upload bukti nota
         binding.cardUploadNota.setOnClickListener {
             showImagePickerDialog()
         }
+        setupKategoriSpinner()
 
         // Tombol simpan
         binding.btnSimpan.setOnClickListener {
@@ -89,7 +106,61 @@ class InputPengeluaranActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // TODO: Simpan data pemasukan ke API
+            lifecycleScope.launch {
+
+                val pengeluaran = PengeluaranEntity(
+
+                    biaya_tanggal = binding.etTanggal.text.toString(),
+
+                    biaya_jenis = binding.spinnerKategori.text.toString(),
+
+                    biaya_nama = binding.etNamaItem.text.toString(),
+
+                    biaya_jumlah = binding.etJumlah.text.toString().toInt(),
+                    petani_id = sp_petaniId,
+
+                    lahan_id = selectedLahan!!,
+
+                    biaya_total = binding.etTotal.text.toString().toDouble(),
+                    biaya_ket = binding.etCatatan.text.toString(),
+
+                    imagePath = imageUri?.toString()
+
+                )
+
+                database.PengeluaranDao().insert(pengeluaran)
+                val semuaData = database.PengeluaranDao().getAll()
+
+                Log.d("ROOM", "Jumlah data = ${semuaData.size}")
+
+                semuaData.forEach {
+                    Log.d("ROOM", it.toString())
+                }
+
+                Toast.makeText(
+                    this@InputPengeluaranActivity,
+                    "Data berhasil disimpan",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d("SYNC_IMAGE", "imagePath = ${pengeluaran.imagePath}")
+
+                if (NetworkUtil.isOnline(this@InputPengeluaranActivity)) {
+                    Toast.makeText(
+                        this@InputPengeluaranActivity,
+                        "Connect ada",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    SyncPengeluaranRepository(
+                        this@InputPengeluaranActivity,
+                        database
+                    ).syncPengeluaran()
+
+                }
+
+                finish()
+
+            }
         }
 
         loadLahan()
@@ -208,5 +279,51 @@ class InputPengeluaranActivity : AppCompatActivity() {
         )
 
         datePickerDialog.show()
+    }
+    private fun setupKategoriSpinner() {
+        val kategoriList = listOf(
+            "Bibit",
+            "Pupuk",
+            "Pestisida",
+            "Upah Pekerja",
+            "Alat & Mesin",
+            "Perbaikan",
+            "BBM",
+            "Transportasi",
+            "Perlengkapan",
+            "Operasional",
+            "Pajak & Perizinan",
+            "Sewa",
+            "Lain-lain"
+        )
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            kategoriList
+        )
+
+        binding.spinnerKategori.setAdapter(adapter)
+    }
+    private fun copyImageToInternalStorage(uri: Uri): String {
+
+        val fileName = "notaPengeluaran_${System.currentTimeMillis()}.jpg"
+
+        // Folder: files/nota/
+        val dir = File(filesDir, "nota_pengeluaran")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+
+        // File tujuan
+        val file = File(dir, fileName)
+
+        contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file.absolutePath
     }
 }

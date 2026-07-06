@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.notasawit.Room.Auditor.AuditorEntity
-import com.example.notasawit.Room.Desa.DesaEntity
+import com.example.notasawit.Room.DesaEntity
 
 @Dao
 interface MasterDao {
@@ -26,7 +26,7 @@ interface MasterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDesa(listDesa: List<DesaEntity>)
 
-    @Query("SELECT * FROM desa_lokal")
+    @Query("SELECT * FROM desa")
     suspend fun getAllDesa(): List<DesaEntity>
 
     // ==========================================

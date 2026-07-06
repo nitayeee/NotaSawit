@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F6F6F6"
     tools:context=".DetailRiwayatKeuangan.RiwayatPengeluaranActivity">
     <!-- ===================== TOOLBAR ===================== -->
     <LinearLayout
@@ -171,6 +172,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
                 app:cardCornerRadius="14dp"
+                android:backgroundTint="@color/white"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -274,6 +276,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="14dp"
                 app:cardCornerRadius="14dp"
+                android:backgroundTint="@color/white"
                 app:cardElevation="2dp">
 
                 <LinearLayout
@@ -417,6 +420,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="14dp"
+                android:backgroundTint="@color/white"
                 app:cardElevation="2dp">
 
                 <LinearLayout

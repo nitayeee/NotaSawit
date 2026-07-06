@@ -15,40 +15,51 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Model.LahanResponse
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
+import com.example.notasawit.Repository.SyncProduksiRepository
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.Lahan.LahanEntity
+import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Utils.NetworkUtil
 import com.example.notasawit.databinding.ActivityInputPemasukanBinding
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class InputPemasukanActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityInputPemasukanBinding
-    private val listLahan = mutableListOf<Lahan>()
+    private val listLahan = mutableListOf<LahanEntity>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
     private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
     private var selectedLahan: Int? = null
-
     private var imageUri: Uri? = null
     private var cameraUri: Uri? = null
+    private lateinit var database: AppDatabase
 
     // Pilih dari galeri
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 
             uri?.let {
-                imageUri = it
+
+                val localPath = copyImageToInternalStorage(it)
+
+                imageUri = Uri.fromFile(File(localPath))
 
                 binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageURI(it)
+                binding.imgNotaPreview.setImageURI(imageUri)
             }
         }
 
@@ -88,6 +99,7 @@ class InputPemasukanActivity : AppCompatActivity() {
 
             insets
         }
+        database = AppDatabase.getDatabase(this)
 
         // Klik upload bukti nota
         binding.cardUploadNota.setOnClickListener {
@@ -113,58 +125,54 @@ class InputPemasukanActivity : AppCompatActivity() {
 
                 return@setOnClickListener
             }
-            PetaniApi.postProduksi(
-                context = this@InputPemasukanActivity,
-                produksiTanggal = binding.etTanggal.text.toString(),
-                jumlahTbs = binding.etBahan.text.toString().toInt(),
-                hargaTbs = binding.etHarga.text.toString().toDouble(),
-                petaniId = sp_petaniId,
-                lahanId = selectedLahan ?: 0,
-                produksiKet = binding.etCatatan.text.toString(),
-                imageUri = imageUri,
-                callback = object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        runOnUiThread {
-                            Toast.makeText(
-                                this@InputPemasukanActivity,
-                                "Gagal terhubung ke server: ${e.message}",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
+            lifecycleScope.launch {
 
-                    override fun onResponse(call: Call, response: Response) {
+                val produksi = ProduksiEntity(
 
-                        val responseBody = response.body?.string() ?: ""
+                    tanggal = binding.etTanggal.text.toString(),
 
-                        Log.d("PRODUKSI", "Code: ${response.code}")
-                        Log.d("PRODUKSI", "Response: $responseBody")
+                    jumlahTbs = binding.etBahan.text.toString().toInt(),
 
+                    hargaTbs = binding.etHarga.text.toString().toDouble(),
 
-                        this@InputPemasukanActivity.runOnUiThread {
+                    petaniId = sp_petaniId,
 
-                            if (response.isSuccessful) {
+                    lahanId = selectedLahan!!,
 
-                                Toast.makeText(
-                                    this@InputPemasukanActivity,
-                                    "Produksi berhasil disimpan",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                    catatan = binding.etCatatan.text.toString(),
 
-                            } else {
+                    imagePath = imageUri?.toString()
 
-                                Toast.makeText(
-                                    this@InputPemasukanActivity,
-                                    "Gagal simpan (${response.code})",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                )
 
-                            }
-                        }
-                    }
+                database.ProduksiDao().insert(produksi)
+                val semuaData = database.ProduksiDao().getAll()
+
+                Log.d("ROOM", "Jumlah data = ${semuaData.size}")
+
+                semuaData.forEach {
+                    Log.d("ROOM", it.toString())
+                }
+
+                Toast.makeText(
+                    this@InputPemasukanActivity,
+                    "Data berhasil disimpan",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d("SYNC_IMAGE", "imagePath = ${produksi.imagePath}")
+
+                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
+
+                    SyncProduksiRepository(
+                        this@InputPemasukanActivity,
+                        database
+                    ).syncProduksi()
 
                 }
-            )
+
+                finish()
+
+            }
 
         }
 
@@ -206,58 +214,22 @@ class InputPemasukanActivity : AppCompatActivity() {
             .show()
     }
     private fun loadLahan() {
-        val petaniId = sp_petaniId
-        PetaniApi.getLahanByPetani(
-            petaniId,
-            object : Callback {
 
-                override fun onFailure(
-                    call: Call,
-                    e: IOException
-                ) {
+        lifecycleScope.launch {
 
-                    runOnUiThread {
+            listLahan.clear()
+            listLahan.addAll(
+                database.LahanDao().getAllLahan()
+            )
 
-                        Toast.makeText(
-                            this@InputPemasukanActivity,
-                            "Gagal mengambil jenis kegiatan",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            val adapter = ArrayAdapter(
+                this@InputPemasukanActivity,
+                android.R.layout.simple_dropdown_item_1line,
+                listLahan.map { it.lahan_nama }
+            )
 
-                override fun onResponse(
-                    call: Call,
-                    response: Response
-                ) {
-
-                    val json = response.body?.string()
-
-                    val JKResponse =
-                        Gson().fromJson(
-                            json,
-                            LahanResponse::class.java
-                        )
-
-                    listLahan.clear()
-                    listLahan.addAll(JKResponse.data)
-
-                    val namaLahan =
-                        listLahan.map { it.lahan_nama }
-
-                    runOnUiThread {
-
-                        val adapter = ArrayAdapter(
-                            this@InputPemasukanActivity,
-                            android.R.layout.simple_dropdown_item_1line,
-                            namaLahan
-                        )
-
-                        binding.spinnerLahan.setAdapter(adapter)
-                    }
-                }
-            }
-        )
+            binding.spinnerLahan.setAdapter(adapter)
+        }
     }
     private fun showDatePicker() {
 
@@ -306,5 +278,38 @@ class InputPemasukanActivity : AppCompatActivity() {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
         )
+    }
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
+                SyncProduksiRepository(
+                    this@InputPemasukanActivity,
+                    database
+                ).syncProduksi()
+            }
+        }
+    }
+    private fun copyImageToInternalStorage(uri: Uri): String {
+
+        val fileName = "nota_${System.currentTimeMillis()}.jpg"
+
+        // Folder: files/nota/
+        val dir = File(filesDir, "nota_pemasukan")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+
+        // File tujuan
+        val file = File(dir, fileName)
+
+        contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file.absolutePath
     }
 }

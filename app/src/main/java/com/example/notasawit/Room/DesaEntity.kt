@@ -1,10 +1,14 @@
-package com.example.notasawit.Room.Desa
+package com.example.notasawit.Room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "desa_lokal")
+@Entity(tableName = "desa")
 data class DesaEntity(
-    @PrimaryKey val idDesa: Int,
+
+    @PrimaryKey
+    val idDesa: Int,
+
     val namaDesa: String
+
 )
