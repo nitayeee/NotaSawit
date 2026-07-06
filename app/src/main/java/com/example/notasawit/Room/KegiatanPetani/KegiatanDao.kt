@@ -9,13 +9,29 @@ import com.example.notasawit.Room.Pengeluaran.PengeluaranEntity
 @Dao
 interface KegiatanDao {
 
-
     @Insert
     suspend fun insert(kegiatan: KegiatanEntity): Long
 
     @Query("SELECT * FROM kegiatan")
     suspend fun getAll(): List<KegiatanEntity>
 
-    @Delete
-    suspend fun delete(kegiatan: KegiatanEntity)
+    @Query("""
+        SELECT * FROM kegiatan
+        WHERE isSynced = 0
+    """)
+    suspend fun getUnsynced(): List<KegiatanEntity>
+
+    @Query("""
+        UPDATE kegiatan
+        SET isSynced = 1
+        WHERE localId = :id
+    """)
+    suspend fun updateSynced(id: Int)
+
+    @Query("""
+    DELETE FROM kegiatan
+    WHERE localId = :id
+    """)
+    suspend fun deleteById(id: Int)
+
 }

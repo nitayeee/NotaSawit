@@ -11,10 +11,18 @@ interface DetailKegiatanDao {
     @Insert
     suspend fun insert(detail: DetailKegiatanEntity)
 
-    @Query("SELECT * FROM detail_kegiatan")
-    suspend fun getAll(): List<DetailKegiatanEntity>
+    @Query("""
+        SELECT * FROM detail_kegiatan
+        WHERE kegiatanId = :kegiatanId
+    """)
+    suspend fun getByKegiatan(
+        kegiatanId: Int
+    ): List<DetailKegiatanEntity>
 
-    @Query("SELECT * FROM detail_kegiatan WHERE kegiatanId = :id")
-    suspend fun getByKegiatan(id: Int): List<DetailKegiatanEntity>
+    @Query("""
+    DELETE FROM detail_kegiatan
+    WHERE kegiatanId = :kegiatanId
+    """)
+    suspend fun deleteByKegiatan(kegiatanId: Int)
 
 }

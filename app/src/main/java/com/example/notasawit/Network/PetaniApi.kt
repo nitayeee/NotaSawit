@@ -286,4 +286,77 @@ object PetaniApi {
             .newCall(request)
             .enqueue(callback)
     }
+
+    fun postKegiatan(
+        kegiatanTanggal: String,
+        kegiatanJumlah: Int,
+        kegiatanSatuan: String,
+        jenisKegiatanId: Int,
+        petaniId: Int,
+        kegiatanKet: String,
+        lahanIds: List<Int>,
+        callback: Callback
+    ) {
+
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("kegiatan_tanggal", kegiatanTanggal)
+            .addFormDataPart("kegiatan_jumlah", kegiatanJumlah.toString())
+            .addFormDataPart("kegiatan_satuan", kegiatanSatuan)
+            .addFormDataPart("jenis_kegiatan_id", jenisKegiatanId.toString())
+            .addFormDataPart("petani_id", petaniId.toString())
+            .addFormDataPart("kegiatan_ket", kegiatanKet)
+
+        // kirim semua lahan
+        lahanIds.forEach { id ->
+            builder.addFormDataPart(
+                "lahan_id[]",
+                id.toString()
+            )
+        }
+
+        val requestBody = builder.build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/kegiatan")
+            .post(requestBody)
+            .build()
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
+
+    fun getRiwayatKegiatan(
+        petaniId: Int,
+        callback: Callback
+    ) {
+
+        val url = "$BASE_URL/api/kegiatan?petani_id=$petaniId"
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
+    fun getDetailKegiatan(
+        petaniId: Int,
+        callback: Callback
+    ) {
+
+        val url = "$BASE_URL/api/detail-kegiatan?petani_id=$petaniId"
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        ApiClient.client
+            .newCall(request)
+            .enqueue(callback)
+    }
 }

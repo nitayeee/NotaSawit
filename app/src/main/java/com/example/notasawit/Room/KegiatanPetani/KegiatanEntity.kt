@@ -15,9 +15,10 @@ data class KegiatanEntity(
 
     val kegiatan_satuan: String,
 
-    val kegiatan_jenis: String,
+    val kegiatan_jenis: Int,
 
     val petani_id: Int,
 
-    val kegiatan_ket: String
+    val kegiatan_ket: String,
+    val isSynced: Boolean = false
 )

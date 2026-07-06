@@ -35,7 +35,7 @@ import com.example.notasawit.Room.Produksi.ProduksiEntity
         KegiatanEntity::class,
         DetailKegiatanEntity::class,
     ],
-    version = 12
+    version = 13
 )
 abstract class AppDatabase : RoomDatabase() {
 

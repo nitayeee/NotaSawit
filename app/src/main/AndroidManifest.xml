@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Notasawit"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".RiwayatKegiatan.RiwayatKegiatanActivity"
+            android:exported="false" />
+        <activity
             android:name=".Admin.Lapangan.CobaActivity"
             android:exported="false" />
         <activity
@@ -24,9 +27,7 @@
             android:exported="false" />
         <activity
             android:name=".Admin.BaseAdminActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".DetailRiwayatKeuangan.RiwayatPengeluaranActivity"
             android:exported="false" />
@@ -69,7 +70,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -32,6 +32,7 @@ import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
 import com.example.notasawit.Room.KegiatanPetani.KegiatanEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Sync.SyncKegiatanRepository
 import com.example.notasawit.Utils.NetworkUtil
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -98,7 +99,7 @@ class InputKegiatanActivity : AppCompatActivity() {
 
                     kegiatan_satuan = "Kg",
 
-                    kegiatan_jenis = binding.spinnerKegiatan.text.toString(),
+                    kegiatan_jenis = selectedJKId!!,
 
                     petani_id = sp_petaniId,
 
@@ -120,6 +121,14 @@ class InputKegiatanActivity : AppCompatActivity() {
                         )
 
                     )
+
+                }
+                if (NetworkUtil.isOnline(this@InputKegiatanActivity)) {
+
+                    SyncKegiatanRepository(
+                        this@InputKegiatanActivity,
+                        database
+                    ).sync()
 
                 }
 
