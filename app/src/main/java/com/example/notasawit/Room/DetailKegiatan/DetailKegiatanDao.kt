@@ -15,7 +15,7 @@ interface DetailKegiatanDao {
         SELECT * FROM detail_kegiatan
         WHERE kegiatanId = :kegiatanId
     """)
-    suspend fun getByKegiatan(
+    suspend fun gethByKegiatan(
         kegiatanId: Int
     ): List<DetailKegiatanEntity>
 
