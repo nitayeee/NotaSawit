@@ -20,7 +20,7 @@ import com.example.notasawit.databinding.FragmentBerandaBinding
 import com.example.notasawit.Model.QuoteResponse
 import com.example.notasawit.Network.RetrofitClient
 import com.example.notasawit.Pengeluaran.InputPengeluaranActivity
-import com.example.notasawit.Repository.SyncProduksiRepository
+
 import com.example.notasawit.Room.AppDatabase
 import kotlinx.coroutines.launch
 import retrofit2.Call

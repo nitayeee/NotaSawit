@@ -27,7 +27,7 @@ class SyncKegiatanRepository(
             // Ambil semua lahan dari kegiatan ini
             val detailLahan =
                 database.DetailKegiatanDao()
-                    .getByKegiatan(kegiatan.localId)
+                    .gethByKegiatan(kegiatan.localId)
 
             val lahanIds =
                 detailLahan.map { it.lahanId }
@@ -77,10 +77,42 @@ class SyncKegiatanRepository(
 
                         Log.d("API", "CODE = ${response.code}")
 
+                        if (response.isSuccessful) {
+                            Log.d("API", "isSuccessful = ${response.isSuccessful}")
+                            Log.d("API", "Response = $body")
+
+                            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+
+                                // Hapus detail kegiatan terlebih dahulu
+                                database.DetailKegiatanDao()
+                                    .deleteByKegiatan(kegiatan.localId)
+
+                                // Baru hapus kegiatan
+                                database.KegiatanDao()
+                                    .deleteById(kegiatan.localId)
+
+                                Log.d(
+                                    "SYNC",
+                                    "Kegiatan ${kegiatan.localId} berhasil disinkron dan dihapus dari Room"
+                                )
+                            }
+
+                        } else {
+
+                            Log.e(
+                                "SYNC",
+                                "Sync gagal : ${response.code}"
+                            )
+
+                        }
+
                         val index = body.indexOf("Exception")
 
                         if (index != -1) {
-                            Log.d("API", body.substring(index, minOf(index + 1500, body.length)))
+                            Log.d(
+                                "API",
+                                body.substring(index, minOf(index + 1500, body.length))
+                            )
                         } else {
                             Log.d("API", body.take(1500))
                         }

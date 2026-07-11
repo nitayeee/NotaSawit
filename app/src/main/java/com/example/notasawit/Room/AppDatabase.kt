@@ -9,6 +9,8 @@ import com.example.notasawit.Room.AuditEntity.AuditForm
 import com.example.notasawit.Room.Auditor.AuditorEntity
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanDao
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
+import com.example.notasawit.Room.DetailProduksi.DetailProduksiDao
+import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
 import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanDao
 import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
 import com.example.notasawit.Room.KegiatanPetani.KegiatanDao
@@ -34,8 +36,9 @@ import com.example.notasawit.Room.Produksi.ProduksiEntity
         JenisKegiatanEntity::class,
         KegiatanEntity::class,
         DetailKegiatanEntity::class,
+        DetailProduksiEntity::class
     ],
-    version = 13
+    version = 14
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -49,6 +52,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun JenisKegiatanDao(): JenisKegiatanDao
     abstract fun KegiatanDao(): KegiatanDao
     abstract fun DetailKegiatanDao(): DetailKegiatanDao
+    abstract fun DetailProduksiDao(): DetailProduksiDao
 
     companion object {
 

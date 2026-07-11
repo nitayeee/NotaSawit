@@ -25,7 +25,6 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Model.LahanResponse
-import com.example.notasawit.Repository.SyncProduksiRepository
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
 import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
@@ -263,4 +262,16 @@ private fun showDatePicker() {
 
     datePickerDialog.show()
 }
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            if (NetworkUtil.isOnline(this@InputKegiatanActivity)) {
+                SyncKegiatanRepository(
+                    this@InputKegiatanActivity,
+                    database
+                ).sync()
+            }
+        }
+    }
 }

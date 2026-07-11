@@ -216,16 +216,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ASAL LAHAN"
+                android:text="LAHAN"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:boxStrokeColor="#1B5E20"
@@ -234,18 +233,30 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundColor="#FFFFFF"
-                app:startIconDrawable="@drawable/ic_shovel"
+                app:startIconDrawable="@drawable/ic_map_pin"
                 app:startIconTint="#7EA887">
 
-                <AutoCompleteTextView
-                    android:id="@+id/spinnerLahan"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPilihLahan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Pilih asal lahan"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:clickable="true"
+                    android:cursorVisible="false"
                     android:inputType="none"
+                    android:hint="Pilih Lahan"
                     android:textSize="13sp"
-                    android:textColor="#2A3A2D" />
+                    android:textColor="#2A3A2D"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupLahan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleLine="false"
+                app:singleSelection="false"/>
 
 
 

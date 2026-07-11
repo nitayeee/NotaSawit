@@ -19,7 +19,6 @@ import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Model.LahanResponse
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
-import com.example.notasawit.Repository.SyncProduksiRepository
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.Pengeluaran.PengeluaranEntity
 import com.example.notasawit.Room.Produksi.ProduksiEntity

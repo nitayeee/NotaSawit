@@ -9,17 +9,18 @@ data class ProduksiEntity(
     @PrimaryKey(autoGenerate = true)
     val localId: Int = 0,
 
-    val tanggal: String,
+    val produksi_tanggal: String,
 
-    val jumlahTbs: Int,
+    val jumlah_tbs: Int,
 
-    val hargaTbs: Double,
+    val harga_tbs: Double,
+
+    val total_pendapatan: Double,
 
     val petaniId: Int,
 
-    val lahanId: Int,
+    val produksi_ket: String,
 
-    val catatan: String,
-
-    val imagePath: String?
+    val imagePath: String?,
+    val isSynced: Boolean = false
 )

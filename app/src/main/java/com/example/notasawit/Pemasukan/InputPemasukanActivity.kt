@@ -16,24 +16,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.notasawit.Model.Lahan
-import com.example.notasawit.Model.LahanResponse
-import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
-import com.example.notasawit.Repository.SyncProduksiRepository
 import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
+import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Sync.SyncKegiatanRepository
 import com.example.notasawit.Utils.NetworkUtil
 import com.example.notasawit.databinding.ActivityInputPemasukanBinding
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -43,7 +37,8 @@ class InputPemasukanActivity : AppCompatActivity() {
     private val listLahan = mutableListOf<LahanEntity>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
     private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
-    private var selectedLahan: Int? = null
+    private val selectedLahanIds = mutableListOf<Int>()
+    private val selectedLahanNames = mutableListOf<String>()
     private var imageUri: Uri? = null
     private var cameraUri: Uri? = null
     private lateinit var database: AppDatabase
@@ -75,7 +70,6 @@ class InputPemasukanActivity : AppCompatActivity() {
                     binding.imgNotaPreview.setImageURI(it)
 
                 }
-
             }
         }
 
@@ -107,10 +101,9 @@ class InputPemasukanActivity : AppCompatActivity() {
         }
 
         loadLahan()
-        binding.spinnerLahan.setOnItemClickListener { _, _, position, _ ->
-            selectedLahan = listLahan[position].lahan_id
+        binding.etPilihLahan.setOnClickListener {
+            showLahanDialog()
         }
-
 
         // Tombol simpan
         binding.btnSimpan.setOnClickListener {
@@ -129,30 +122,54 @@ class InputPemasukanActivity : AppCompatActivity() {
 
                 val produksi = ProduksiEntity(
 
-                    tanggal = binding.etTanggal.text.toString(),
+                    produksi_tanggal = binding.etTanggal.text.toString(),
 
-                    jumlahTbs = binding.etBahan.text.toString().toInt(),
+                    jumlah_tbs = binding.etBahan.text.toString().toInt(),
 
-                    hargaTbs = binding.etHarga.text.toString().toDouble(),
+                    harga_tbs = binding.etHarga.text.toString().toDouble(),
+                    total_pendapatan = binding.etBahan.text.toString().toInt() *
+                            binding.etHarga.text.toString().toDouble(),
 
                     petaniId = sp_petaniId,
 
-                    lahanId = selectedLahan!!,
-
-                    catatan = binding.etCatatan.text.toString(),
+                    produksi_ket = binding.etCatatan.text.toString(),
 
                     imagePath = imageUri?.toString()
 
                 )
+                val produksiId = database.ProduksiDao().insert(produksi)
 
-                database.ProduksiDao().insert(produksi)
-                val semuaData = database.ProduksiDao().getAll()
+                // Simpan semua lahan yang dipilih
+                selectedLahanIds.forEach { lahanId ->
 
-                Log.d("ROOM", "Jumlah data = ${semuaData.size}")
+                    database.DetailProduksiDao().insert(
 
-                semuaData.forEach {
-                    Log.d("ROOM", it.toString())
+                        DetailProduksiEntity(
+                            produksiId = produksiId.toInt(),
+                            lahanId  = lahanId
+                        )
+
+                    )
+
                 }
+                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
+
+                    SyncKegiatanRepository(
+                        this@InputPemasukanActivity,
+                        database
+                    ).sync()
+
+                }
+
+
+//                database.ProduksiDao().insert(produksi)
+//                val semuaData = database.ProduksiDao().getAll()
+//
+//                Log.d("ROOM", "Jumlah data = ${semuaData.size}")
+//
+//                semuaData.forEach {
+//                    Log.d("ROOM", it.toString())
+//                }
 
                 Toast.makeText(
                     this@InputPemasukanActivity,
@@ -161,14 +178,14 @@ class InputPemasukanActivity : AppCompatActivity() {
                 ).show()
                 Log.d("SYNC_IMAGE", "imagePath = ${produksi.imagePath}")
 
-                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
-
-                    SyncProduksiRepository(
-                        this@InputPemasukanActivity,
-                        database
-                    ).syncProduksi()
-
-                }
+//                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
+//
+//                    SyncProduksiRepository(
+//                        this@InputPemasukanActivity,
+//                        database
+//                    ).syncProduksi()
+//
+//                }
 
                 finish()
 
@@ -222,13 +239,6 @@ class InputPemasukanActivity : AppCompatActivity() {
                 database.LahanDao().getAllLahan()
             )
 
-            val adapter = ArrayAdapter(
-                this@InputPemasukanActivity,
-                android.R.layout.simple_dropdown_item_1line,
-                listLahan.map { it.lahan_nama }
-            )
-
-            binding.spinnerLahan.setAdapter(adapter)
         }
     }
     private fun showDatePicker() {
@@ -283,12 +293,12 @@ class InputPemasukanActivity : AppCompatActivity() {
         super.onResume()
 
         lifecycleScope.launch {
-            if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
-                SyncProduksiRepository(
-                    this@InputPemasukanActivity,
-                    database
-                ).syncProduksi()
-            }
+//            if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
+//                SyncProduksiRepository(
+//                    this@InputPemasukanActivity,
+//                    database
+//                ).syncProduksi()
+//            }
         }
     }
     private fun copyImageToInternalStorage(uri: Uri): String {
@@ -311,5 +321,64 @@ class InputPemasukanActivity : AppCompatActivity() {
         }
 
         return file.absolutePath
+    }
+    private fun showLahanDialog() {
+
+        val items = listLahan.map { it.lahan_nama }.toTypedArray()
+        val checked = BooleanArray(items.size)
+
+        //menandai yang sudah dipilih
+        listLahan.forEachIndexed { index, lahan ->
+            checked[index] = selectedLahanIds.contains(lahan.lahan_id)
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Pilih Lahan")
+            .setMultiChoiceItems(items, checked) { _, which, isChecked ->
+
+                val lahan = listLahan[which]
+
+                if (isChecked) {
+
+                    selectedLahanIds.add(lahan.lahan_id)
+                    selectedLahanNames.add(lahan.lahan_nama)
+
+                } else {
+
+                    selectedLahanIds.remove(lahan.lahan_id)
+                    selectedLahanNames.remove(lahan.lahan_nama)
+
+                }
+
+            }
+            .setPositiveButton("Simpan") { _, _ ->
+
+                binding.chipGroupLahan.removeAllViews()
+
+                selectedLahanNames.forEach { nama ->
+
+                    val chip = com.google.android.material.chip.Chip(this)
+                    chip.text = nama
+                    chip.isCloseIconVisible = true
+
+                    chip.setOnCloseIconClickListener {
+
+                        val index = selectedLahanNames.indexOf(nama)
+
+                        if (index != -1) {
+                            selectedLahanNames.removeAt(index)
+                            selectedLahanIds.removeAt(index)
+                        }
+
+                        binding.chipGroupLahan.removeView(chip)
+                    }
+
+                    binding.chipGroupLahan.addView(chip)
+                }
+
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+
     }
 }

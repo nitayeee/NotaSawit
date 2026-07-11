@@ -107,6 +107,9 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.8")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
 
+//    Untuk Work Manager
+    implementation("androidx.work:work-runtime-ktx:2.10.2")
+
 
 
 
