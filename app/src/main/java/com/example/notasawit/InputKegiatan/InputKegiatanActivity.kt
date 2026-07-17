@@ -8,31 +8,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.notasawit.InputKegiatan.JenisKegiatan.JenisKegiatan
-import com.example.notasawit.InputKegiatan.JenisKegiatan.JenisKegiatanApiResponse
-import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
 import com.example.notasawit.databinding.ActivityInputKegiatanBinding
-import com.google.gson.Gson
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import android.app.DatePickerDialog
-import android.util.Log
 import androidx.lifecycle.lifecycleScope
-import com.example.notasawit.Model.Lahan
-import com.example.notasawit.Model.LahanResponse
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
 import com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity
 import com.example.notasawit.Room.KegiatanPetani.KegiatanEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
-import com.example.notasawit.Room.Produksi.ProduksiEntity
-import com.example.notasawit.Sync.SyncKegiatanRepository
-import com.example.notasawit.Utils.NetworkUtil
+import com.example.notasawit.Sync.SyncWorker
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -78,65 +70,38 @@ class InputKegiatanActivity : AppCompatActivity() {
             showDatePicker()
         }
         binding.btnSimpan.setOnClickListener {
-
             lifecycleScope.launch {
-
                 if (selectedLahanIds.isEmpty()) {
-                    Toast.makeText(
-                        this@InputKegiatanActivity,
-                        "Pilih minimal satu lahan",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@InputKegiatanActivity, "Pilih minimal satu lahan", Toast.LENGTH_SHORT).show()
                     return@launch
                 }
 
                 val kegiatan = KegiatanEntity(
-
-                    kegiatan_tanggal = binding.etTanggal.text.toString(),
-
+                    kegiatan_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
                     kegiatan_jumlah = binding.etDosis.text.toString().toInt(),
-
                     kegiatan_satuan = "Kg",
-
                     kegiatan_jenis = selectedJKId!!,
-
                     petani_id = sp_petaniId,
-
-                    kegiatan_ket = binding.etBahan.text.toString()
-
+                    kegiatan_ket = binding.etBahan.text.toString(),
+                    isSynced = false // Data baru ditandai belum tersinkron
                 )
 
-                // Simpan kegiatan
+                // 1. Selalu simpan ke database lokal terlebih dahulu (Aman & Pasti tersimpan)
                 val kegiatanId = database.KegiatanDao().insert(kegiatan)
 
-                // Simpan semua lahan yang dipilih
                 selectedLahanIds.forEach { lahanId ->
-
                     database.DetailKegiatanDao().insert(
-
                         DetailKegiatanEntity(
                             kegiatanId = kegiatanId.toInt(),
                             lahanId  = lahanId
                         )
-
                     )
-
-                }
-                if (NetworkUtil.isOnline(this@InputKegiatanActivity)) {
-
-                    SyncKegiatanRepository(
-                        this@InputKegiatanActivity,
-                        database
-                    ).sync()
-
                 }
 
-                Toast.makeText(
-                    this@InputKegiatanActivity,
-                    "Data berhasil disimpan",
-                    Toast.LENGTH_SHORT
-                ).show()
+                // 2. Picu WorkManager untuk menangani pengiriman data & pembersihan lokal
+                triggerDataSync()
 
+                Toast.makeText(this@InputKegiatanActivity, "Data disimpan ke lokal & mengantre sinkronisasi", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -236,42 +201,52 @@ class InputKegiatanActivity : AppCompatActivity() {
 
 //    Untuk tanggal
 private fun showDatePicker() {
-
     val calendar = Calendar.getInstance()
 
     val datePickerDialog = DatePickerDialog(
         this,
         { _, year, month, dayOfMonth ->
-
             val selectedDate = Calendar.getInstance()
             selectedDate.set(year, month, dayOfMonth)
 
-            val formatter = SimpleDateFormat(
-                "dd MMM yyyy",
-                Locale("id", "ID")
-            )
+            // 1. Tampilan untuk USER di aplikasi (Tetap Bahasa Indonesia agar mudah dibaca)
+            val formatterUser = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
+            binding.etTanggal.setText(formatterUser.format(selectedDate.time))
 
-            binding.etTanggal.setText(
-                formatter.format(selectedDate.time)
-            )
+            // 2. Simpan format standar SERVER (yyyy-MM-dd) di tag/variabel tersembunyi
+            val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val tanggalStandard = formatterServer.format(selectedDate.time)
+
+            // Simpan tanggal standard ke dalam tag EditText agar bisa diambil nanti
+            binding.etTanggal.tag = tanggalStandard
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
-
     datePickerDialog.show()
 }
+    private fun triggerDataSync() {
+        // Buat aturan wajib: Harus terhubung internet
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        // Jalankan antrean background task
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "SyncKegiatanWork",
+            ExistingWorkPolicy.KEEP, // Tetap jalankan antrean yang ada, jangan ditimpa/dihapus
+            syncRequest
+        )
+    }
+
     override fun onResume() {
         super.onResume()
-
-        lifecycleScope.launch {
-            if (NetworkUtil.isOnline(this@InputKegiatanActivity)) {
-                SyncKegiatanRepository(
-                    this@InputKegiatanActivity,
-                    database
-                ).sync()
-            }
-        }
+        // Saat aplikasi dibuka kembali, cek apakah ada data tertinggal yang perlu disinkronkan
+        triggerDataSync()
     }
 }

@@ -16,6 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.notasawit.R
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
@@ -23,7 +28,7 @@ import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.Room.Produksi.ProduksiEntity
 import com.example.notasawit.Sync.SyncKegiatanRepository
-import com.example.notasawit.Utils.NetworkUtil
+import com.example.notasawit.Sync.SyncWorker
 import com.example.notasawit.databinding.ActivityInputPemasukanBinding
 import kotlinx.coroutines.launch
 import java.io.File
@@ -118,11 +123,30 @@ class InputPemasukanActivity : AppCompatActivity() {
 
                 return@setOnClickListener
             }
+            
+            if (selectedLahanIds.isEmpty()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Peringatan")
+                    .setMessage("Silakan pilih minimal 1 Lahan")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
+            if (binding.etBahan.text.toString().isEmpty() || binding.etHarga.text.toString().isEmpty() || binding.etTanggal.text.toString().isEmpty()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Peringatan")
+                    .setMessage("Silakan lengkapi semua data (Tanggal, Jumlah, dan Harga)")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
             lifecycleScope.launch {
 
                 val produksi = ProduksiEntity(
 
-                    produksi_tanggal = binding.etTanggal.text.toString(),
+                    produksi_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
 
                     jumlah_tbs = binding.etBahan.text.toString().toInt(),
 
@@ -134,7 +158,8 @@ class InputPemasukanActivity : AppCompatActivity() {
 
                     produksi_ket = binding.etCatatan.text.toString(),
 
-                    imagePath = imageUri?.toString()
+                    imagePath = imageUri?.toString(),
+                    isSynced = false
 
                 )
                 val produksiId = database.ProduksiDao().insert(produksi)
@@ -152,40 +177,14 @@ class InputPemasukanActivity : AppCompatActivity() {
                     )
 
                 }
-                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
-
-                    SyncKegiatanRepository(
-                        this@InputPemasukanActivity,
-                        database
-                    ).sync()
-
-                }
-
-
-//                database.ProduksiDao().insert(produksi)
-//                val semuaData = database.ProduksiDao().getAll()
-//
-//                Log.d("ROOM", "Jumlah data = ${semuaData.size}")
-//
-//                semuaData.forEach {
-//                    Log.d("ROOM", it.toString())
-//                }
+                triggerDataSync()
 
                 Toast.makeText(
                     this@InputPemasukanActivity,
-                    "Data berhasil disimpan",
+                    "Data disimpan ke lokal & mengantre sinkronisasi",
                     Toast.LENGTH_SHORT
                 ).show()
                 Log.d("SYNC_IMAGE", "imagePath = ${produksi.imagePath}")
-
-//                if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
-//
-//                    SyncProduksiRepository(
-//                        this@InputPemasukanActivity,
-//                        database
-//                    ).syncProduksi()
-//
-//                }
 
                 finish()
 
@@ -242,30 +241,27 @@ class InputPemasukanActivity : AppCompatActivity() {
         }
     }
     private fun showDatePicker() {
-
         val calendar = Calendar.getInstance()
 
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, month, dayOfMonth ->
-
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(year, month, dayOfMonth)
 
-                val formatter = SimpleDateFormat(
-                    "yyyy-MM-dd",
-                    Locale.getDefault()
-                )
+                // 1. Format untuk Server (yyyy-MM-dd) disimpan di TAG
+                val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val tanggalStandard = formatterServer.format(selectedDate.time)
+                binding.etTanggal.tag = tanggalStandard // <-- PASTIKAN BARIS INI ADA!
 
-                binding.etTanggal.setText(
-                    formatter.format(selectedDate.time)
-                )
+                // 2. Format untuk Tampilan User di EditText
+                val formatterUser = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
+                binding.etTanggal.setText(formatterUser.format(selectedDate.time))
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
-
         datePickerDialog.show()
     }
     private fun createImageUri(): Uri? {
@@ -289,18 +285,7 @@ class InputPemasukanActivity : AppCompatActivity() {
             contentValues
         )
     }
-    override fun onResume() {
-        super.onResume()
 
-        lifecycleScope.launch {
-//            if (NetworkUtil.isOnline(this@InputPemasukanActivity)) {
-//                SyncProduksiRepository(
-//                    this@InputPemasukanActivity,
-//                    database
-//                ).syncProduksi()
-//            }
-        }
-    }
     private fun copyImageToInternalStorage(uri: Uri): String {
 
         val fileName = "nota_${System.currentTimeMillis()}.jpg"
@@ -380,5 +365,27 @@ class InputPemasukanActivity : AppCompatActivity() {
             .setNegativeButton("Batal", null)
             .show()
 
+    }
+    private fun triggerDataSync() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        // 🔄 Ganti KEEP menjadi REPLACE
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "SyncProduksiWork",
+            ExistingWorkPolicy.REPLACE, // Mengganti antrean lama agar Worker langsung merespon data baru
+            syncRequest
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Saat aplikasi dibuka kembali, cek apakah ada data tertinggal yang perlu disinkronkan
+        triggerDataSync()
     }
 }

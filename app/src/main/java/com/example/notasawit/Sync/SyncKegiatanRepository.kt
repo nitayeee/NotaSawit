@@ -4,126 +4,66 @@ import android.content.Context
 import android.util.Log
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
-import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class SyncKegiatanRepository(
-
     private val context: Context,
     private val database: AppDatabase
-
 ) {
 
-    suspend fun sync() {
+    // Ubah fungsi menjadi mengembalikan Boolean (true jika SEMUA sukses, false jika ada yang gagal)
+    suspend fun sync(): Boolean = withContext(Dispatchers.IO) {
+        val kegiatanList = database.KegiatanDao().getUnsynced()
 
-        val kegiatanList =
-            database.KegiatanDao().getUnsynced()
+        if (kegiatanList.isEmpty()) return@withContext true
+
+        var allSuccess = true
 
         kegiatanList.forEach { kegiatan ->
+            val detailLahan = database.DetailKegiatanDao().gethByKegiatan(kegiatan.localId)
+            val lahanIds = detailLahan.map { it.lahanId }
 
-            // Ambil semua lahan dari kegiatan ini
-            val detailLahan =
-                database.DetailKegiatanDao()
-                    .gethByKegiatan(kegiatan.localId)
-
-            val lahanIds =
-                detailLahan.map { it.lahanId }
             Log.d("SYNC", "==========================")
-            Log.d("SYNC", "Tanggal : ${kegiatan.kegiatan_tanggal}")
-            Log.d("SYNC", "Jumlah  : ${kegiatan.kegiatan_jumlah}")
-            Log.d("SYNC", "Satuan  : ${kegiatan.kegiatan_satuan}")
-            Log.d("SYNC", "Jenis   : ${kegiatan.kegiatan_jenis}")
-            Log.d("SYNC", "Petani  : ${kegiatan.petani_id}")
-            Log.d("SYNC", "Ket     : ${kegiatan.kegiatan_ket}")
-            Log.d("SYNC", "Lahan   : $lahanIds")
+            Log.d("SYNC", "Mengirim Kegiatan ID: ${kegiatan.localId}")
 
-            PetaniApi.postKegiatan(
+            try {
+                // KUNCI UTAMA: Gunakan .execute() agar codingan menunggu response server (Synchronous)
+                // Jika postKegiatan belum mendukung .execute(), pastikan method tersebut mengembalikan objek 'Call'
+                val call = PetaniApi.postKegiatan(
+                    kegiatanTanggal = kegiatan.kegiatan_tanggal,
+                    kegiatanJumlah = kegiatan.kegiatan_jumlah,
+                    kegiatanSatuan = kegiatan.kegiatan_satuan,
+                    jenisKegiatanId = kegiatan.kegiatan_jenis,
+                    petaniId = kegiatan.petani_id,
+                    kegiatanKet = kegiatan.kegiatan_ket,
+                    lahanIds = lahanIds
+                )
 
-                kegiatanTanggal = kegiatan.kegiatan_tanggal,
+                val response = call.execute() // <--- Menunggu response dari server di thread IO
 
-                kegiatanJumlah = kegiatan.kegiatan_jumlah,
+                val body = response.body?.string() ?: ""
+                Log.d("API", "CODE = ${response.code}")
 
-                kegiatanSatuan = kegiatan.kegiatan_satuan,
+                if (response.isSuccessful) {
+                    Log.d("API", "isSuccessful = true. Response = $body")
 
-                jenisKegiatanId = kegiatan.kegiatan_jenis,
+                    // Hapus data lokal LANGSUNG di thread yang sama, tidak perlu CoroutineScope baru
+                    database.DetailKegiatanDao().deleteByKegiatan(kegiatan.localId)
+                    database.KegiatanDao().deleteById(kegiatan.localId)
 
-                petaniId = kegiatan.petani_id,
-
-                kegiatanKet = kegiatan.kegiatan_ket,
-
-                lahanIds = lahanIds,
-
-                callback = object : Callback {
-
-                    override fun onFailure(
-                        call: Call,
-                        e: IOException
-                    ) {
-
-                        Log.e(
-                            "SYNC",
-                            "Gagal sync kegiatan",
-                            e
-                        )
-
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-
-                        val body = response.body?.string() ?: ""
-
-                        Log.d("API", "CODE = ${response.code}")
-
-                        if (response.isSuccessful) {
-                            Log.d("API", "isSuccessful = ${response.isSuccessful}")
-                            Log.d("API", "Response = $body")
-
-                            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-
-                                // Hapus detail kegiatan terlebih dahulu
-                                database.DetailKegiatanDao()
-                                    .deleteByKegiatan(kegiatan.localId)
-
-                                // Baru hapus kegiatan
-                                database.KegiatanDao()
-                                    .deleteById(kegiatan.localId)
-
-                                Log.d(
-                                    "SYNC",
-                                    "Kegiatan ${kegiatan.localId} berhasil disinkron dan dihapus dari Room"
-                                )
-                            }
-
-                        } else {
-
-                            Log.e(
-                                "SYNC",
-                                "Sync gagal : ${response.code}"
-                            )
-
-                        }
-
-                        val index = body.indexOf("Exception")
-
-                        if (index != -1) {
-                            Log.d(
-                                "API",
-                                body.substring(index, minOf(index + 1500, body.length))
-                            )
-                        } else {
-                            Log.d("API", body.take(1500))
-                        }
-                    }
-
+                    Log.d("SYNC", "Kegiatan ${kegiatan.localId} berhasil dihapus dari Room")
+                } else {
+                    Log.e("SYNC", "Sync gagal untuk ID ${kegiatan.localId}: ${response.code}")
+                    allSuccess = false // Set falg menjadi false agar worker tahu ada yang gagal
                 }
 
-            )
-
+            } catch (e: Exception) {
+                Log.e("SYNC", "Gagal sync karena koneksi/RTO untuk ID ${kegiatan.localId}", e)
+                allSuccess = false
+            }
         }
 
+        return@withContext allSuccess
     }
-
 }

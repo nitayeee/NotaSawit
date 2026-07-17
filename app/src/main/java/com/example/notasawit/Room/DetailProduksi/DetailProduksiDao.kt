@@ -15,7 +15,7 @@ interface DetailProduksiDao {
         SELECT * FROM detail_produksi
         WHERE produksiId = :produksiId
     """)
-    suspend fun gethByProduksi(
+    suspend fun getByProduksi(
         produksiId: Int
     ): List<DetailProduksiEntity>
 
@@ -23,6 +23,6 @@ interface DetailProduksiDao {
     DELETE FROM detail_produksi
     WHERE produksiId = :produksiId
     """)
-    suspend fun deleteByKegiatan(produksiId: Int)
+    suspend fun deleteByProduksi(produksiId: Int)
 
 }

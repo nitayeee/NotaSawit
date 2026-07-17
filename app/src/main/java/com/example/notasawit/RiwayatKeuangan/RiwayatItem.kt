@@ -1,11 +1,16 @@
 package com.example.notasawit.RiwayatKeuangan
 
+import com.google.gson.annotations.SerializedName
 data class RiwayatItem(
-    val id: Int,
-    val judul: String,
-    val tanggal: String,
-    val nominal: Double,
-    val tipe: String,
-    val lahanNama: String?,
-    val sourceTable: String
+    @SerializedName("id") val id: Int,
+    @SerializedName("judul") val judul: String,
+    @SerializedName("tanggal") val tanggal: String,
+    @SerializedName("nominal") val nominal: Double,
+    @SerializedName("tipe") val tipe: String,
+
+    // Wajib disamakan dengan key di JSON API Laravel ("lahan_nama")
+    @SerializedName("lahan_nama") val lahanNama: String?,
+
+    // Wajib disamakan dengan key di JSON API Laravel ("source_table")
+    @SerializedName("source_table") val sourceTable: String
 )

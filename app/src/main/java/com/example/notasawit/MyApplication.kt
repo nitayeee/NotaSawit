@@ -24,9 +24,10 @@ class MyApplication : Application() {
             .setConstraints(constraints)
             .build()
 
+        // Ganti REPLACE menjadi KEEP agar tidak menghentikan paksa task yang sedang berjalan
         WorkManager.getInstance(this).enqueueUniqueWork(
             "sync_data",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             request
         )
 

@@ -9,6 +9,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Callback
 import okhttp3.MultipartBody
 import java.io.File
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
 
 object PetaniApi {
 
@@ -148,45 +151,71 @@ object PetaniApi {
         jumlahTbs: Int,
         hargaTbs: Double,
         petaniId: Int,
-        lahanId: Int,
+        lahanIds: List<Int>,
         produksiKet: String,
-        imageUri: Uri?,
-        callback: Callback
-    )
-    {
+        totalPendapatan: Double,
+        imageUri: Uri?
+    ): okhttp3.Call { // <-- 1. Tambahkan tipe kembalian Call di sini
+
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("produksi_tanggal", produksiTanggal)
             .addFormDataPart("jumlah_tbs", jumlahTbs.toString())
             .addFormDataPart("harga_tbs", hargaTbs.toString())
             .addFormDataPart("petani_id", petaniId.toString())
-            .addFormDataPart("lahan_id", lahanId.toString())
             .addFormDataPart("produksi_ket", produksiKet)
+            .addFormDataPart("total_pendapatan", totalPendapatan.toString())
+
+        lahanIds.forEach { id ->
+            builder.addFormDataPart(
+                "lahan_id[]",
+                id.toString()
+            )
+        }
 
         imageUri?.let { uri ->
-
             Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
 
             val bytes = if (uri.scheme == "file") {
-
                 File(uri.path!!).readBytes()
-
             } else {
-
                 context.contentResolver.openInputStream(uri)?.use {
                     it.readBytes()
                 }
-
             }
 
             Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
 
+            Log.d("UPLOAD_IMAGE", "Image size before compression: ${bytes?.size}")
+
             if (bytes != null) {
+                var finalBytes = bytes
+                try {
+                    // Kompres gambar agar tidak melebihi batas (maksimum upload PHP biasanya 2MB atau 5MB)
+                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    if (bmp != null) {
+                        val stream = ByteArrayOutputStream()
+                        // Mulai dengan quality 80
+                        var quality = 80
+                        bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+                        
+                        // Jika masih lebih besar dari 1.5MB, turunkan kualitas
+                        while (stream.toByteArray().size > 1.5 * 1024 * 1024 && quality > 10) {
+                            stream.reset()
+                            quality -= 15
+                            bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+                        }
+                        finalBytes = stream.toByteArray()
+                        Log.d("UPLOAD_IMAGE", "Image size after compression: ${finalBytes.size}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("UPLOAD_IMAGE", "Gagal kompres gambar", e)
+                }
 
                 builder.addFormDataPart(
                     "produksi_bukti",
                     "bukti.jpg",
-                    bytes.toRequestBody("image/*".toMediaType())
+                    finalBytes.toRequestBody("image/jpeg".toMediaType())
                 )
             }
         }
@@ -198,7 +227,8 @@ object PetaniApi {
             .post(requestBody)
             .build()
 
-        ApiClient.client.newCall(request).enqueue(callback)
+        // 2. KUNCI UTAMA: Kembalikan objek Call-nya, hapus .enqueue()
+        return ApiClient.client.newCall(request)
     }
     fun postPengeluaran(
         context: Context,
@@ -209,10 +239,9 @@ object PetaniApi {
         biayaKet: String,
         petaniId: Int,
         biayaTotal: Double,
-        lahanId: Int,
-        imageUri: Uri?,
-        callback: Callback
-    ) {
+        lahanIds: List<Int>, // 🔄 Diubah menjadi List<Int> agar sama dengan format pemasukan/kegiatan
+        imageUri: Uri?
+    ): okhttp3.Call { // 🔄 Diubah agar mengembalikan objek Call (tanpa callback & enqueue langsung)
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("biaya_tanggal", biayaTanggal)
@@ -222,10 +251,16 @@ object PetaniApi {
             .addFormDataPart("biaya_nama", biayaNama)
             .addFormDataPart("biaya_total", biayaTotal.toString())
             .addFormDataPart("petani_id", petaniId.toString())
-            .addFormDataPart("lahan_id", lahanId.toString())
+
+        // 🔄 Mengirim semua lahan menggunakan array parameter format Laravel `lahan_id[]`
+        lahanIds.forEach { id ->
+            builder.addFormDataPart(
+                "lahan_id[]",
+                id.toString()
+            )
+        }
 
         imageUri?.let { uri ->
-
             Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
 
             val bytes = if (uri.scheme == "file") {
@@ -236,13 +271,31 @@ object PetaniApi {
                 }
             }
 
-            Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
-
             if (bytes != null) {
+                var finalBytes = bytes
+                try {
+                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    if (bmp != null) {
+                        val stream = ByteArrayOutputStream()
+                        var quality = 80
+                        bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+
+                        while (stream.toByteArray().size > 1.5 * 1024 * 1024 && quality > 10) {
+                            stream.reset()
+                            quality -= 15
+                            bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+                        }
+                        finalBytes = stream.toByteArray()
+                        Log.d("UPLOAD_IMAGE", "Image size after compression: ${finalBytes.size}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("UPLOAD_IMAGE", "Gagal kompres gambar", e)
+                }
+
                 builder.addFormDataPart(
                     "biaya_bukti",
                     "bukti.jpg",
-                    bytes.toRequestBody("image/*".toMediaType())
+                    finalBytes.toRequestBody("image/jpeg".toMediaType())
                 )
             }
         }
@@ -252,9 +305,11 @@ object PetaniApi {
         val request = Request.Builder()
             .url("$BASE_URL/biaya-operasional")
             .post(requestBody)
+            .header("Accept", "application/json") // <-- TAMBAHKAN INI
             .build()
 
-        ApiClient.client.newCall(request).enqueue(callback)
+        // 🔄 KUNCI UTAMA: Mengembalikan objek Call agar bisa dieksekusi via Repository/Worker secara sinkronus
+        return ApiClient.client.newCall(request)
     }
     fun getDetailProduksi(
         produksiId: Int,
@@ -294,9 +349,8 @@ object PetaniApi {
         jenisKegiatanId: Int,
         petaniId: Int,
         kegiatanKet: String,
-        lahanIds: List<Int>,
-        callback: Callback
-    ) {
+        lahanIds: List<Int>
+    ): okhttp3.Call { // <-- 1. Tambahkan tipe kembalian Call di sini
 
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
@@ -322,9 +376,8 @@ object PetaniApi {
             .post(requestBody)
             .build()
 
-        ApiClient.client
-            .newCall(request)
-            .enqueue(callback)
+        // 2. KUNCI UTAMA: Kembalikan objek Call-nya, hapus .enqueue()
+        return ApiClient.client.newCall(request)
     }
 
     fun getRiwayatKegiatan(

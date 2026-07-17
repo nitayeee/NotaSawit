@@ -17,11 +17,11 @@ data class PengeluaranEntity(
 
     val biaya_jenis: String,
     val petani_id: Int,
-
-    val lahan_id: Int,
     val biaya_total: Double,
 
     val biaya_ket: String,
 
-    val imagePath: String?
+    val imagePath: String?,
+    val isSynced: Boolean = false
+
 )

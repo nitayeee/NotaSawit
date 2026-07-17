@@ -5,96 +5,83 @@ import android.net.Uri
 import android.util.Log
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
-import com.example.notasawit.Room.Pengeluaran.PengeluaranEntity
-import com.example.notasawit.Room.Produksi.ProduksiEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class SyncPengeluaranRepository(
     private val context: Context,
     private val database: AppDatabase
 ) {
 
-    suspend fun syncPengeluaran() {
+    // Mengembalikan Boolean agar Worker tahu status akhirnya
+    suspend fun syncPengeluaran(): Boolean = withContext(Dispatchers.IO) {
+        // 1. Ambil data pengeluaran lokal yang belum tersinkron (isSynced = false)
+        val pengeluaranList = database.PengeluaranDao().getUnsynced() // Pastikan ada query getUnsynced() di Dao Anda
 
-        val listPengeluaran = database.PengeluaranDao().getAll()
+        if (pengeluaranList.isEmpty()) return@withContext true
 
-        for (pengeluaran in listPengeluaran) {
+        var allSuccess = true
 
-            val berhasil = uploadPengeluaran(pengeluaran)
+        pengeluaranList.forEach { biaya_operasional ->
+            // 2. Ambil data lahan yang terhubung dengan pengeluaran ini
+            val detailLahan = database.DetailPengeluaranDao().getByPengeluaran(biaya_operasional.localId) // Sesuaikan method Dao Anda
 
-            if (berhasil) {
-                database.PengeluaranDao().delete(pengeluaran)
+            val lahanIds = detailLahan.map { it.lahanId }
 
-                val sisa = database.PengeluaranDao().getAll()
-
-                Log.d("SYNC", "Sisa data = ${sisa.size}")
+            if (lahanIds.isEmpty()) {
+                // Jika tidak ada lahan terkait, lewati atau hapus data kotor ini
+                database.PengeluaranDao().deleteById(biaya_operasional.localId)
+                return@forEach
             }
 
-        }
-    }
+            Log.d("SYNC_PENGELUARAN", "==========================")
+            Log.d("SYNC_PENGELUARAN", "Mengirim Pengeluaran ID Lokal: ${biaya_operasional.localId}")
 
-    private suspend fun uploadPengeluaran(
-        pengeluaran: PengeluaranEntity
-    ): Boolean = withContext(Dispatchers.IO) {
+            try {
+                val imageUri = biaya_operasional.imagePath?.let { Uri.parse(it) }
 
-        suspendCoroutine { continuation ->
+                // 3. Panggil postPengeluaran bentukan OkHttp yang baru (.Call)
+                val call = PetaniApi.postPengeluaran(
+                    context = context,
+                    biayaTanggal = biaya_operasional.biaya_tanggal, // Sudah yyyy-MM-dd
+                    biayaJumlah = biaya_operasional.biaya_jumlah,
+                    biayaJenis = biaya_operasional.biaya_jenis,
+                    biayaTotal = biaya_operasional.biaya_total,
+                    biayaNama = biaya_operasional.biaya_nama,
+                    petaniId = biaya_operasional.petani_id,
+                    lahanIds = lahanIds, // Kirim list lahan sekaligus
+                    biayaKet = biaya_operasional.biaya_ket ?: "",
+                    imageUri = imageUri
+                )
 
-            PetaniApi.postPengeluaran(
+                // 4. Eksekusi secara synchronous (Menunggu respons Laravel)
+                val response = call.execute()
+                val body = response.body?.string() ?: ""
 
-                context = context,
+                Log.d("API_PENGELUARAN", "CODE = ${response.code}")
 
-                biayaTanggal = pengeluaran.biaya_tanggal,
-
-                biayaJumlah = pengeluaran.biaya_jumlah,
-
-                biayaNama = pengeluaran.biaya_nama,
-
-                biayaJenis = pengeluaran.biaya_jenis,
-
-                biayaTotal = pengeluaran.biaya_total,
-
-                biayaKet = pengeluaran.biaya_ket,
-                lahanId = pengeluaran.lahan_id,
-                petaniId = pengeluaran.petani_id,
-
-                imageUri = pengeluaran.imagePath?.let {
-                    Uri.parse(it)
-                },
-
-                callback = object : Callback {
-
-                    override fun onFailure(
-                        call: Call,
-                        e: IOException
-                    ) {
-
-                        continuation.resume(false)
-
+                if (response.isSuccessful) {
+                    if (body.contains("<!DOCTYPE html>") || body.contains("<html")) {
+                        Log.e("API_PENGELUARAN", "Kritis! Server merespon 200 tapi isinya HTML Login. Data lokal TIDAK dihapus.")
+                        allSuccess = false
+                    } else {
+                        Log.d("API_PENGELUARAN", "Sukses masuk server asli: $body")
+                        // Hapus detail dan pengeluaran utama
+                        database.DetailPengeluaranDao().deleteByPengeluaran(biaya_operasional.localId)
+                        database.PengeluaranDao().deleteById(biaya_operasional.localId)
+                        Log.d("SYNC_PENGELUARAN", "Data Utama Pengeluaran ID ${biaya_operasional.localId} bersih dari lokal Room.")
                     }
-
-                    override fun onResponse(
-                        call: Call,
-                        response: Response
-                    ) {
-
-                        continuation.resume(response.isSuccessful)
-
-                    }
-
+                } else {
+                    Log.e("SYNC_PENGELUARAN", "Gagal ke server untuk Pengeluaran ${biaya_operasional.localId}: ${response.code}")
+                    allSuccess = false
                 }
 
-            )
-
-
+            } catch (e: Exception) {
+                Log.e("SYNC_PENGELUARAN", "Crash Jaringan/RTO saat kirim Pengeluaran ID ${biaya_operasional.localId}", e)
+                allSuccess = false
+            }
         }
 
+        return@withContext allSuccess
     }
-
 }
