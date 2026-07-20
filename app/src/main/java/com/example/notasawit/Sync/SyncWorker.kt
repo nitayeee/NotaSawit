@@ -23,13 +23,16 @@ class SyncWorker(
             val isProduksiSuccess = SyncProduksiRepository(applicationContext, db).syncProduksi()
 
             val isPengeluaranSuccess = SyncPengeluaranRepository(applicationContext, db).syncPengeluaran()
+            
+            // 4. Jalankan Sinkronisasi Kunjungan Lahan
+            val isKunjunganSuccess = SyncKunjunganRepository(applicationContext, db).syncKunjungan()
 
-            // 3. Evaluasi hasil akhir kedua sinkronisasi
-            if (isKegiatanSuccess && isProduksiSuccess && isPengeluaranSuccess) {
-                Log.d("WORKER", "Semua data (Kegiatan & Pemasukan & Pengeluaran) sukses tersinkron!")
+            // Evaluasi hasil akhir semua sinkronisasi
+            if (isKegiatanSuccess && isProduksiSuccess && isPengeluaranSuccess && isKunjunganSuccess) {
+                Log.d("WORKER", "Semua data (Kegiatan & Pemasukan & Pengeluaran & Kunjungan) sukses tersinkron!")
                 Result.success() // Tugas selesai dengan sempurna
             } else {
-                Log.d("WORKER", "Ada data gagal kirim (kegiatan=$isKegiatanSuccess, produksi=$isProduksiSuccess, pengeluaran=$isPengeluaranSuccess). Menjadwalkan ulang...")
+                Log.d("WORKER", "Ada data gagal kirim (kegiatan=$isKegiatanSuccess, produksi=$isProduksiSuccess, pengeluaran=$isPengeluaranSuccess, kunjungan=$isKunjunganSuccess). Menjadwalkan ulang...")
                 Result.retry() // Coba lagi nanti saat internet stabil
             }
         } catch (e: Exception) {

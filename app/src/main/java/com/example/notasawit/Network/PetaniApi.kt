@@ -68,6 +68,22 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+    
+    fun getAdmins(callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/users/admins")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun getAllPetani(callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/petani")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
     fun login(
         username: String,
         password: String,
@@ -411,5 +427,48 @@ object PetaniApi {
         ApiClient.client
             .newCall(request)
             .enqueue(callback)
+    }
+
+    fun postKunjunganLapangan(
+        tanggalKunjungan: String,
+        desaKebun: String,
+        desaKepengurusan: String,
+        namaAuditor: String,
+        pdfPath: String
+    ): okhttp3.Call {
+
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("tanggal_kunjungan", tanggalKunjungan)
+            .addFormDataPart("desa_kebun", desaKebun)
+            .addFormDataPart("desa_kepengurusan", desaKepengurusan)
+            .addFormDataPart("nama_auditor", namaAuditor)
+
+        if (pdfPath.isNotEmpty()) {
+            val file = File(pdfPath)
+            if (file.exists()) {
+                val bytes = file.readBytes()
+                val mediaType = if (file.extension.lowercase() == "pdf") {
+                    "application/pdf".toMediaType()
+                } else {
+                    "image/*".toMediaType()
+                }
+                builder.addFormDataPart(
+                    "file_kunjungan",
+                    file.name,
+                    bytes.toRequestBody(mediaType)
+                )
+            }
+        }
+
+        val requestBody = builder.build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/kunjungan-lapangan") // Sesuaikan URL dengan route di api.php
+            .post(requestBody)
+            .header("Accept", "application/json")
+            .build()
+
+        return ApiClient.client.newCall(request)
     }
 }

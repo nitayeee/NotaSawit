@@ -82,26 +82,7 @@ class Section1Fragment : Fragment() {
     private fun siapkanDanTampilkanDataMaster() {
         lifecycleScope.launch(Dispatchers.IO) {
 
-            // Cek apakah auditor & petani masih kosong
-            val cekPetani = database.masterDao().getAllPetani()
-            if (cekPetani.isEmpty()) {
 
-                val dummyAuditor = listOf(
-                    AuditorEntity(1, "Budi Santoso", "budi123"),
-                    AuditorEntity(2, "Siti Aminah", "siti456")
-                )
-
-                val dummyPetani = listOf(
-                    PetaniEntity(1, "Ahmad Subarjo", "Desa Sawit Makmur"),
-                    PetaniEntity(2, "Anwar Ibrahim", "Desa Riau Sejahtera"),
-                    PetaniEntity(3, "Amiruddin", "Desa Tunas Muda"),
-                    PetaniEntity(4, "Bambang Pamungkas", "Desa Sawit Makmur")
-                )
-
-                // Tidak ada insertDesa lagi
-                database.masterDao().insertAuditor(dummyAuditor)
-                database.masterDao().insertPetani(dummyPetani)
-            }
 
             // Ambil data dari Room
             val listDesa = database.masterDao()

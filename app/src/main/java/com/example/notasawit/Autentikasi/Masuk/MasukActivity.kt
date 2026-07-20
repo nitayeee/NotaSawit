@@ -176,6 +176,7 @@ getJenisKegiatan()
 
 
                                 getDesa()
+                                getAdminsAndPetani()
 
                                 runOnUiThread {
 
@@ -488,5 +489,63 @@ getJenisKegiatan()
         })
     }
 
+    private fun getAdminsAndPetani() {
+        PetaniApi.getAdmins(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listAuditor = mutableListOf<com.example.notasawit.Room.Auditor.AuditorEntity>()
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                listAuditor.add(com.example.notasawit.Room.Auditor.AuditorEntity(
+                                    idAuditor = item.getInt("user_id"),
+                                    namaAuditor = item.getString("user_nama"),
+                                    username = item.getString("user_username") 
+                                ))
+                            }
+                            if (listAuditor.isNotEmpty()) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    database.masterDao().insertAuditor(listAuditor)
+                                }
+                            }
+                        } catch (e: Exception) {}
+                    }
+                }
+            }
+        })
 
+        PetaniApi.getAllPetani(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listPetani = mutableListOf<com.example.notasawit.Room.Petani.PetaniEntity>()
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                listPetani.add(com.example.notasawit.Room.Petani.PetaniEntity(
+                                    idPetani = item.getInt("petani_id"),
+                                    namaPetani = item.getString("petani_nama"),
+                                    namaDesa = item.getString("petani_username") 
+                                ))
+                            }
+                            if (listPetani.isNotEmpty()) {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    database.masterDao().insertPetani(listPetani)
+                                }
+                            }
+                        } catch (e: Exception) {}
+                    }
+                }
+            }
+        })
+    }
 }
