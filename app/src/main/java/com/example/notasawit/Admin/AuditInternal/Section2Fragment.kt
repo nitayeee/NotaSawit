@@ -135,6 +135,7 @@ class Section2Fragment : Fragment() {
                     "pelatihanQ11" -> form.copy(pelatihanQ11 = item.answer)
                     "pelatihanQ12" -> form.copy(pelatihanQ12 = item.answer)
                     "pelatihanQ13" -> form.copy(pelatihanQ13 = item.answer)
+                    "pelatihanQ14" -> form.copy(pelatihanQ14 = item.answer)
 
                     "lb3Q1" -> form.copy(lb3Q1 = item.answer)
                     "lb3Q2" -> form.copy(lb3Q2 = item.answer)

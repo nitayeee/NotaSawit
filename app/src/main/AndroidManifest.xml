@@ -21,10 +21,13 @@
             android:name=".RiwayatKegiatan.RiwayatKegiatanActivity"
             android:exported="false" />
         <activity
-            android:name=".Admin.Lapangan.CobaActivity"
+            android:name=".Admin.AuditLahan.CobaActivity"
             android:exported="false" />
         <activity
             android:name=".Admin.AuditInternal.AuditInternalActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Admin.KunjunganLahan.KunjunganLahanActivity"
             android:exported="false" />
         <activity
             android:name=".Admin.BaseAdminActivity"

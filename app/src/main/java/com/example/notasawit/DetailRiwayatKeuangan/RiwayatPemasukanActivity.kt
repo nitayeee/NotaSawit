@@ -31,7 +31,6 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val produksi_bukti_url: String?
         val produksiId =
             intent.getIntExtra(
                 "produksi_id",
@@ -44,9 +43,8 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
             finish()
         }
     }
+
     private fun getDetailProduksi(id:Int){
-
-
         PetaniApi.getDetailProduksi(
             id,
             object : Callback {
@@ -77,7 +75,6 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
                         json ?: "NULL"
                     )
 
-
                     if (json != null && response.isSuccessful) {
                         val result =
                             Gson().fromJson(
@@ -85,25 +82,20 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
                                 ProduksiDetailResponse::class.java
                             )
 
-
                         runOnUiThread {
-
                             tampilkanData(result.data)
-
                         }
-
                     } else {
-
                         Log.e(
                             "DETAIL_ERROR",
                             json ?: "kosong"
                         )
-
                     }
                 }
             }
         )
     }
+
     private fun tampilkanData(
         data: ProduksiDetail
     ){
@@ -119,13 +111,21 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
             "Status : ${data.status_validasi}"
         binding.tvPetani.text =
             "Petani : ${data.petani?.nama}"
+
+        // PERBAIKAN: Mengambil nama-nama lahan dari list detail_produksi
+        val daftarLahan = data.detail_produksi
+            ?.mapNotNull { it.lahan?.nama } // Ambil nama lahan yang tidak null
+            ?.distinct()                     // Hilangkan duplikat jika lahannya sama
+            ?.joinToString(", ")            // Gabungkan dengan koma, contoh: "Lahan A, Lahan B"
+
         binding.tvLahan.text =
-            "Lahan : ${data.lahan?.nama}"
+            "Lahan : ${if (!daftarLahan.isNullOrEmpty()) daftarLahan else "-"}"
+
         binding.tvKeterangan.text =
             "Keterangan : ${data.produksi_ket ?: "-"}"
+
         Glide.with(this)
             .load(data.produksi_bukti_url)
             .into(binding.imgBuktiProduksi)
-
     }
 }

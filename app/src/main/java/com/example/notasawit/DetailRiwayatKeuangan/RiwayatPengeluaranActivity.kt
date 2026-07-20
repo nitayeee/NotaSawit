@@ -34,7 +34,6 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val biaya_bukti_url: String?
         val biayaId =
             intent.getIntExtra(
                 "biaya_id",
@@ -49,8 +48,6 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
     }
 
     private fun getDetailBiayaOperasional(id:Int){
-
-
         PetaniApi.getDetailBiayaOperasional(
             id,
             object : Callback {
@@ -88,29 +85,23 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
                                 BiayaDetailResponse::class.java
                             )
 
-
                         runOnUiThread {
-
                             tampilkanData(result.data)
-
                         }
-
                     } else {
-
                         Log.e(
                             "DETAIL_ERROR",
                             json ?: "kosong"
                         )
-
                     }
                 }
             }
         )
     }
+
     private fun tampilkanData(
         data: PengeluaranDetail
     ){
-
         Log.d("BUKTI", data.biaya_bukti ?: "null")
 
         binding.tvTanggal.text =
@@ -123,14 +114,20 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
             "Total Pengeluaran : Rp ${data.biaya_total}"
         binding.tvPetani.text =
             "Petani : ${data.petani?.nama}"
+
+        // PERBAIKAN: Mengambil semua nama lahan dari dalam list detail_biaya
+        val daftarLahan = data.detail_biaya
+            ?.mapNotNull { it.lahan?.nama } // Map data hanya untuk mengambil nama lahannya saja
+            ?.distinct()                     // Mencegah nama lahan yang sama ditulis dobel
+            ?.joinToString(", ")            // Gabungkan hasilnya menggunakan koma
+
         binding.tvLahan.text =
-            "Lahan : ${data.lahan?.nama}"
+            "Lahan : ${if (!daftarLahan.isNullOrEmpty()) daftarLahan else "-"}"
+
         binding.tvKeterangan.text =
             "Keterangan : ${data.biaya_ket ?: "-"}"
         Glide.with(this)
             .load(data.biaya_bukti_url)
             .into(binding.imgBuktiBiaya)
-
     }
-
 }

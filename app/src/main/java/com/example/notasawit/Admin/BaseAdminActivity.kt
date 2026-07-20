@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.notasawit.Admin.AuditInternal.AuditInternalActivity
 import com.example.notasawit.Admin.Beranda.BerandaAdminFragment
+import com.example.notasawit.Admin.KunjunganLahan.KunjunganLahanActivity
 import com.example.notasawit.Home.BerandaFragment
 import com.example.notasawit.ProfilPetani.ProfilPetaniActivity
 import com.example.notasawit.R
@@ -42,8 +43,15 @@ class BaseAdminActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.audit -> {
+                R.id.auditInternal -> {
                     val intent = Intent(this@BaseAdminActivity, AuditInternalActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
+
+                R.id.auditLahan -> {
+                    val intent = Intent(this@BaseAdminActivity, KunjunganLahanActivity::class.java)
                     startActivity(intent)
                     finish()
                     true

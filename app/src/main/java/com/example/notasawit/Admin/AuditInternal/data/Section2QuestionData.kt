@@ -28,7 +28,7 @@ object Section2QuestionData {
             ),
 
             AuditItem.Question(
-                key = "sopQ3",
+                key = "sopQ2",
                 question = "2. Apakah Bapak/Ibu tahu Prosedur Komunikasi dan Konsultasi dengan Para Pihak?"
             ),
 

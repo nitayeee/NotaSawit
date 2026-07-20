@@ -25,6 +25,38 @@ class Section4Fragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: AuditViewModel by activityViewModels()
     private lateinit var database: AppDatabase
+    
+    private var currentPhotoPath: String? = null
+
+    private val pickImageLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.GetContent()
+    ) { uri: android.net.Uri? ->
+        if (uri != null) {
+            try {
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val directory = requireContext().getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES)
+                if (directory != null && !directory.exists()) {
+                    directory.mkdirs()
+                }
+                val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
+                val file = java.io.File(directory, "Audit_Bukti_$timeStamp.jpg")
+                val outputStream = java.io.FileOutputStream(file)
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
+                outputStream.close()
+                
+                currentPhotoPath = file.absolutePath
+                viewModel.auditForm = viewModel.auditForm.copy(fotoPath = currentPhotoPath ?: "")
+                
+                com.bumptech.glide.Glide.with(this)
+                    .load(file)
+                    .into(binding.ivBuktiAudit)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Gagal menyimpan foto", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +88,18 @@ class Section4Fragment : Fragment() {
             binding.rbOtherTemuan.isChecked = true
             binding.etTemuan.isEnabled = true
         }
+        
+        currentPhotoPath = viewModel.auditForm.fotoPath
+        if (!currentPhotoPath.isNullOrEmpty()) {
+            com.bumptech.glide.Glide.with(this)
+                .load(java.io.File(currentPhotoPath!!))
+                .into(binding.ivBuktiAudit)
+        }
+
+        binding.btnPilihFoto.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
+
         binding.btnBack.setOnClickListener {
 
             (requireActivity() as AuditInternalActivity)
@@ -65,20 +109,44 @@ class Section4Fragment : Fragment() {
 
         binding.btnSelesai.setOnClickListener {
             if (!validasi()) return@setOnClickListener
+
+            val selectedTemuanId = binding.rgTemuan.checkedRadioButtonId
+            val temuanValue = if (selectedTemuanId == binding.rbOtherTemuan.id) {
+                binding.etTemuan.text.toString()
+            } else {
+                view.findViewById<android.widget.RadioButton>(selectedTemuanId).text.toString()
+            }
+
+            val selectedPerbaikanId = binding.rgPerbaikan.checkedRadioButtonId
+            val perbaikanValue = if (selectedPerbaikanId == binding.rbOtherPerbaikan.id) {
+                binding.etPerbaikan.text.toString()
+            } else {
+                view.findViewById<android.widget.RadioButton>(selectedPerbaikanId).text.toString()
+            }
+
             viewModel.auditForm =
                 viewModel.auditForm.copy(
-                    ringkasanTemuan = binding.etTemuan.text.toString(),
-                    rencanaPerbaikan = binding.etPerbaikan.text.toString(),
+                    ringkasanTemuan = temuanValue,
+                    rencanaPerbaikan = perbaikanValue,
                     rencanaPemeriksaan = binding.etTanggalAudit.text.toString()
                 )
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                // Generate PDF
+                val generatedPdfPath = PdfGenerator.generatePdf(requireContext(), viewModel.auditForm)
+                if (generatedPdfPath != null) {
+                    viewModel.auditForm = viewModel.auditForm.copy(pdfPath = generatedPdfPath)
+                }
+
                 database.auditDao().insert(viewModel.auditForm)
-                Toast.makeText(
-                    requireContext(),
-                    "Audit berhasil disimpan",
-                    Toast.LENGTH_SHORT
-                ).show()
+                
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Audit & PDF berhasil disimpan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 //                if (NetworkUtil.isConnected(requireContext())) {
 //
 //                    uploadKeLaravel(viewModel.auditForm)

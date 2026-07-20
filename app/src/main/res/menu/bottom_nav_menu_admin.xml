@@ -5,9 +5,13 @@
         android:icon="@drawable/ic_home"
         android:title="Beranda" />
     <item
-        android:id="@+id/audit"
+        android:id="@+id/auditInternal"
         android:icon="@drawable/ic_audit2"
         android:title="Audit Internal" />
+    <item
+        android:id="@+id/auditLahan"
+        android:icon="@drawable/ic_audit2"
+        android:title="Audit Lahan" />
     <item
         android:id="@+id/lainnya"
         android:icon="@drawable/ic_more"

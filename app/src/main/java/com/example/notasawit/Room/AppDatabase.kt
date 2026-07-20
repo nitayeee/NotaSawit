@@ -25,6 +25,8 @@ import com.example.notasawit.Room.Petani.MasterDao
 import com.example.notasawit.Room.Petani.PetaniEntity
 import com.example.notasawit.Room.Produksi.ProduksiDao
 import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Room.KunjunganLahanEntity.KunjunganLahanForm
+import com.example.notasawit.Room.KunjunganLahanEntity.KunjunganLahanDao
 
 @Database(
     entities = [
@@ -39,9 +41,10 @@ import com.example.notasawit.Room.Produksi.ProduksiEntity
         KegiatanEntity::class,
         DetailKegiatanEntity::class,
         DetailProduksiEntity::class,
-        DetailPengeluaranEntity::class
+        DetailPengeluaranEntity::class,
+        KunjunganLahanForm::class
     ],
-    version = 15
+    version = 18
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -57,6 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun DetailKegiatanDao(): DetailKegiatanDao
     abstract fun DetailProduksiDao(): DetailProduksiDao
     abstract fun DetailPengeluaranDao(): DetailPengeluaranDao
+    abstract fun KunjunganLahanDao(): KunjunganLahanDao
 
     companion object {
 

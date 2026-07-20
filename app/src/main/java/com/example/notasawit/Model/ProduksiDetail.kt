@@ -1,6 +1,8 @@
 package com.example.notasawit.Model
 
-
+// ==========================================
+// 1. MODEL PRODUKSI (UTAMA)
+// ==========================================
 data class ProduksiDetail(
     val id: Int,
     val produksi_tanggal: String,
@@ -11,11 +13,25 @@ data class ProduksiDetail(
     val produksi_ket: String?,
     val produksi_bukti: String?,
     val produksi_bukti_url: String?,
-
     val petani: PetaniDetail?,
-    val lahan: LahanDetail?
+
+    // UBAH: Tidak lagi berupa satu LahanDetail langsung,
+    // melainkan List yang berisi rincian beserta lahannya masing-masing
+    val detail_produksi: List<ItemDetailProduksi>?
 )
 
+// Model baru untuk menampung item detail_produksi dari API
+data class ItemDetailProduksi(
+    val id: Int,
+    val jumlah_tbs_detail: Int?, // Menyesuaikan field dari Laravel
+    val harga_tbs_detail: Double?,
+    val lahan: LahanDetail?      // Sekarang Lahan menempel di sini
+)
+
+
+// ==========================================
+// 2. MODEL BIAYA OPERASIONAL / PENGELUARAN (UTAMA)
+// ==========================================
 data class PengeluaranDetail(
     val id: Int,
     val biaya_tanggal: String,
@@ -26,19 +42,30 @@ data class PengeluaranDetail(
     val biaya_ket: String?,
     val biaya_bukti: String?,
     val biaya_bukti_url: String?,
-
     val petani: PetaniDetail?,
-    val lahan: LahanDetail?
+
+    // UBAH: Sama seperti produksi, diganti menjadi List
+    val detail_biaya: List<ItemDetailBiaya>?
 )
 
-
-data class PetaniDetail(
+// Model baru untuk menampung item detail_biaya dari API
+data class ItemDetailBiaya(
     val id: Int,
-    val nama: String
+    val nama_detail: String?, // Menyesuaikan field dari Laravel
+    val subtotal: Double?,
+    val lahan: LahanDetail?   // Lahan ditarik ke sini
 )
 
+
+// ==========================================
+// 3. MODEL PELENGKAP (TETAP SAMA)
+// ==========================================
+data class PetaniDetail(
+    val id: Int?, // Gunakan nullable untuk berjaga-jaga jika ID null
+    val nama: String?
+)
 
 data class LahanDetail(
-    val id: Int,
-    val nama: String
+    val id: Int?,
+    val nama: String?
 )
