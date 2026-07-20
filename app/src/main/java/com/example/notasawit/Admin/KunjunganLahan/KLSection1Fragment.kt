@@ -14,6 +14,10 @@ import com.example.notasawit.databinding.FragmentKlSection1Binding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.app.DatePickerDialog
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class KLSection1Fragment : Fragment() {
 
@@ -39,6 +43,24 @@ class KLSection1Fragment : Fragment() {
         siapkanDanTampilkanDataMaster()
         
         binding.etTanggal.setText(viewModel.kunjunganLahanForm.tanggal)
+
+        // Setup DatePicker agar format sesuai dengan yang diharapkan server (yyyy-MM-dd)
+        binding.etTanggal.isFocusable = false
+        binding.etTanggal.isClickable = true
+        binding.etTanggal.setOnClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            val dpd = DatePickerDialog(requireContext(), { _, y, m, d ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(y, m, d)
+                val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                binding.etTanggal.setText(format.format(selectedDate.time))
+            }, year, month, day)
+            dpd.show()
+        }
         binding.etDesaKebun.setText(viewModel.kunjunganLahanForm.desaKebun)
         binding.etDesaKepengurusan.setText(viewModel.kunjunganLahanForm.desaKepengurusan)
         binding.acAuditor.setText(viewModel.kunjunganLahanForm.namaAuditor, false)

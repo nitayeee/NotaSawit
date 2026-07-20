@@ -17,6 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.fragment.app.activityViewModels
+import android.app.DatePickerDialog
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import com.example.notasawit.Admin.AuditInternal.AuditViewModel.AuditViewModel
 
 
@@ -46,6 +50,24 @@ class Section1Fragment : Fragment() {
         siapkanDanTampilkanDataMaster()
         // Tampilkan data yang sudah pernah disimpan
         binding.etTanggal.setText(viewModel.auditForm.tanggal)
+
+        // Setup DatePicker agar format sesuai dengan yang diharapkan server (yyyy-MM-dd)
+        binding.etTanggal.isFocusable = false
+        binding.etTanggal.isClickable = true
+        binding.etTanggal.setOnClickListener {
+            val c = Calendar.getInstance()
+            val year = c.get(Calendar.YEAR)
+            val month = c.get(Calendar.MONTH)
+            val day = c.get(Calendar.DAY_OF_MONTH)
+
+            val dpd = DatePickerDialog(requireContext(), { _, y, m, d ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(y, m, d)
+                val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                binding.etTanggal.setText(format.format(selectedDate.time))
+            }, year, month, day)
+            dpd.show()
+        }
         binding.acDesa.setText(viewModel.auditForm.desa, false)
         binding.acAuditor.setText(viewModel.auditForm.namaAuditor, false)
         binding.acPetani.setText(viewModel.auditForm.namaPetani, false)

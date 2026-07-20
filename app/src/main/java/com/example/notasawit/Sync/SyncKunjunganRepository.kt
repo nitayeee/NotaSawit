@@ -47,7 +47,7 @@ class SyncKunjunganRepository(
                         Log.d("SYNC_KUNJUNGAN", "Data Utama Kunjungan ID ${kunjungan.idKunjungan} berhasil disync.")
                     }
                 } else {
-                    Log.e("SYNC_KUNJUNGAN", "Gagal ke server untuk Kunjungan ${kunjungan.idKunjungan}: ${response.code}")
+                    Log.e("SYNC_KUNJUNGAN", "Gagal ke server untuk Kunjungan ${kunjungan.idKunjungan}: ${response.code}, Body: $body")
                     allSuccess = false
                 }
 
