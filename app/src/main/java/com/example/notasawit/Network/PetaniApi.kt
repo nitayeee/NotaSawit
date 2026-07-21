@@ -11,6 +11,7 @@ import okhttp3.MultipartBody
 import java.io.File
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.ByteArrayOutputStream
 
 object PetaniApi {
@@ -467,6 +468,44 @@ object PetaniApi {
             .url("$BASE_URL/kunjungan-lapangan") // Sesuaikan URL dengan route di api.php
             .post(requestBody)
             .header("Accept", "application/json")
+            .build()
+
+        return ApiClient.client.newCall(request)
+    }
+
+    fun postAuditInternal(
+        idAudit: String,
+        userId: Int,
+        tanggal: String,
+        desa: String,
+        namaAuditor: String,
+        namaPetani: String,
+        pdfPath: String
+    ): okhttp3.Call {
+
+        val builder = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("id_audit", idAudit)
+            .addFormDataPart("user_id", userId.toString())
+            .addFormDataPart("tanggal", tanggal)
+            .addFormDataPart("desa", desa)
+            .addFormDataPart("nama_auditor", namaAuditor)
+            .addFormDataPart("nama_petani", namaPetani)
+
+        val file = java.io.File(pdfPath)
+        if (file.exists()) {
+            val mediaType = "application/pdf".toMediaTypeOrNull()
+            builder.addFormDataPart(
+                "file_kunjungan", file.name,
+                file.readBytes().toRequestBody(mediaType)
+            )
+        }
+
+        val requestBody = builder.build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/audit-internal")
+            .post(requestBody)
             .build()
 
         return ApiClient.client.newCall(request)

@@ -141,19 +141,32 @@ class Section4Fragment : Fragment() {
                 database.auditDao().insert(viewModel.auditForm)
                 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    triggerDataSync()
                     Toast.makeText(
                         requireContext(),
-                        "Audit & PDF berhasil disimpan",
+                        "Audit & PDF berhasil disimpan & siap disinkron!",
                         Toast.LENGTH_SHORT
                     ).show()
+                    requireActivity().finish() // Tutup activity setelah berhasil simpan
                 }
-//                if (NetworkUtil.isConnected(requireContext())) {
-//
-//                    uploadKeLaravel(viewModel.auditForm)
-//
-//                }
             }
         }
+    }
+
+    private fun triggerDataSync() {
+        val constraints = androidx.work.Constraints.Builder()
+            .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = androidx.work.OneTimeWorkRequestBuilder<com.example.notasawit.Sync.SyncWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        androidx.work.WorkManager.getInstance(requireContext()).enqueueUniqueWork(
+            "SyncAuditWork",
+            androidx.work.ExistingWorkPolicy.REPLACE,
+            syncRequest
+        )
     }
 
     private fun setupRadio() {
