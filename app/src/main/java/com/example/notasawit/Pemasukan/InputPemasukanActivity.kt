@@ -109,6 +109,7 @@ class InputPemasukanActivity : AppCompatActivity() {
         binding.etPilihLahan.setOnClickListener {
             showLahanDialog()
         }
+        binding.btnBack.setOnClickListener { finish() }
 
         // Tombol simpan
         binding.btnSimpan.setOnClickListener {

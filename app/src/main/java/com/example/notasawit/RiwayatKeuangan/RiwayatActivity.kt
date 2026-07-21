@@ -66,6 +66,7 @@ class RiwayatActivity : AppCompatActivity() {
             insets
         }
 
+        binding.btnBack.setOnClickListener { finish() }
         loadLahan()
         loadRiwayat()
         binding.spinnerLahan.onItemSelectedListener =

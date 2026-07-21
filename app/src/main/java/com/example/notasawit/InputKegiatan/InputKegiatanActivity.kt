@@ -59,6 +59,7 @@ class InputKegiatanActivity : AppCompatActivity() {
 
             selectedJKId = jenisKegiatanList[position].id_jenis
         }
+        binding.btnBack.setOnClickListener { finish() }
 //        binding.spinnerLahan.setOnItemClickListener { _, _, position, _ ->
 //
 //            selectedLahan = listLahan[position].lahan_id

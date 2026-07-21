@@ -85,6 +85,14 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun getDetailPetani(petaniId: Int, callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/petani/$petaniId")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
     fun login(
         username: String,
         password: String,

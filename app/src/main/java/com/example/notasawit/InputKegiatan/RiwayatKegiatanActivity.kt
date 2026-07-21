@@ -17,5 +17,9 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        
+        findViewById<android.view.View>(R.id.btnBack).setOnClickListener { 
+            finish() 
+        }
     }
 }

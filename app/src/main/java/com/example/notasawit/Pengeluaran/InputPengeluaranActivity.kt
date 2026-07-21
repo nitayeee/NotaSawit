@@ -90,6 +90,7 @@ class InputPengeluaranActivity : AppCompatActivity() {
             showLahanDialog()
         }
         setupKategoriSpinner()
+        binding.btnBack.setOnClickListener { finish() }
 
         // Tombol simpan
         binding.btnSimpan.setOnClickListener {

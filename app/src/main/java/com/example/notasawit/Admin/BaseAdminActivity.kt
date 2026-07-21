@@ -46,14 +46,12 @@ class BaseAdminActivity : AppCompatActivity() {
                 R.id.auditInternal -> {
                     val intent = Intent(this@BaseAdminActivity, AuditInternalActivity::class.java)
                     startActivity(intent)
-                    finish()
                     true
                 }
 
                 R.id.auditLahan -> {
                     val intent = Intent(this@BaseAdminActivity, KunjunganLahanActivity::class.java)
                     startActivity(intent)
-                    finish()
                     true
                 }
 

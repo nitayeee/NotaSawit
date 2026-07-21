@@ -50,14 +50,12 @@ class BaseActivity : AppCompatActivity() {
                 R.id.riwayat -> {
                     val intent = Intent(this@BaseActivity, RiwayatActivity::class.java)
                     startActivity(intent)
-                    finish()
                     true
                 }
 
                 R.id.pengaturan -> {
                     val intent = Intent(this@BaseActivity, ProfilPetaniActivity::class.java)
                     startActivity(intent)
-                    finish()
                     true
                 }
 
