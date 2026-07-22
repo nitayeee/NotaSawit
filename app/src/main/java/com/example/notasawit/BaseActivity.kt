@@ -43,7 +43,7 @@ class BaseActivity : AppCompatActivity() {
                 }
 
                 R.id.notification -> {
-                    replaceFragment(BerandaFragment())
+                    replaceFragment(com.example.notasawit.Notifikasi.NotificationFragment())
                     true
                 }
 

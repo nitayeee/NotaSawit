@@ -518,4 +518,26 @@ object PetaniApi {
 
         return ApiClient.client.newCall(request)
     }
+
+    fun getNotifications(
+        petaniId: Int,
+        callback: Callback
+    ) {
+        val request = Request.Builder()
+            .url("$BASE_URL/audit-internal/petani/$petaniId")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun markNotificationAsRead(
+        idAudit: Int,
+        callback: Callback
+    ) {
+        val request = Request.Builder()
+            .url("$BASE_URL/audit-internal/$idAudit/read")
+            .put("".toRequestBody("application/json".toMediaTypeOrNull()))
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
 }
