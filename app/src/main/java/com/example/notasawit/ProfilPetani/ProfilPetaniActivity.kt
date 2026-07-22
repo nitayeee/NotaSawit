@@ -38,6 +38,11 @@ class ProfilPetaniActivity : AppCompatActivity() {
             finish()
         }
 
+//        binding.btnRiwayat.setOnClickListener {
+//            val intent = Intent(this@ProfilPetaniActivity, com.example.notasawit.RiwayatKeuangan.RiwayatActivity::class.java)
+//            startActivity(intent)
+//        }
+
         if (petaniId != 0) {
             fetchDataProfil(petaniId)
             fetchDataLahan(petaniId)

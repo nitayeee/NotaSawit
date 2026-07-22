@@ -30,15 +30,14 @@ class NotificationAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = notifications[position]
         
-        holder.tvAuditor.text = "Auditor: ${item.nama_auditor}"
+        holder.tvTitle.text = item.title
+        holder.tvAuditor.text = item.message
         holder.tvTanggal.text = "Tanggal: ${item.tanggal}"
 
         if (item.is_read == 0) {
             holder.container.setBackgroundColor(Color.parseColor("#E3F2FD")) 
-            holder.tvTitle.text = "Hasil Audit Internal Baru!"
         } else {
             holder.container.setBackgroundColor(Color.parseColor("#FFFFFF")) 
-            holder.tvTitle.text = "Hasil Audit Internal"
         }
 
         holder.itemView.setOnClickListener {

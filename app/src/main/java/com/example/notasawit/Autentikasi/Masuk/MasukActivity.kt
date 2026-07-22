@@ -136,9 +136,7 @@ getJenisKegiatan()
 
                                 if(loginResponse.role == "petani"){
                                     sharedPref.edit().apply {
-
                                         putString("role", loginResponse.role)
-
                                         putInt("petani_id", data?.petani_id ?: 0)
                                         putString("namaPetani", data?.petani_nama ?: "")
                                         putString("username", data?.petani_username ?: "")
@@ -147,71 +145,56 @@ getJenisKegiatan()
                                         getLahan()
                                         apply()
                                     }
-                                    startActivity(
-                                        Intent(
-                                            this@MasukActivity,
-                                            BaseActivity::class.java
-                                        )
-                                    )
                                 }else {
-
                                     sharedPref.edit().apply {
-
                                         putString("role", "admin")
-
                                         putInt("user_id", data?.user_id ?: 0)
                                         putString("username", data?.user_username ?: "")
                                         putString("user_role", data?.user_role ?: "")
-
                                         apply()
                                     }
-                                    startActivity(
-                                        Intent(
-                                            this@MasukActivity,
-                                            BaseAdminActivity::class.java
-                                        )
-                                    )
-
                                 }
-
 
                                 getDesa()
                                 getAdminsAndPetani()
 
                                 runOnUiThread {
-
-                                    Toast.makeText(
+                                    val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
+                                    com.example.notasawit.utils.CustomAlert.showSuccess(
                                         this@MasukActivity,
-                                        "Login Berhasil",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                        "Berhasil",
+                                        "Selamat datang, $nama"
+                                    )
 
-                                    finish()
+                                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                        if(loginResponse.role == "petani"){
+                                            startActivity(Intent(this@MasukActivity, BaseActivity::class.java))
+                                        } else {
+                                            startActivity(Intent(this@MasukActivity, BaseAdminActivity::class.java))
+                                        }
+                                        finish()
+                                    }, 1500)
                                 }
-
-
                             } else {
-
                                 runOnUiThread {
-                                    Toast.makeText(
+                                    com.example.notasawit.utils.CustomAlert.showError(
                                         this@MasukActivity,
-                                        loginResponse.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                        "Gagal",
+                                        loginResponse.message ?: "Email atau password salah"
+                                    )
                                 }
                             }
 
                         } catch (e: Exception) {
-
                             Log.e("LOGIN_ERROR", "Response: $json")
                             Log.e("LOGIN_ERROR", e.toString())
 
                             runOnUiThread {
-                                Toast.makeText(
+                                com.example.notasawit.utils.CustomAlert.showError(
                                     this@MasukActivity,
-                                    "Format response tidak sesuai",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                    "Error",
+                                    "Format response tidak sesuai"
+                                )
                             }
                         }
                     }

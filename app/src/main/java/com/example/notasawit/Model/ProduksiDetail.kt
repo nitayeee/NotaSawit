@@ -13,6 +13,7 @@ data class ProduksiDetail(
     val produksi_ket: String?,
     val produksi_bukti: String?,
     val produksi_bukti_url: String?,
+    val is_read: Int?,
     val petani: PetaniDetail?,
 
     // UBAH: Tidak lagi berupa satu LahanDetail langsung,
@@ -42,6 +43,7 @@ data class PengeluaranDetail(
     val biaya_ket: String?,
     val biaya_bukti: String?,
     val biaya_bukti_url: String?,
+    val is_read: Int?,
     val petani: PetaniDetail?,
 
     // UBAH: Sama seperti produksi, diganti menjadi List

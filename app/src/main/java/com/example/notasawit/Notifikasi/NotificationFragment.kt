@@ -82,13 +82,19 @@ class NotificationFragment : Fragment() {
                 
                 for (i in 0 until dataArray.length()) {
                     val obj = dataArray.getJSONObject(i)
-                    val idAudit = obj.getInt("id_audit")
+                    val id = obj.optInt("id", 0)
+                    if (id == 0) {
+                        Log.e("NotificationFragment", "ID kosong atau null pada JSON: $obj")
+                        continue
+                    }
+                    val type = obj.getString("type")
+                    val title = obj.getString("title")
+                    val message = obj.getString("message")
                     val tanggal = obj.getString("tanggal")
-                    val auditor = obj.getString("nama_auditor")
                     val isRead = if (obj.optBoolean("is_read", false) || obj.optInt("is_read", 0) == 1) 1 else 0
-                    val pathFile = obj.optString("path_file_kunjungan", "")
+                    val dataUrl = obj.optString("data_url", "")
                     
-                    notificationList.add(NotificationItem(idAudit, tanggal, auditor, isRead, pathFile))
+                    notificationList.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl))
                 }
                 
                 requireActivity().runOnUiThread {
@@ -104,7 +110,7 @@ class NotificationFragment : Fragment() {
     private fun handleNotificationClick(item: NotificationItem) {
         // Mark as read
         if (item.is_read == 0) {
-            PetaniApi.markNotificationAsRead(item.id_audit, object : Callback {
+            PetaniApi.markNotificationAsRead(item.type, item.id, object : Callback {
                 override fun onFailure(call: Call, e: IOException) {}
                 override fun onResponse(call: Call, response: Response) {
                     if (response.isSuccessful) {
@@ -117,16 +123,29 @@ class NotificationFragment : Fragment() {
             })
         }
 
-        // Buka file PDF jika ada
-        val fileName = item.path_file_kunjungan
-        if (!fileName.isNullOrEmpty() && fileName != "null") {
-            // Asumsi file tersimpan di storage/audit_internal
-            val url = "http://160.187.144.157/storage/$fileName"
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
-            startActivity(intent)
-        } else {
-            Toast.makeText(requireContext(), "File PDF tidak tersedia", Toast.LENGTH_SHORT).show()
+        // Navigate or open based on type
+        when (item.type) {
+            "audit" -> {
+                val fileName = item.data_url
+                if (!fileName.isNullOrEmpty() && fileName != "null") {
+                    val url = "http://160.187.144.157/storage/$fileName"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(url)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "File PDF tidak tersedia", Toast.LENGTH_SHORT).show()
+                }
+            }
+            "produksi" -> {
+                val intent = Intent(requireContext(), com.example.notasawit.DetailRiwayatKeuangan.RiwayatPemasukanActivity::class.java)
+                intent.putExtra("produksi_id", item.id)
+                startActivity(intent)
+            }
+            "pengeluaran" -> {
+                val intent = Intent(requireContext(), com.example.notasawit.DetailRiwayatKeuangan.RiwayatPengeluaranActivity::class.java)
+                intent.putExtra("biaya_id", item.id)
+                startActivity(intent)
+            }
         }
     }
 }

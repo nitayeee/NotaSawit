@@ -296,7 +296,8 @@ class RiwayatActivity : AppCompatActivity() {
                                 sourceTable =
                                     item.getString(
                                         "source_table"
-                                    )
+                                    ),
+                                isRead = item.optInt("is_read", 1)
                             )
                         )
                     }

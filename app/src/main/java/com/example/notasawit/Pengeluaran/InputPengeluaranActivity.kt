@@ -161,14 +161,16 @@ class InputPengeluaranActivity : AppCompatActivity() {
                 }
                 triggerDataSync()
 
-                Toast.makeText(
+                com.example.notasawit.utils.CustomAlert.showSuccess(
                     this@InputPengeluaranActivity,
-                    "Data disimpan ke lokal & mengantre sinkronisasi",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    "Berhasil",
+                    "Data disimpan & siap disinkron"
+                )
                 Log.d("SYNC_IMAGE", "imagePath = ${biaya_operasional.imagePath}")
 
-                finish()
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    finish()
+                }, 1500)
 
             }
 

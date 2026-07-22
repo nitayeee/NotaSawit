@@ -110,6 +110,15 @@ class BerandaFragment : Fragment() {
                 )
             )
         }
+        
+        binding.btnProfileContainer.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    com.example.notasawit.ProfilPetani.ProfilPetaniActivity::class.java
+                )
+            )
+        }
         val fotoProfil = sharedPref.getString("profilPetani", null)
 
         val namaPetani = sharedPref.getString("namaPetani", "") ?: ""

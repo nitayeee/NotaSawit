@@ -526,17 +526,24 @@ object PetaniApi {
         val request = Request.Builder()
             .url("$BASE_URL/audit-internal/petani/$petaniId")
             .get()
+            .header("Accept", "application/json")
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
 
-    fun markNotificationAsRead(
-        idAudit: Int,
-        callback: Callback
-    ) {
+    fun markNotificationAsRead(type: String, id: Int, callback: Callback) {
+        val json = """
+            {
+                "type": "$type",
+                "id": $id
+            }
+        """.trimIndent()
+        
+        val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        
         val request = Request.Builder()
-            .url("$BASE_URL/audit-internal/$idAudit/read")
-            .put("".toRequestBody("application/json".toMediaTypeOrNull()))
+            .url("$BASE_URL/notifications/read")
+            .put(requestBody)
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }

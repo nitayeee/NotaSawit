@@ -79,8 +79,14 @@ class KLSection2Fragment : Fragment() {
                 database.KunjunganLahanDao().insertKunjunganLahan(viewModel.kunjunganLahanForm)
                 withContext(Dispatchers.Main) {
                     triggerDataSync()
-                    Toast.makeText(requireContext(), "Data & PDF berhasil disimpan & siap disinkron!", Toast.LENGTH_SHORT).show()
-                    requireActivity().finish() // Tutup activity setelah berhasil simpan
+                    com.example.notasawit.utils.CustomAlert.showSuccess(
+                        requireActivity(),
+                        "Berhasil",
+                        "Data & PDF disimpan & siap disinkron!"
+                    )
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        requireActivity().finish() // Tutup activity setelah berhasil simpan
+                    }, 1500)
                 }
             }
         }

@@ -142,12 +142,14 @@ class Section4Fragment : Fragment() {
                 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     triggerDataSync()
-                    Toast.makeText(
-                        requireContext(),
-                        "Audit & PDF berhasil disimpan & siap disinkron!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    requireActivity().finish() // Tutup activity setelah berhasil simpan
+                    com.example.notasawit.utils.CustomAlert.showSuccess(
+                        requireActivity(),
+                        "Berhasil",
+                        "Audit & PDF disimpan & siap disinkron!"
+                    )
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        requireActivity().finish() // Tutup activity setelah berhasil simpan
+                    }, 1500)
                 }
             }
         }

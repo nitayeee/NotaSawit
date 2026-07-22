@@ -44,6 +44,11 @@ class RiwayatAdapter(
         holder.binding.tvTitle.text = item.judul
         holder.binding.tvDate.text = item.tanggal
 
+        if (item.isRead == 0) {
+            holder.binding.root.setCardBackgroundColor(Color.parseColor("#E3F2FD"))
+        } else {
+            holder.binding.root.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+        }
 
         when (item.tipe.lowercase()) {
 
