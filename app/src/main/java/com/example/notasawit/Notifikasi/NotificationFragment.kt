@@ -23,8 +23,19 @@ import java.io.IOException
 class NotificationFragment : Fragment() {
 
     private lateinit var rvNotifications: RecyclerView
+    private val allNotifications = mutableListOf<NotificationItem>()
     private val notificationList = mutableListOf<NotificationItem>()
     private lateinit var adapter: NotificationAdapter
+    
+    private lateinit var filterSemua: android.widget.TextView
+    private lateinit var filterBelum: android.widget.TextView
+    private lateinit var filterSudah: android.widget.TextView
+    
+    private lateinit var panelSelection: android.widget.LinearLayout
+    private lateinit var btnBatalSeleksi: android.widget.Button
+    private lateinit var btnTandaiDibaca: android.widget.Button
+    
+    private var currentFilter = "semua"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,14 +46,76 @@ class NotificationFragment : Fragment() {
         rvNotifications = view.findViewById(R.id.rvNotifications)
         rvNotifications.layoutManager = LinearLayoutManager(requireContext())
         
-        adapter = NotificationAdapter(notificationList) { item ->
-            handleNotificationClick(item)
-        }
+        filterSemua = view.findViewById(R.id.filterSemua)
+        filterBelum = view.findViewById(R.id.filterBelum)
+        filterSudah = view.findViewById(R.id.filterSudah)
+        
+        panelSelection = view.findViewById(R.id.panelSelection)
+        btnBatalSeleksi = view.findViewById(R.id.btnBatalSeleksi)
+        btnTandaiDibaca = view.findViewById(R.id.btnTandaiDibaca)
+        
+        adapter = NotificationAdapter(
+            notificationList,
+            onItemClick = { item ->
+                handleNotificationClick(item)
+            },
+            onItemLongClick = { item ->
+                handleNotificationLongClick(item)
+            }
+        )
         rvNotifications.adapter = adapter
 
+        setupFilterListeners()
+        setupSelectionListeners()
         fetchNotifications()
 
         return view
+    }
+
+    private fun setupSelectionListeners() {
+        btnBatalSeleksi.setOnClickListener {
+            adapter.isSelectionMode = false
+            allNotifications.forEach { it.isSelected = false }
+            panelSelection.visibility = View.GONE
+            applyFilter()
+        }
+
+        btnTandaiDibaca.setOnClickListener {
+            val selectedItems = allNotifications.filter { it.isSelected && it.is_read == 0 }
+            if (selectedItems.isEmpty()) {
+                adapter.isSelectionMode = false
+                panelSelection.visibility = View.GONE
+                applyFilter()
+                return@setOnClickListener
+            }
+
+            var pendingCount = selectedItems.size
+            selectedItems.forEach { item ->
+                PetaniApi.markNotificationAsRead(item.type, item.id, object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        checkPendingCount(--pendingCount)
+                    }
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            item.is_read = 1
+                        }
+                        checkPendingCount(--pendingCount)
+                    }
+                })
+            }
+        }
+    }
+
+    private fun checkPendingCount(count: Int) {
+        if (count == 0) {
+            requireActivity().runOnUiThread {
+                Toast.makeText(requireContext(), "Berhasil menandai notifikasi", Toast.LENGTH_SHORT).show()
+                adapter.isSelectionMode = false
+                allNotifications.forEach { it.isSelected = false }
+                panelSelection.visibility = View.GONE
+                applyFilter()
+            }
+        }
     }
 
     private fun fetchNotifications() {
@@ -69,6 +142,50 @@ class NotificationFragment : Fragment() {
         })
     }
 
+    private fun setupFilterListeners() {
+        filterSemua.setOnClickListener {
+            currentFilter = "semua"
+            updateFilterUI()
+            applyFilter()
+        }
+        filterBelum.setOnClickListener {
+            currentFilter = "belum"
+            updateFilterUI()
+            applyFilter()
+        }
+        filterSudah.setOnClickListener {
+            currentFilter = "sudah"
+            updateFilterUI()
+            applyFilter()
+        }
+    }
+
+    private fun updateFilterUI() {
+        val activeBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2B462C"))
+        val inactiveBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E8EEE8"))
+        val activeText = android.graphics.Color.parseColor("#FFFFFF")
+        val inactiveText = android.graphics.Color.parseColor("#2B462C")
+
+        filterSemua.backgroundTintList = if (currentFilter == "semua") activeBg else inactiveBg
+        filterSemua.setTextColor(if (currentFilter == "semua") activeText else inactiveText)
+
+        filterBelum.backgroundTintList = if (currentFilter == "belum") activeBg else inactiveBg
+        filterBelum.setTextColor(if (currentFilter == "belum") activeText else inactiveText)
+
+        filterSudah.backgroundTintList = if (currentFilter == "sudah") activeBg else inactiveBg
+        filterSudah.setTextColor(if (currentFilter == "sudah") activeText else inactiveText)
+    }
+
+    private fun applyFilter() {
+        notificationList.clear()
+        when (currentFilter) {
+            "semua" -> notificationList.addAll(allNotifications)
+            "belum" -> notificationList.addAll(allNotifications.filter { it.is_read == 0 })
+            "sudah" -> notificationList.addAll(allNotifications.filter { it.is_read == 1 })
+        }
+        adapter.notifyDataSetChanged()
+    }
+
     private fun processResponse(response: Response) {
         if (!response.isSuccessful) return
         val body = response.body?.string() ?: return
@@ -78,7 +195,7 @@ class NotificationFragment : Fragment() {
             val success = jsonObject.getBoolean("success")
             if (success) {
                 val dataArray = jsonObject.getJSONArray("data")
-                notificationList.clear()
+                allNotifications.clear()
                 
                 for (i in 0 until dataArray.length()) {
                     val obj = dataArray.getJSONObject(i)
@@ -94,11 +211,11 @@ class NotificationFragment : Fragment() {
                     val isRead = if (obj.optBoolean("is_read", false) || obj.optInt("is_read", 0) == 1) 1 else 0
                     val dataUrl = obj.optString("data_url", "")
                     
-                    notificationList.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl))
+                    allNotifications.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl))
                 }
                 
                 requireActivity().runOnUiThread {
-                    adapter.notifyDataSetChanged()
+                    applyFilter()
                 }
             }
         } catch (e: Exception) {
@@ -108,6 +225,13 @@ class NotificationFragment : Fragment() {
     }
 
     private fun handleNotificationClick(item: NotificationItem) {
+        if (adapter.isSelectionMode) {
+            item.isSelected = !item.isSelected
+            adapter.notifyDataSetChanged()
+            updateSelectionCount()
+            return
+        }
+
         // Mark as read
         if (item.is_read == 0) {
             PetaniApi.markNotificationAsRead(item.type, item.id, object : Callback {
@@ -116,7 +240,11 @@ class NotificationFragment : Fragment() {
                     if (response.isSuccessful) {
                         requireActivity().runOnUiThread {
                             item.is_read = 1
-                            adapter.notifyDataSetChanged()
+                            val index = allNotifications.indexOfFirst { it.id == item.id && it.type == item.type }
+                            if (index != -1) {
+                                allNotifications[index].is_read = 1
+                            }
+                            applyFilter()
                         }
                     }
                 }
@@ -146,6 +274,26 @@ class NotificationFragment : Fragment() {
                 intent.putExtra("biaya_id", item.id)
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun handleNotificationLongClick(item: NotificationItem) {
+        if (!adapter.isSelectionMode) {
+            adapter.isSelectionMode = true
+            item.isSelected = true
+            panelSelection.visibility = View.VISIBLE
+            updateSelectionCount()
+            applyFilter()
+        }
+    }
+
+    private fun updateSelectionCount() {
+        val selectedCount = allNotifications.count { it.isSelected }
+        btnTandaiDibaca.text = "Tandai Dibaca ($selectedCount)"
+        if (selectedCount == 0) {
+            adapter.isSelectionMode = false
+            panelSelection.visibility = View.GONE
+            applyFilter()
         }
     }
 }

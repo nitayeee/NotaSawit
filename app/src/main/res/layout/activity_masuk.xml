@@ -10,7 +10,7 @@
 
     <ImageView
         android:id="@+id/iv_header"
-        android:layout_width="416dp"
+        android:layout_width="0dp"
         android:layout_height="82dp"
         android:scaleType="centerCrop"
         android:src="@drawable/gambar_sawit"
@@ -276,9 +276,10 @@
 
     <View
         android:id="@+id/view_fade"
-        android:layout_width="413dp"
+        android:layout_width="0dp"
         android:layout_height="42dp"
         android:background="@drawable/bg_fade_header"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="41dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/iv_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -133,6 +133,11 @@ class BerandaFragment : Fragment() {
 //                .load(fotoProfil)
 //                .into(binding.imgProfile)
         }
+
+        val petaniId = sharedPref.getInt("petani_id", -1)
+        if (petaniId != -1) {
+            loadPetaniSummary(petaniId)
+        }
     }
     fun getInitials(name: String): String {
         val words = name.trim().split("\\s+".toRegex())
@@ -184,6 +189,78 @@ class BerandaFragment : Fragment() {
                         "Tetap semangat dalam mengelola kebun hari ini 🌱"
                 }
             })
+    }
+
+    private fun loadPetaniSummary(petaniId: Int) {
+        com.example.notasawit.Network.PetaniApi.getPetaniSummary(petaniId, object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                if (!isAdded || _binding == null) return
+                requireActivity().runOnUiThread {
+                    binding.tvPemasukan.text = "Rp 0"
+                    binding.tvPengeluaran.text = "Rp 0"
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (!isAdded || _binding == null) return
+                val responseData = response.body?.string()
+                if (response.isSuccessful && responseData != null) {
+                    try {
+                        val jsonObject = org.json.JSONObject(responseData)
+                        if (jsonObject.getBoolean("success")) {
+                            val dataObj = jsonObject.getJSONObject("data")
+                            val pemasukanIni = dataObj.getDouble("pemasukan_bulan_ini")
+                            val pemasukanLalu = dataObj.getDouble("pemasukan_bulan_lalu")
+                            val pengeluaranIni = dataObj.getDouble("pengeluaran_bulan_ini")
+                            val pengeluaranLalu = dataObj.getDouble("pengeluaran_bulan_lalu")
+
+                            requireActivity().runOnUiThread {
+                                binding.tvPemasukan.text = formatCurrency(pemasukanIni)
+                                binding.tvPengeluaran.text = formatCurrency(pengeluaranIni)
+
+                                // Logic Pemasukan
+                                if (pemasukanIni > pemasukanLalu) {
+                                    binding.tvBadgePemasukan.text = "↑ Meningkat"
+                                    binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
+                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#2B462C"))
+                                } else if (pemasukanIni < pemasukanLalu) {
+                                    binding.tvBadgePemasukan.text = "↓ Menurun"
+                                    binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_red)
+                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#C62828"))
+                                } else {
+                                    binding.tvBadgePemasukan.text = "Stabil"
+                                    binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
+                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#2B462C"))
+                                }
+
+                                // Logic Pengeluaran
+                                if (pengeluaranIni < pengeluaranLalu) {
+                                    binding.tvBadgePengeluaran.text = "↓ Lebih hemat"
+                                    binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
+                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#2B462C"))
+                                } else if (pengeluaranIni > pengeluaranLalu) {
+                                    binding.tvBadgePengeluaran.text = "↑ Lebih boros"
+                                    binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_red)
+                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#C62828"))
+                                } else {
+                                    binding.tvBadgePengeluaran.text = "Stabil"
+                                    binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
+                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#2B462C"))
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun formatCurrency(amount: Double): String {
+        val format = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("id", "ID"))
+        format.maximumFractionDigits = 0
+        return format.format(amount).replace("Rp", "Rp ")
     }
 
     override fun onDestroyView() {

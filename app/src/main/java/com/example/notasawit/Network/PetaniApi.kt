@@ -547,4 +547,22 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun getDashboardData(callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/dashboard")
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun getPetaniSummary(petaniId: Int, callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/dashboard/petani/$petaniId")
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
 }

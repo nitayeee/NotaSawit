@@ -77,15 +77,17 @@ class MasukActivity : AppCompatActivity() {
 getJenisKegiatan()
         credentialManager = CredentialManager.create(this)
 
-        // 1. Cek apakah user ini sudah pernah login sebelumnya
-        val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-        val sudahPernahLogin = sharedPref.getBoolean("sudah_pernah_login", false)
-        val sp_namaPetani = sharedPref.getString("namaPetani", "")
-        val sp_alamatPetani = sharedPref.getString("alamatPetani", "")
+        val showFingerprint = intent.getBooleanExtra("SHOW_FINGERPRINT", false)
+
+        if (showFingerprint) {
+            checkAndShowFingerprint()
+            binding.btnFingerprint.visibility = android.view.View.VISIBLE
+        } else {
+            binding.btnFingerprint.visibility = android.view.View.GONE
+        }
 
         binding.btnFingerprint.setOnClickListener {
-            if (sudahPernahLogin) {
-                // Jika sudah pernah login, cek apakah HP mendukung sidik jari
+            if (showFingerprint) {
                 checkAndShowFingerprint()
             }
         }
@@ -241,8 +243,15 @@ getJenisKegiatan()
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    // LOGIN SUKSES! Langsung pindah ke Beranda
-                    startActivity(Intent(this@MasukActivity, BaseActivity::class.java))
+                    
+                    val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+                    val role = sharedPref.getString("role", "")
+                    
+                    if (role == "petani") {
+                        startActivity(Intent(this@MasukActivity, BaseActivity::class.java))
+                    } else if (role == "admin") {
+                        startActivity(Intent(this@MasukActivity, BaseAdminActivity::class.java))
+                    }
                     finish()
                 }
 

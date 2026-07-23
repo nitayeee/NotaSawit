@@ -1,5 +1,6 @@
 package com.example.notasawit
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -27,7 +28,13 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(2000) //simulasi pengambilan data selama 2 detik
 
-            var intent = Intent(this@MainActivity, MasukActivity::class.java)
+            val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val role = sharedPref.getString("role", "")
+            
+            val intent = Intent(this@MainActivity, MasukActivity::class.java)
+            if (role == "petani" || role == "admin") {
+                intent.putExtra("SHOW_FINGERPRINT", true)
+            }
             startActivity(intent)
             finish()
         }
