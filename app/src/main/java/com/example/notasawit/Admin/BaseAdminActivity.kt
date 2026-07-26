@@ -12,6 +12,7 @@ import com.example.notasawit.Admin.Beranda.BerandaAdminFragment
 import com.example.notasawit.Admin.KunjunganLahan.KunjunganLahanActivity
 import com.example.notasawit.Home.BerandaFragment
 import com.example.notasawit.ProfilPetani.ProfilPetaniActivity
+import com.example.notasawit.ProfilPetani.SetelanFragment
 import com.example.notasawit.R
 import com.example.notasawit.RiwayatKeuangan.RiwayatActivity
 import com.example.notasawit.databinding.ActivityBaseAdminBinding
@@ -56,7 +57,7 @@ class BaseAdminActivity : AppCompatActivity() {
                 }
 
                 R.id.lainnya -> {
-                    replaceFragment(BerandaAdminFragment())
+                    replaceFragment(SetelanFragment())
                     true
                 }
 

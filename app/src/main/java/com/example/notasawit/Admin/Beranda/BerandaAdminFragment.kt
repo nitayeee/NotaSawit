@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -24,6 +23,8 @@ import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import androidx.recyclerview.widget.LinearLayoutManager
+import android.view.View
 
 class BerandaAdminFragment : Fragment() {
     private var _binding: FragmentBerandaAdminBinding? = null
@@ -73,11 +74,29 @@ class BerandaAdminFragment : Fragment() {
                             val pemasukanArray = dataObj.getJSONArray("pemasukan")
                             val pengeluaranArray = dataObj.getJSONArray("pengeluaran")
 
+                            val pengingatList = mutableListOf<Pengingat>()
+                            if (dataObj.has("pengingat")) {
+                                val pengingatArray = dataObj.getJSONArray("pengingat")
+                                for (i in 0 until pengingatArray.length()) {
+                                    val item = pengingatArray.getJSONObject(i)
+                                    pengingatList.add(
+                                        Pengingat(
+                                            item.getInt("id"),
+                                            item.getString("judul"),
+                                            item.getString("pesan"),
+                                            item.getString("deadline"),
+                                            if (item.has("is_done")) item.getBoolean("is_done") else false
+                                        )
+                                    )
+                                }
+                            }
+
                             activity?.runOnUiThread {
                                 binding.tvJumlahPetani.text = jumlahPetani.toString()
                                 binding.tvLuasLahan.text = String.format("%.2f", jumlahLahan)
                                 setupBarChart(pemasukanArray)
                                 setupPieChart(pengeluaranArray)
+                                setupPengingatList(pengingatList)
                             }
                         }
                     } catch (e: Exception) {
@@ -145,6 +164,20 @@ class BerandaAdminFragment : Fragment() {
             setEntryLabelColor(Color.BLACK)
             animateY(1000)
             invalidate()
+        }
+    }
+
+    private fun setupPengingatList(pengingatList: List<Pengingat>) {
+        if (pengingatList.isEmpty()) {
+            binding.rvPengingat.visibility = View.GONE
+            binding.tvEmptyPengingat.visibility = View.VISIBLE
+        } else {
+            binding.rvPengingat.visibility = View.VISIBLE
+            binding.tvEmptyPengingat.visibility = View.GONE
+            
+            val adapter = PengingatAdapter(pengingatList)
+            binding.rvPengingat.layoutManager = LinearLayoutManager(requireContext())
+            binding.rvPengingat.adapter = adapter
         }
     }
 

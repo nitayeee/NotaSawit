@@ -41,18 +41,34 @@ class SetelanFragment : Fragment() {
         }
 
         btnLogout.setOnClickListener {
-            // Hapus sesi / shared preferences
-            val sharedPref = requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                clear()
-                apply()
+            val dialog = android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Konfirmasi Logout")
+                .setMessage("Apakah Anda yakin ingin keluar dari aplikasi?")
+                .setPositiveButton("OK") { dialogInterface, which ->
+                    // Hapus sesi / shared preferences
+                    val sharedPref = requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        clear()
+                        apply()
+                    }
+                    
+                    // Pindah ke halaman Masuk
+                    val intent = Intent(requireContext(), MasukActivity::class.java)
+                    // Hapus backstack agar tidak bisa kembali dengan tombol back
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+                .setNegativeButton("Batal") { dialogInterface, which ->
+                    dialogInterface.dismiss()
+                }
+                .create()
+                
+            dialog.setOnShowListener {
+                dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(android.graphics.Color.parseColor("#1B4332"))
+                dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(android.graphics.Color.parseColor("#1B4332"))
             }
             
-            // Pindah ke halaman Masuk
-            val intent = Intent(requireContext(), MasukActivity::class.java)
-            // Hapus backstack agar tidak bisa kembali dengan tombol back
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            dialog.show()
         }
     }
 }

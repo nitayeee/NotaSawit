@@ -38,11 +38,6 @@ class ProfilPetaniActivity : AppCompatActivity() {
             finish()
         }
 
-//        binding.btnRiwayat.setOnClickListener {
-//            val intent = Intent(this@ProfilPetaniActivity, com.example.notasawit.RiwayatKeuangan.RiwayatActivity::class.java)
-//            startActivity(intent)
-//        }
-
         if (petaniId != 0) {
             fetchDataProfil(petaniId)
             fetchDataLahan(petaniId)
@@ -75,6 +70,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                 val profilUrl = data.optString("petani_profil", "")
 
                                 runOnUiThread {
+                                    binding.tvNamaProfile.text = nama
                                     binding.tvNama.text = nama
                                     binding.tvUsername.text = username
                                     binding.tvEmail.text = email
@@ -126,8 +122,8 @@ class ProfilPetaniActivity : AppCompatActivity() {
                             val jumlahLahan = dataArray?.length() ?: 0
 
                             runOnUiThread {
-                                binding.tvJumlahLahan.text = "$jumlahLahan Kavling / Blok"
-                                binding.tvTotalLuas.text = "-" // Sembunyikan luas lahan karena tidak ada datanya
+                                binding.tvJumlahLahan.text = "$jumlahLahan"
+                                binding.tvTotalLuas.text = "-" // Tetap strip jika API belum menyediakan total luas hektar
                             }
                         } catch (e: Exception) {
                             Log.e("ProfilPetani", "Error parsing Lahan: ${e.message}")
