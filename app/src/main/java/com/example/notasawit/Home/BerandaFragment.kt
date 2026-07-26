@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.notasawit.InputKegiatan.InputKegiatanActivity
 import com.example.notasawit.Pemasukan.InputPemasukanActivity
 import com.example.notasawit.databinding.FragmentBerandaBinding
@@ -119,9 +120,23 @@ class BerandaFragment : Fragment() {
                 )
             )
         }
-        val fotoProfil = sharedPref.getString("profilPetani", null)
+        updateProfileUI()
 
+        val petaniId = sharedPref.getInt("petani_id", -1)
+        if (petaniId != -1) {
+            loadPetaniSummary(petaniId)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateProfileUI()
+    }
+
+    private fun updateProfileUI() {
+        val fotoProfil = sharedPref.getString("profilPetani", null)
         val namaPetani = sharedPref.getString("namaPetani", "") ?: ""
+        
         if (fotoProfil.isNullOrBlank() || fotoProfil == "null") {
             binding.imgProfile.visibility = View.GONE
             binding.tvInitial.visibility = View.VISIBLE
@@ -129,16 +144,18 @@ class BerandaFragment : Fragment() {
         } else {
             binding.tvInitial.visibility = View.GONE
             binding.imgProfile.visibility = View.VISIBLE
-//            Glide.with(this)
-//                .load(fotoProfil)
-//                .into(binding.imgProfile)
-        }
-
-        val petaniId = sharedPref.getInt("petani_id", -1)
-        if (petaniId != -1) {
-            loadPetaniSummary(petaniId)
+            val fullUrl = if (!fotoProfil.startsWith("http")) {
+                "http://160.187.144.157/storage/$fotoProfil"
+            } else {
+                fotoProfil
+            }
+            Glide.with(this)
+                .load(fullUrl)
+                .into(binding.imgProfile)
         }
     }
+
+
     fun getInitials(name: String): String {
         val words = name.trim().split("\\s+".toRegex())
 

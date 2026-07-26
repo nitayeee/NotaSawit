@@ -62,6 +62,24 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun ubahPin(petaniId: Int, pinBaru: String, callback: Callback) {
+        val json = """
+        {
+            "pin_baru": "$pinBaru"
+        }
+        """.trimIndent()
+        
+        val body = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("$BASE_URL/petani/ubah-pin/$petaniId")
+            .post(body)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
     fun getJenisKegiatan(callback: Callback) {
         val request = Request.Builder()
             .url("$BASE_URL/jenis-kegiatan")
@@ -93,6 +111,39 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun updatePetani(
+        petaniId: Int,
+        nama: String,
+        username: String,
+        email: String,
+        noHp: String,
+        desaId: Int,
+        alamat: String,
+        imageFile: File?,
+        callback: Callback
+    ) {
+        val multipartBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("petani_nama", nama)
+            .addFormDataPart("petani_username", username)
+            .addFormDataPart("petani_email", email)
+            .addFormDataPart("petani_no_hp", noHp)
+            .addFormDataPart("desa_id", desaId.toString())
+            .addFormDataPart("petani_alamat", alamat)
+
+        if (imageFile != null) {
+            val requestBody = imageFile.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
+            multipartBuilder.addFormDataPart("petani_profil", imageFile.name, requestBody)
+        }
+
+        val request = Request.Builder()
+            .url("$BASE_URL/petani/update/$petaniId")
+            .post(multipartBuilder.build())
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
     fun login(
         username: String,
         password: String,

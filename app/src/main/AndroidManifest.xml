@@ -42,6 +42,12 @@
             android:name=".ProfilPetani.ProfilPetaniActivity"
             android:exported="false" />
         <activity
+            android:name=".ProfilPetani.EditProfilPetaniActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfilPetani.UbahPinActivity"
+            android:exported="false" />
+        <activity
             android:name=".RiwayatKeuangan.RiwayatActivity"
             android:exported="false" />
         <activity

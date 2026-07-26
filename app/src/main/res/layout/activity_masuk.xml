@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Email Address"
+            android:text="Username"
             android:textColor="@color/text_primary"
             android:textSize="12sp" />
 
@@ -110,8 +110,8 @@
                 android:layout_marginStart="12dp"
                 android:background="@null"
                 android:fontFamily="@font/poppins_regular"
-                android:hint="nama@email.com"
-                android:inputType="textEmailAddress"
+                android:hint="Masukkan Username"
+                android:inputType="text"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -131,42 +131,42 @@
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/bg_input_field"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp">
+                app:hintEnabled="false"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/text_secondary"
+                app:boxBackgroundMode="none">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_lock_idle_lock"
-                    app:tint="@color/text_secondary" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
 
-                <EditText
-                    android:id="@+id/etPin"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:fontFamily="@font/poppins_regular"
-                    android:hint="•••••"
-                    android:inputType="numberPassword"
-                    android:maxLength="6"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_lock_idle_lock"
+                        app:tint="@color/text_secondary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="Lihat"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="12dp"
+                        android:background="@null"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="••••••"
+                        android:inputType="numberPassword"
+                        android:maxLength="6"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <FrameLayout
                 android:id="@+id/btn_fingerprint"

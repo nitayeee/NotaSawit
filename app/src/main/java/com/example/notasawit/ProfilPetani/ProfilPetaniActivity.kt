@@ -38,11 +38,21 @@ class ProfilPetaniActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.btnEditProfil.setOnClickListener {
+            val intent = android.content.Intent(this, EditProfilPetaniActivity::class.java)
+            startActivity(intent)
+        }
+
+        if (petaniId == 0) {
+            Toast.makeText(this, "Petani ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (petaniId != 0) {
             fetchDataProfil(petaniId)
             fetchDataLahan(petaniId)
-        } else {
-            Toast.makeText(this, "Petani ID tidak ditemukan", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -68,6 +78,13 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                 val email = data.optString("petani_email", "-")
                                 val jenisKelamin = data.optString("petani_jenis_kelamin", "-")
                                 val profilUrl = data.optString("petani_profil", "")
+                                
+                                // Sync local SharedPreferences
+                                with(sharedPref.edit()) {
+                                    putString("namaPetani", nama)
+                                    putString("profilPetani", profilUrl)
+                                    apply()
+                                }
 
                                 runOnUiThread {
                                     binding.tvNamaProfile.text = nama
@@ -75,8 +92,19 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                     binding.tvUsername.text = username
                                     binding.tvEmail.text = email
                                     binding.tvJenisKelamin.text = jenisKelamin
-                                    
+                                    // Set Initials
+                                    val parts = nama.trim().split("\\s+".toRegex())
+                                    val initials = if (parts.size >= 2) {
+                                        "${parts[0].take(1)}${parts[1].take(1)}".uppercase()
+                                    } else if (parts.isNotEmpty() && parts[0].isNotEmpty()) {
+                                        parts[0].take(2).uppercase()
+                                    } else {
+                                        "U"
+                                    }
+                                    binding.tvInitials.text = initials
+
                                     if (profilUrl.isNotEmpty() && profilUrl != "null") {
+                                        binding.imgFotoProfil.visibility = android.view.View.VISIBLE
                                         val fullUrl = if (!profilUrl.startsWith("http")) {
                                             "http://160.187.144.157/storage/$profilUrl"
                                         } else {
@@ -84,9 +112,9 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                         }
                                         Glide.with(this@ProfilPetaniActivity)
                                             .load(fullUrl)
-                                            .placeholder(R.drawable.dummy_profile)
-                                            .error(R.drawable.dummy_profile)
                                             .into(binding.imgFotoProfil)
+                                    } else {
+                                        binding.imgFotoProfil.visibility = android.view.View.GONE
                                     }
                                 }
                             }

@@ -29,7 +29,8 @@ class SetelanFragment : Fragment() {
         val btnLogout = view.findViewById<View>(R.id.btnLogout)
 
         btnUbahPassword.setOnClickListener {
-            Toast.makeText(requireContext(), "Fitur Ubah Kata Sandi segera hadir", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), UbahPinActivity::class.java)
+            startActivity(intent)
         }
 
         btnTentang.setOnClickListener {

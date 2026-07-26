@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="Ubah Kata Sandi"
+            android:text="Ubah PIN"
             android:textColor="#333333"
             android:textSize="16sp" />
 

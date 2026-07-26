@@ -57,8 +57,6 @@ class DataDiri3Fragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val pinHash = hashPin(pinMentah)
-
             val nama = sharedPref.getString("namaPetani", "") ?: ""
             val username = sharedPref.getString("username", "") ?: ""
             val tglLahir = sharedPref.getString("tanggalLahir", "") ?: ""
@@ -77,7 +75,7 @@ class DataDiri3Fragment : Fragment() {
                 noHp,
                 alamat,
                 desa,
-                pinHash,
+                pinMentah,
                 object : Callback {
 
                     override fun onFailure(call: Call, e: IOException) {
@@ -162,11 +160,6 @@ class DataDiri3Fragment : Fragment() {
                 binding.pin6.text.toString()
     }
 
-    private fun hashPin(pin: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(pin.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
-    }
 
     private fun tampilkanDialogCustom() {
         val dialog = Dialog(requireContext())

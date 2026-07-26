@@ -94,10 +94,9 @@ getJenisKegiatan()
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
             val pin = binding.etPin.text.toString()
-            val pinHash = hashPin(pin)
             PetaniApi.login(
                 username,
-                pinHash,
+                pin,
                 object : Callback {
 
                     override fun onFailure(
@@ -230,11 +229,7 @@ getJenisKegiatan()
             }
         }
     }
-    private fun hashPin(pin: String): String {
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(pin.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
-    }
+
 
     private fun showBiometricPrompt() {
         val executor = ContextCompat.getMainExecutor(this)
