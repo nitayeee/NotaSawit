@@ -120,6 +120,15 @@ class BerandaFragment : Fragment() {
                 )
             )
         }
+        
+        binding.cardEdukasi.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    EdukasiActivity::class.java
+                )
+            )
+        }
         updateProfileUI()
 
         val petaniId = sharedPref.getInt("petani_id", -1)

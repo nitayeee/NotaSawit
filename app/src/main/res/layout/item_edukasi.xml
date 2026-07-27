@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Icon -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E6F2EA">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_edukasi"
+                app:tint="@color/agri_green_dark" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:id="@+id/tvModulTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Modul 1: Asosiasi"
+                android:textColor="#1E293B"
+                android:textSize="16sp"
+                android:fontFamily="@font/poppins_bold" />
+
+            <TextView
+                android:id="@+id/tvModulDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Profil Asosiasi Pekebun Swadaya"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Progress Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <ProgressBar
+                    android:id="@+id/pbModulProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/custom_progress_bar" />
+
+                <TextView
+                    android:id="@+id/tvProgressPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0%"
+                    android:textColor="@color/agri_green_dark"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="#CBD5E1"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

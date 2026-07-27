@@ -138,34 +138,21 @@
                 app:hintEnabled="false"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_secondary"
+                app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                app:startIconTint="@color/text_secondary"
                 app:boxBackgroundMode="none">
 
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPin"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/bg_input_field"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@android:drawable/ic_lock_idle_lock"
-                        app:tint="@color/text_secondary" />
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPin"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="12dp"
-                        android:background="@null"
-                        android:fontFamily="@font/poppins_regular"
-                        android:hint="••••••"
-                        android:inputType="numberPassword"
-                        android:maxLength="6"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                    android:fontFamily="@font/poppins_regular"
+                    android:hint="••••••"
+                    android:inputType="numberPassword"
+                    android:maxLength="6"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <FrameLayout
