@@ -45,6 +45,9 @@
             android:name=".ProfilPetani.EditProfilPetaniActivity"
             android:exported="false" />
         <activity
+            android:name=".ProfilPetani.EditLahanActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfilPetani.UbahPinActivity"
             android:exported="false" />
         <activity
@@ -87,6 +90,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ProfilPetani.TentangAplikasiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProfilPetani.BantuanActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

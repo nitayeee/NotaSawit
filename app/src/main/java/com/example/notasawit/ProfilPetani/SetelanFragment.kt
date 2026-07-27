@@ -34,11 +34,13 @@ class SetelanFragment : Fragment() {
         }
 
         btnTentang.setOnClickListener {
-            Toast.makeText(requireContext(), "Notasawit v1.0", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), TentangAplikasiActivity::class.java)
+            startActivity(intent)
         }
 
         btnBantuan.setOnClickListener {
-            Toast.makeText(requireContext(), "Hubungi admin untuk bantuan", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), BantuanActivity::class.java)
+            startActivity(intent)
         }
 
         btnLogout.setOnClickListener {

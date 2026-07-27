@@ -139,6 +139,31 @@ object PetaniApi {
         val request = Request.Builder()
             .url("$BASE_URL/petani/update/$petaniId")
             .post(multipartBuilder.build())
+            .header("Accept", "application/json")
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun updateLahan(
+        lahanId: Int,
+        tahunTanam: String,
+        noSurat: String,
+        callback: Callback
+    ) {
+        val json = """
+            {
+                "tahun_tanam": "$tahunTanam",
+                "lahan_no_surat": "$noSurat"
+            }
+        """.trimIndent()
+
+        val body = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("$BASE_URL/lahan/update/$lahanId")
+            .post(body)
+            .header("Accept", "application/json")
             .build()
 
         ApiClient.client.newCall(request).enqueue(callback)

@@ -159,6 +159,17 @@
                             android:focusable="true"
                             android:drawableStart="@android:drawable/ic_menu_edit"
                             android:drawablePadding="6dp"/>
+                            
+                        <TextView
+                            android:id="@+id/tvErrorFoto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#EF4444"
+                            android:textSize="12sp"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:visibility="gone"
+                            android:text="Error" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -248,7 +259,7 @@
                             android:layout_height="52dp"
                             android:background="@null"
                             android:paddingHorizontal="16dp"
-                            android:fontFamily="@font/poppins_bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:inputType="textPersonName" />
@@ -320,7 +331,7 @@
                             android:layout_height="52dp"
                             android:background="@null"
                             android:paddingHorizontal="16dp"
-                            android:fontFamily="@font/poppins_bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:inputType="textPersonName" />
@@ -383,7 +394,7 @@
                             android:layout_height="52dp"
                             android:background="@null"
                             android:paddingHorizontal="16dp"
-                            android:fontFamily="@font/poppins_bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:inputType="phone" />
@@ -446,7 +457,7 @@
                             android:layout_height="52dp"
                             android:background="@null"
                             android:paddingHorizontal="16dp"
-                            android:fontFamily="@font/poppins_bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:inputType="textEmailAddress" />
@@ -561,11 +572,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Alamat Lengkap"
+                            android:text="Alamat Lengkap "
                             android:fontFamily="@font/poppins_bold"
                             android:textSize="14sp"
                             android:textColor="#1E293B"
                             android:layout_marginStart="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textSize="14sp"
+                            android:textColor="#EF4444" />
                     </LinearLayout>
 
                     <androidx.cardview.widget.CardView
@@ -582,7 +600,7 @@
                             android:background="@null"
                             android:padding="16dp"
                             android:gravity="top|start"
-                            android:fontFamily="@font/poppins_bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:textColor="#1E293B"
                             android:textSize="14sp"
                             android:inputType="textMultiLine"

@@ -43,8 +43,13 @@ class ProfilPetaniActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.btnEditLahan.setOnClickListener {
+            val intent = android.content.Intent(this, EditLahanActivity::class.java)
+            startActivity(intent)
+        }
+
         if (petaniId == 0) {
-            Toast.makeText(this, "Petani ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+            com.example.notasawit.utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
         }
     }
 
@@ -60,7 +65,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
         PetaniApi.getDetailPetani(id, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Toast.makeText(this@ProfilPetaniActivity, "Gagal mengambil data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    com.example.notasawit.utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Gagal mengambil data: ${e.message}")
                 }
             }
 
@@ -121,7 +126,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
                         } catch (e: Exception) {
                             Log.e("ProfilPetani", "Error parsing JSON: ${e.message}")
                             runOnUiThread {
-                                Toast.makeText(this@ProfilPetaniActivity, "Format response tidak sesuai", Toast.LENGTH_SHORT).show()
+                                com.example.notasawit.utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Format response tidak sesuai")
                             }
                         }
                     }
@@ -148,10 +153,21 @@ class ProfilPetaniActivity : AppCompatActivity() {
                             val jsonObject = JSONObject(body)
                             val dataArray = jsonObject.optJSONArray("data")
                             val jumlahLahan = dataArray?.length() ?: 0
+                            var totalLuas = 0.0
+
+                            if (dataArray != null) {
+                                for (i in 0 until dataArray.length()) {
+                                    val lahanObj = dataArray.optJSONObject(i)
+                                    val luas = lahanObj?.optDouble("lahan_luas", 0.0) ?: 0.0
+                                    totalLuas += luas
+                                }
+                            }
 
                             runOnUiThread {
                                 binding.tvJumlahLahan.text = "$jumlahLahan"
-                                binding.tvTotalLuas.text = "-" // Tetap strip jika API belum menyediakan total luas hektar
+                                binding.tvTotalLuas.text = if (totalLuas > 0) String.format("%.2f", totalLuas) else "-"
+                                binding.tvInfoJumlahLahan.text = "$jumlahLahan Lahan"
+                                binding.tvInfoTotalLuas.text = if (totalLuas > 0) String.format("%.2f Hektar", totalLuas) else "- Hektar"
                             }
                         } catch (e: Exception) {
                             Log.e("ProfilPetani", "Error parsing Lahan: ${e.message}")

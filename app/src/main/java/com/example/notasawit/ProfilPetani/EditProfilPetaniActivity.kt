@@ -1,6 +1,7 @@
 package com.example.notasawit.ProfilPetani
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -40,15 +41,52 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         if (uri != null) {
             try {
                 val inputStream = contentResolver.openInputStream(uri)
-                val tempFile = java.io.File(cacheDir, "temp_profile_image.jpg")
+                val tempFile = java.io.File(cacheDir, "temp_profile_image_${System.currentTimeMillis()}.jpg")
                 val outputStream = java.io.FileOutputStream(tempFile)
                 inputStream?.copyTo(outputStream)
                 inputStream?.close()
                 outputStream.close()
+                
+                val bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
+                val compressedFile = java.io.File(cacheDir, "compressed_profile_${System.currentTimeMillis()}.jpg")
+                val compressStream = java.io.FileOutputStream(compressedFile)
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, compressStream)
+                compressStream.flush()
+                compressStream.close()
+                
+                // Hapus tempFile asli karena tidak dipakai lagi
+                tempFile.delete()
+                
+                val finalFile = compressedFile
+                val fileSizeInMB = finalFile.length() / (1024.0 * 1024.0)
+                
+                val options = BitmapFactory.Options()
+                options.inJustDecodeBounds = true
+                BitmapFactory.decodeFile(finalFile.absolutePath, options)
+                val mimeType = options.outMimeType ?: ""
 
-                selectedImageFile = tempFile
+                if (fileSizeInMB > 1.0) {
+                    binding.tvErrorFoto.text = "Ukuran gambar terlalu besar, maksimal 1MB"
+                    binding.tvErrorFoto.visibility = View.VISIBLE
+                    selectedImageFile = null
+                    Glide.with(this).clear(binding.imgFotoProfil)
+                    binding.imgFotoProfil.setImageResource(0)
+                    return@registerForActivityResult
+                }
+                
+                if (mimeType != "image/jpeg" && mimeType != "image/png" && mimeType != "image/jpg") {
+                    binding.tvErrorFoto.text = "Format gambar harus JPG/JPEG/PNG"
+                    binding.tvErrorFoto.visibility = View.VISIBLE
+                    selectedImageFile = null
+                    Glide.with(this).clear(binding.imgFotoProfil)
+                    binding.imgFotoProfil.setImageResource(0)
+                    return@registerForActivityResult
+                }
+
+                binding.tvErrorFoto.visibility = View.GONE
+                selectedImageFile = finalFile
                 binding.imgFotoProfil.visibility = View.VISIBLE
-                Glide.with(this).load(tempFile).into(binding.imgFotoProfil)
+                Glide.with(this).load(finalFile).into(binding.imgFotoProfil)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(this, "Gagal memuat gambar", Toast.LENGTH_SHORT).show()
@@ -79,8 +117,8 @@ class EditProfilPetaniActivity : AppCompatActivity() {
             val noHp = binding.etNoHp.text.toString().trim()
             val alamat = binding.etAlamat.text.toString().trim()
 
-            if (nama.isEmpty() || username.isEmpty() || email.isEmpty() || noHp.isEmpty() || selectedDesaId == null) {
-                Toast.makeText(this, "Harap lengkapi semua data wajib (*)", Toast.LENGTH_SHORT).show()
+            if (nama.isEmpty() || username.isEmpty() || email.isEmpty() || noHp.isEmpty() || alamat.isEmpty() || selectedDesaId == null) {
+                Toast.makeText(this, "Harap lengkapi semua data wajib", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -94,7 +132,11 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                         runOnUiThread {
                             binding.btnSimpan.isEnabled = true
                             binding.btnSimpan.text = "Simpan Perubahan"
-                            Toast.makeText(this@EditProfilPetaniActivity, "Gagal menyimpan data: ${e.message}", Toast.LENGTH_SHORT).show()
+                            com.example.notasawit.utils.CustomAlert.showError(
+                                this@EditProfilPetaniActivity,
+                                "Gagal",
+                                "Gagal menyimpan data: ${e.message}"
+                            )
                         }
                     }
 
@@ -106,6 +148,16 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                 val json = org.json.JSONObject(bodyString)
                                 message = json.optString("message", message)
                                 
+                                // Extract specific validation error if present
+                                val errors = json.optJSONObject("errors")
+                                if (errors != null && errors.keys().hasNext()) {
+                                    val firstKey = errors.keys().next()
+                                    val errorArray = errors.optJSONArray(firstKey)
+                                    if (errorArray != null && errorArray.length() > 0) {
+                                        message = errorArray.getString(0)
+                                    }
+                                }
+                                
                                 val dataObj = json.optJSONObject("data")
                                 if (dataObj != null) {
                                     val sharedPrefUpdate = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
@@ -116,16 +168,30 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                     }
                                 }
                             }
-                        } catch (e: Exception) {}
+                        } catch (e: Exception) {
+                            if (bodyString != null && !bodyString.startsWith("{")) {
+                                message = "Server error: " + bodyString.take(150)
+                            }
+                        }
                         
                         runOnUiThread {
                             binding.btnSimpan.isEnabled = true
                             binding.btnSimpan.text = "Simpan Perubahan"
                             if (response.isSuccessful) {
-                                Toast.makeText(this@EditProfilPetaniActivity, message, Toast.LENGTH_LONG).show()
-                                finish()
+                                com.example.notasawit.utils.CustomAlert.showSuccess(
+                                    this@EditProfilPetaniActivity,
+                                    "Berhasil",
+                                    message
+                                )
+                                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                    finish()
+                                }, 1500)
                             } else {
-                                Toast.makeText(this@EditProfilPetaniActivity, "Gagal menyimpan data: $message", Toast.LENGTH_LONG).show()
+                                com.example.notasawit.utils.CustomAlert.showError(
+                                    this@EditProfilPetaniActivity,
+                                    "Gagal",
+                                    message
+                                )
                             }
                         }
                     }
@@ -139,7 +205,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         if (petaniId != 0) {
             loadDesa()
         } else {
-            Toast.makeText(this, "Petani ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+            com.example.notasawit.utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
         }
     }
 
@@ -147,7 +213,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         PetaniApi.getDesa(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Toast.makeText(this@EditProfilPetaniActivity, "Gagal memuat desa", Toast.LENGTH_SHORT).show()
+                    com.example.notasawit.utils.CustomAlert.showError(this@EditProfilPetaniActivity, "Gagal", "Gagal memuat desa")
                     fetchDataProfil(petaniId)
                 }
             }
@@ -208,7 +274,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                 val username = data.optString("petani_username", "")
                                 val email = data.optString("petani_email", "")
                                 val noHp = data.optString("petani_no_hp", "")
-                                val alamat = data.optString("petani_alamat", "")
+                                val alamat = if (data.isNull("petani_alamat")) "" else data.optString("petani_alamat", "")
                                 val desaId = data.optInt("desa_id", 0)
                                 val profilUrl = data.optString("petani_profil", "")
 
