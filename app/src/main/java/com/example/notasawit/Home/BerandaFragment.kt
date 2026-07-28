@@ -134,12 +134,21 @@ class BerandaFragment : Fragment() {
         val petaniId = sharedPref.getInt("petani_id", -1)
         if (petaniId != -1) {
             loadPetaniSummary(petaniId)
+            checkTahunTanamLahan(petaniId)
+        }
+        
+        binding.btnIsiTahunTanam.setOnClickListener {
+            startActivity(Intent(requireContext(), com.example.notasawit.ProfilPetani.EditLahanActivity::class.java))
         }
     }
 
     override fun onResume() {
         super.onResume()
         updateProfileUI()
+        val petaniId = sharedPref.getInt("petani_id", -1)
+        if (petaniId != -1) {
+            checkTahunTanamLahan(petaniId)
+        }
     }
 
     private fun updateProfileUI() {
@@ -304,6 +313,49 @@ class BerandaFragment : Fragment() {
 //                database
 //            ).syncProduksi()
 //
-//        }
 //    }
+
+    private fun checkTahunTanamLahan(petaniId: Int) {
+        com.example.notasawit.Network.PetaniApi.getLahanByPetani(petaniId, object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                // Ignore failure
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (!isAdded || _binding == null) return
+                val responseData = response.body?.string()
+                
+                var hasEmptyTahunTanam = false
+                
+                if (response.isSuccessful && responseData != null) {
+                    try {
+                        val jsonObject = org.json.JSONObject(responseData)
+                        if (jsonObject.optBoolean("success", false)) {
+                            val dataArray = jsonObject.optJSONArray("data")
+                            if (dataArray != null && dataArray.length() > 0) {
+                                for (i in 0 until dataArray.length()) {
+                                    val lahanObj = dataArray.getJSONObject(i)
+                                    val tahunTanam = lahanObj.optString("tahun_tanam", "")
+                                    if (tahunTanam.isNullOrEmpty() || tahunTanam == "null" || tahunTanam == "0") {
+                                        hasEmptyTahunTanam = true
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                
+                requireActivity().runOnUiThread {
+                    if (hasEmptyTahunTanam) {
+                        binding.cardAlertTahunTanam.visibility = android.view.View.VISIBLE
+                    } else {
+                        binding.cardAlertTahunTanam.visibility = android.view.View.GONE
+                    }
+                }
+            }
+        })
+    }
 }

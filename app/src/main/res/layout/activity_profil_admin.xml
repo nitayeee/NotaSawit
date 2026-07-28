@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F4F6F8"
-    tools:context=".ProfilPetani.ProfilPetaniActivity">
+    tools:context=".Admin.ProfilAdmin.ProfilAdminActivity">
 
     <!-- Header Background (Dark Blue) -->
     <View
@@ -169,7 +169,7 @@
         android:fontFamily="@font/poppins_bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Warga Terverifikasi"
+                                android:text="Admin Notasawit"
                                 android:textSize="13sp"
                                 android:textColor="@color/agri_green_dark"
                                 android:textStyle="bold"
@@ -190,78 +190,14 @@
                                     android:paddingVertical="4dp"
                                     android:gravity="center_vertical">
                                     <TextView
-        android:fontFamily="@font/poppins_regular"
+                                        android:fontFamily="@font/poppins_regular"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Anggota Sejak 2026"
+                                        android:text="Administrator"
                                         android:textSize="11sp"
                                         android:textColor="#8C93A4" />
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#F0F2F5"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="16dp" />
-
-                    <!-- Stats Row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <TextView
-        android:fontFamily="@font/poppins_bold"
-                                android:id="@+id/tvJumlahLahan"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
-                            <TextView
-        android:fontFamily="@font/poppins_regular"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jumlah Lahan"
-                                android:textSize="13sp"
-                                android:textColor="#8C93A4"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="center">
-                            <TextView
-        android:fontFamily="@font/poppins_bold"
-                                android:id="@+id/tvTotalLuas"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0.0"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
-                            <TextView
-        android:fontFamily="@font/poppins_regular"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Hektar"
-                                android:textSize="13sp"
-                                android:textColor="#8C93A4"
-                                android:layout_marginTop="2dp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -469,223 +405,6 @@
                         </LinearLayout>
                     </LinearLayout>
                     
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F2F5" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
-                    
-                    <!-- Row Jenis Kelamin -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            app:cardCornerRadius="20dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#F4F6F8">
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_users"
-                                app:tint="#64748B" />
-                        </androidx.cardview.widget.CardView>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-                            <TextView
-        android:fontFamily="@font/poppins_regular"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jenis Kelamin"
-                                android:textSize="12sp"
-                                android:textColor="#94A3B8" />
-                            <TextView
-        android:fontFamily="@font/poppins_medium"
-                                android:id="@+id/tvJenisKelamin"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-"
-                                android:textSize="15sp"
-                                android:textColor="#1E293B"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Card Informasi Lahan -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="4dp"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#FFFFFF">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <!-- Side Decoration Line -->
-                    <View
-                        android:layout_width="6dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/agri_green_dark" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp">
-
-                        <!-- Title & Edit Button -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="24dp">
-
-                            <TextView
-                                android:fontFamily="@font/poppins_bold"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Informasi Lahan"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
-
-                            <LinearLayout
-                                android:id="@+id/btnEditLahan"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:gravity="center_vertical"
-                                android:clickable="true"
-                                android:focusable="true">
-                                <TextView
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Edit"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold"
-                                    android:textColor="@color/agri_green_dark"
-                                    android:drawableStart="@android:drawable/ic_menu_edit"
-                                    android:drawablePadding="4dp"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- Row Total Lahan -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                app:cardCornerRadius="20dp"
-                                app:cardElevation="0dp"
-                                app:cardBackgroundColor="#F4F6F8">
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_audit"
-                                    app:tint="#64748B" />
-                            </androidx.cardview.widget.CardView>
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="16dp">
-                                <TextView
-                                    android:fontFamily="@font/poppins_regular"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Jumlah Lahan"
-                                    android:textSize="12sp"
-                                    android:textColor="#94A3B8" />
-                                <TextView
-                                    android:fontFamily="@font/poppins_medium"
-                                    android:id="@+id/tvInfoJumlahLahan"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    android:textSize="15sp"
-                                    android:textColor="#1E293B"
-                                    android:layout_marginTop="4dp" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F2F5" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
-
-                        <!-- Row Luas Lahan -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                app:cardCornerRadius="20dp"
-                                app:cardElevation="0dp"
-                                app:cardBackgroundColor="#F4F6F8">
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_note"
-                                    app:tint="#64748B" />
-                            </androidx.cardview.widget.CardView>
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_marginStart="16dp">
-                                <TextView
-                                    android:fontFamily="@font/poppins_regular"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Total Luas Lahan"
-                                    android:textSize="12sp"
-                                    android:textColor="#94A3B8" />
-                                <TextView
-                                    android:fontFamily="@font/poppins_medium"
-                                    android:id="@+id/tvInfoTotalLuas"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    android:textSize="15sp"
-                                    android:textColor="#1E293B"
-                                    android:layout_marginTop="4dp" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <!-- Peta Lahan -->
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="250dp"
-                            android:layout_marginTop="24dp"
-                            app:cardCornerRadius="16dp"
-                            app:cardElevation="2dp">
-                            <WebView
-                                android:id="@+id/mapViewLahan"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent" />
-                        </androidx.cardview.widget.CardView>
-
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

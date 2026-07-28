@@ -142,12 +142,19 @@ class DataDiri3Fragment : Fragment() {
                     }
                 }
 
-                override fun afterTextChanged(s: Editable?) {
-                    if (s?.length == 0 && i > 0) {
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            pins[i].setOnKeyListener { _, keyCode, event ->
+                if (keyCode == android.view.KeyEvent.KEYCODE_DEL && event.action == android.view.KeyEvent.ACTION_DOWN) {
+                    if (pins[i].text.toString().isEmpty() && i > 0) {
                         pins[i - 1].requestFocus()
+                        pins[i - 1].text?.clear()
+                        return@setOnKeyListener true
                     }
                 }
-            })
+                false
+            }
         }
     }
 

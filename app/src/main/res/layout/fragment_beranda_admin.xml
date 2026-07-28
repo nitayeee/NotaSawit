@@ -90,8 +90,11 @@
 
                 <!-- Avatar -->
                 <FrameLayout
+                    android:id="@+id/btnProfileContainer"
                     android:layout_width="39dp"
-                    android:layout_height="39dp">
+                    android:layout_height="39dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/tvInitial"

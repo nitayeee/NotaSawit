@@ -45,31 +45,71 @@ class DaftarActivity : AppCompatActivity() {
             val emailUser = binding.etEmailOtp.text.toString().trim()
 
             if (emailUser.isNotEmpty()) {
-                // Karena ini proses jaringan (network), harus dijalankan di dalam Coroutine
-                lifecycleScope.launch {
-                    try {
-                        // 1. Meminta Supabase mengirimkan OTP ke email tersebut
-//                        PetaniApi.client.auth.signInWith(OTP) {
-//                            email = emailUser
-//                        }
-                        val inputEmail =binding.etEmailOtp.text.toString().trim()
-
-                        // 2. Kalau sukses, pindah ke halaman untuk memasukkan 6 digit angka
-                        val editor = sharedPref.edit()
-                        editor.putString("emailPetani",inputEmail)
-                        editor.apply()
-
-                        val intent = Intent(this@DaftarActivity, OtpActivity::class.java)
-                        intent.putExtra("EMAIL_USER", emailUser) // Bawa emailnya ke halaman sebelah
-                        startActivity(intent)
-
-                    } catch (e: Exception) {
-                        // Tampilkan pesan error kalau gagal (misal: tidak ada internet)
-                        Toast.makeText(this@DaftarActivity, "Gagal kirim OTP: ${e.message}", Toast.LENGTH_SHORT).show()
+                binding.btnKirimOtp.isEnabled = false
+                
+                // Cek email ke server (sementara dengan getAllPetani)
+                PetaniApi.getAllPetani(object : okhttp3.Callback {
+                    override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                        runOnUiThread {
+                            binding.btnKirimOtp.isEnabled = true
+                            Toast.makeText(this@DaftarActivity, "Gagal mengecek email: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+
+                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                        var emailExists = false
+                        if (response.isSuccessful) {
+                            val body = response.body?.string()
+                            if (body != null) {
+                                try {
+                                    val jsonObject = org.json.JSONObject(body)
+                                    val dataArray = jsonObject.getJSONArray("data")
+                                    for (i in 0 until dataArray.length()) {
+                                        val item = dataArray.getJSONObject(i)
+                                        if (item.has("petani_email") && item.getString("petani_email") == emailUser) {
+                                            emailExists = true
+                                            break
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+
+                        runOnUiThread {
+                            binding.btnKirimOtp.isEnabled = true
+                            if (emailExists) {
+                                android.app.AlertDialog.Builder(this@DaftarActivity)
+                                    .setTitle("Email Sudah Terdaftar")
+                                    .setMessage("Email yang Anda masukkan sudah terdaftar. Silakan login menggunakan akun Anda.")
+                                    .setPositiveButton("Login") { _, _ ->
+                                        startActivity(Intent(this@DaftarActivity, com.example.notasawit.Autentikasi.Masuk.MasukActivity::class.java))
+                                        finish()
+                                    }
+                                    .setNegativeButton("Batal", null)
+                                    .show()
+                            } else {
+                                lifecycleScope.launch {
+                                    try {
+                                        val inputEmail = binding.etEmailOtp.text.toString().trim()
+                                        val editor = sharedPref.edit()
+                                        editor.putString("emailPetani", inputEmail)
+                                        editor.apply()
+
+                                        val intent = Intent(this@DaftarActivity, OtpActivity::class.java)
+                                        intent.putExtra("EMAIL_USER", emailUser)
+                                        startActivity(intent)
+
+                                    } catch (e: Exception) {
+                                        Toast.makeText(this@DaftarActivity, "Gagal kirim OTP: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
             } else {
-                // 3. TAMBAHAN: Beri tahu user kalau emailnya kosong
                 Toast.makeText(this@DaftarActivity, "Email tidak boleh kosong!", Toast.LENGTH_SHORT).show()
             }
         }

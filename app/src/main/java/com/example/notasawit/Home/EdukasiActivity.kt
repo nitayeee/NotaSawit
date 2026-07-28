@@ -61,9 +61,13 @@ class EdukasiActivity : AppCompatActivity() {
     }
 
     private fun updateProgressData() {
+        val userPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+        val petaniId = userPref.getInt("petani_id", -1)
+        
         val sharedPref = getSharedPreferences("EDUKASI_PROGRESS", Context.MODE_PRIVATE)
         for (i in modulList.indices) {
-            val progress = sharedPref.getInt("progress_modul_${modulList[i].id}", 0)
+            val prefKey = "progress_modul_${modulList[i].id}_user_$petaniId"
+            val progress = sharedPref.getInt(prefKey, 0)
             modulList[i].progress = progress
         }
         if (::adapter.isInitialized) {

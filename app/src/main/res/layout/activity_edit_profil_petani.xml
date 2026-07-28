@@ -289,7 +289,7 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_audit" 
+                                android:src="@drawable/ic_audit"
                                 app:tint="#8C93A4"/>
                         </androidx.cardview.widget.CardView>
 

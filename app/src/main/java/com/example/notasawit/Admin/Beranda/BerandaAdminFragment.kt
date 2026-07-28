@@ -50,6 +50,10 @@ class BerandaAdminFragment : Fragment() {
         if (!username.isNullOrEmpty()) {
             binding.tvInitial.text = username.substring(0, 1).uppercase()
         }
+        
+        binding.btnProfileContainer.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.ProfilAdmin.ProfilAdminActivity::class.java))
+        }
 
         fetchDashboardData()
     }

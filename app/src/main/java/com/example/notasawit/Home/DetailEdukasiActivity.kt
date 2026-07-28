@@ -38,8 +38,12 @@ class DetailEdukasiActivity : AppCompatActivity() {
         }
 
         // Load saved progress
+        val userPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+        val petaniId = userPref.getInt("petani_id", -1)
+        val prefKey = "progress_modul_${modulId}_user_$petaniId"
+        
         val sharedPref = getSharedPreferences("EDUKASI_PROGRESS", Context.MODE_PRIVATE)
-        currentProgress = sharedPref.getInt("progress_modul_$modulId", 0)
+        currentProgress = sharedPref.getInt(prefKey, 0)
         binding.pbReadingProgress.progress = currentProgress
         
         if (currentProgress == 100) {
@@ -169,8 +173,12 @@ Total anggota Asosiasi PSKS Pelalawan Siak tahun 2026 yakni:
         currentProgress = percentage
         binding.pbReadingProgress.progress = currentProgress
         
+        val userPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+        val petaniId = userPref.getInt("petani_id", -1)
+        val prefKey = "progress_modul_${modulId}_user_$petaniId"
+        
         val sharedPref = getSharedPreferences("EDUKASI_PROGRESS", Context.MODE_PRIVATE)
-        sharedPref.edit().putInt("progress_modul_$modulId", percentage).apply()
+        sharedPref.edit().putInt(prefKey, percentage).apply()
 
         if (percentage == 100) {
             binding.layoutSelesai.visibility = View.VISIBLE

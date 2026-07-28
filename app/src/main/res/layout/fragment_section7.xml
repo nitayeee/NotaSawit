@@ -217,7 +217,7 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:text="LANJUT KE SECTION 3"
-            android:backgroundTint="#4CAF50"
+            app:backgroundTint="@color/agri_green_dark"
             android:textColor="#FFFFFF"
             android:textStyle="bold"/>
     </LinearLayout>

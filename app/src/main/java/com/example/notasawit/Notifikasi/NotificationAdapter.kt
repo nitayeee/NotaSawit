@@ -18,8 +18,11 @@ class NotificationAdapter(
     var isSelectionMode = false
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val container: LinearLayout = view.findViewById(R.id.containerNotification)
+        val rootCard: androidx.cardview.widget.CardView = view as androidx.cardview.widget.CardView
+        val container: View = view.findViewById(R.id.containerNotification)
         val indicatorUnread: View = view.findViewById(R.id.indicatorUnread)
+        val cvIconBackground: androidx.cardview.widget.CardView = view.findViewById(R.id.cvIconBackground)
+        val ivIcon: android.widget.ImageView = view.findViewById(R.id.ivIcon)
         val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         val tvAuditor: TextView = view.findViewById(R.id.tvAuditor)
         val tvTanggal: TextView = view.findViewById(R.id.tvTanggal)
@@ -39,12 +42,35 @@ class NotificationAdapter(
         holder.tvAuditor.text = item.message
         holder.tvTanggal.text = "Tanggal: ${item.tanggal}"
 
+        when (item.type) {
+            "produksi" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_income)
+                holder.ivIcon.setColorFilter(Color.parseColor("#4CAF50"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#E8F5E9"))
+            }
+            "pengeluaran" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_outcome)
+                holder.ivIcon.setColorFilter(Color.parseColor("#F44336"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#FFEBEE"))
+            }
+            "audit" -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_audit)
+                holder.ivIcon.setColorFilter(Color.parseColor("#FF9800"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#FFF3E0"))
+            }
+            else -> {
+                holder.ivIcon.setImageResource(R.drawable.ic_notification)
+                holder.ivIcon.setColorFilter(Color.parseColor("#9E9E9E"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F5F5F5"))
+            }
+        }
+
         if (item.is_read == 0) {
-            holder.container.setBackgroundColor(Color.parseColor("#E8EEE8")) 
             holder.indicatorUnread.visibility = View.VISIBLE
+            holder.rootCard.setCardBackgroundColor(Color.parseColor("#E8F5E9"))
         } else {
-            holder.container.setBackgroundColor(Color.parseColor("#FFFFFF")) 
             holder.indicatorUnread.visibility = View.INVISIBLE
+            holder.rootCard.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
         }
 
         if (isSelectionMode) {

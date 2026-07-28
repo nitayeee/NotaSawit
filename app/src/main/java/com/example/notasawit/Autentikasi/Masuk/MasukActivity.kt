@@ -336,27 +336,68 @@ getJenisKegiatan()
         nama: String,
         email: String
     ) {
+        PetaniApi.getAllPetani(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@MasukActivity, "Gagal mengecek email: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-        sharedPref.edit()
-            .putBoolean("is_login", true)
-            .putBoolean("sudah_pernah_login", true)
-            .putString("namaPetani", nama)
-            .putString("emailPetani", email)
-            .apply()
+            override fun onResponse(call: Call, response: Response) {
+                var emailExists = false
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                if (item.has("petani_email") && item.getString("petani_email") == email) {
+                                    emailExists = true
+                                    break
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
 
-        Toast.makeText(
-            this,
-            "Login Google Berhasil",
-            Toast.LENGTH_SHORT
-        ).show()
+                runOnUiThread {
+                    if (emailExists) {
+                        // Jika sudah terdaftar, muncul alert
+                        android.app.AlertDialog.Builder(this@MasukActivity)
+                            .setTitle("Akun Sudah Terdaftar")
+                            .setMessage("Email dari akun Google ini sudah terdaftar. Silakan login menggunakan Username dan PIN Anda.")
+                            .setPositiveButton("OK", null)
+                            .show()
+                    } else {
+                        // Jika belum terdaftar, lanjut ke DataDiriActivity
+                        sharedPref.edit()
+                            .putBoolean("is_login", true)
+                            .putBoolean("sudah_pernah_login", true)
+                            .putString("namaPetani", nama)
+                            .putString("emailPetani", email)
+                            .apply()
 
-        startActivity(
-            Intent(
-                this,
-                DataDiriActivity::class.java
-            )
-        )
-        finish()
+                        Toast.makeText(
+                            this@MasukActivity,
+                            "Melanjutkan pendaftaran...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        startActivity(
+                            Intent(
+                                this@MasukActivity,
+                                DataDiriActivity::class.java
+                            )
+                        )
+                        finish()
+                    }
+                }
+            }
+        })
     }
     private fun getDesa(){
         PetaniApi.getDesa(object : Callback {

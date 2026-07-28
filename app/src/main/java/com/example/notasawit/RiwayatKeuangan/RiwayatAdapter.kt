@@ -62,7 +62,7 @@ class RiwayatAdapter(
                 )
 
                 holder.binding.ivIcon.setImageResource(
-                    R.drawable.ic_profile
+                    R.drawable.ic_income
                 )
             }
 
@@ -76,7 +76,7 @@ class RiwayatAdapter(
                 )
 
                 holder.binding.ivIcon.setImageResource(
-                    R.drawable.ic_riwayat
+                    R.drawable.ic_outcome
                 )
             }
         }

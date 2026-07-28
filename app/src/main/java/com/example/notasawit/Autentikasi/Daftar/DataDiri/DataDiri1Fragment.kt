@@ -59,6 +59,13 @@ class DataDiri1Fragment : Fragment() {
         binding.etUsia.isEnabled = false
         binding.etUsia.setTextColor(resources.getColor(android.R.color.black, null))
 
+        val jenisKelaminAdapter = android.widget.ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            arrayOf("Laki-laki", "Perempuan")
+        )
+        binding.etJenisKelamin.setAdapter(jenisKelaminAdapter)
+
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -130,7 +137,7 @@ class DataDiri1Fragment : Fragment() {
 
         picker.addOnPositiveButtonClickListener { selection ->
             // 2. Format tanggal untuk ditampilkan di EditText
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val tanggalTerpilih = sdf.format(Date(selection))
             binding.etTanggalLahir.setText(tanggalTerpilih)
 
@@ -152,4 +159,5 @@ class DataDiri1Fragment : Fragment() {
 
         picker.show(parentFragmentManager, "DATE_PICKER_TAG")
     }
+
 }

@@ -252,14 +252,16 @@ class InputPemasukanActivity : AppCompatActivity() {
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(year, month, dayOfMonth)
 
-                // 1. Format untuk Server (yyyy-MM-dd) disimpan di TAG
-                val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val tanggalStandard = formatterServer.format(selectedDate.time)
-                binding.etTanggal.tag = tanggalStandard // <-- PASTIKAN BARIS INI ADA!
-
-                // 2. Format untuk Tampilan User di EditText
+                // 1. Tampilan untuk USER di aplikasi (Tetap Bahasa Indonesia agar mudah dibaca)
                 val formatterUser = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
                 binding.etTanggal.setText(formatterUser.format(selectedDate.time))
+
+                // 2. Simpan format standar SERVER (yyyy-MM-dd) di tag/variabel tersembunyi
+                val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val tanggalStandard = formatterServer.format(selectedDate.time)
+
+                // Simpan tanggal standard ke dalam tag EditText agar bisa diambil nanti
+                binding.etTanggal.tag = tanggalStandard
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),

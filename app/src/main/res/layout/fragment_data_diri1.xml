@@ -52,6 +52,7 @@
             android:layout_marginTop="20dp"
             android:hint="Nama Depan"
             android:textColorHint="#555555"
+            app:hintTextColor="@color/agri_green_dark"
             app:boxStrokeColor="@color/agri_green_dark"
             app:boxStrokeWidth="1.5dp"
             app:boxStrokeWidthFocused="2.5dp"
@@ -77,6 +78,7 @@
             android:layout_marginTop="20dp"
             android:hint="Username"
             android:textColorHint="#555555"
+            app:hintTextColor="@color/agri_green_dark"
             app:boxStrokeColor="@color/agri_green_dark"
             app:boxStrokeWidth="1.5dp"
             app:boxStrokeWidthFocused="2.5dp"
@@ -104,6 +106,7 @@
             android:layout_marginTop="20dp"
             android:hint="Tanggal Lahir"
             android:textColorHint="#555555"
+            app:hintTextColor="@color/agri_green_dark"
             app:boxStrokeColor="@color/agri_green_dark"
             app:boxStrokeWidth="1.5dp"
             app:boxStrokeWidthFocused="2.5dp"
@@ -136,24 +139,25 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/JenisKelaminLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:hint="Jenis Kelamin"
                 android:textColorHint="#555555"
+                app:hintTextColor="@color/agri_green_dark"
                 app:boxStrokeColor="@color/agri_green_dark"
                 app:boxStrokeWidth="1.5dp"
                 app:boxStrokeWidthFocused="2.5dp"
                 app:startIconDrawable="@drawable/ic_man"
                 app:startIconTint="#444444">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/etJenisKelamin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="none"
                     android:textColor="#222222" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,6 +170,7 @@
                 android:layout_marginStart="8dp"
                 android:hint="Usia"
                 android:textColorHint="#555555"
+                app:hintTextColor="@color/agri_green_dark"
                 app:boxStrokeColor="@color/agri_green_dark"
                 app:boxStrokeWidth="1.5dp"
                 app:boxStrokeWidthFocused="2.5dp"

@@ -45,6 +45,12 @@
             android:name=".ProfilPetani.EditProfilPetaniActivity"
             android:exported="false" />
         <activity
+            android:name=".Admin.ProfilAdmin.ProfilAdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Admin.ProfilAdmin.EditProfilAdminActivity"
+            android:exported="false" />
+        <activity
             android:name=".Home.EdukasiActivity"
             android:exported="false" />
         <activity

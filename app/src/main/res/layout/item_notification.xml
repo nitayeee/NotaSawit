@@ -9,17 +9,33 @@
     app:cardElevation="0dp"
     app:cardBackgroundColor="@android:color/white">
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/containerNotification"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/indicatorUnread"
-            android:layout_width="4dp"
-            android:layout_height="match_parent"
-            android:background="#2B462C" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvIconBackground"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#F5F5F5">
+
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notification" />
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -68,5 +84,18 @@
             android:focusable="false"
             android:buttonTint="#2B462C" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/indicatorUnread"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardBackgroundColor="#F44336"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="0dp" />
+
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

@@ -641,4 +641,43 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun getDetailAdmin(id: Int, callback: Callback) {
+        val request = Request.Builder()
+            .url("$BASE_URL/users/$id")
+            .get()
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun updateProfilAdmin(
+        adminId: Int,
+        nama: String,
+        username: String,
+        email: String,
+        noHp: String,
+        jk: String,
+        imageFile: File?,
+        callback: Callback
+    ) {
+        val multipartBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("user_nama", nama)
+            .addFormDataPart("user_username", username)
+            .addFormDataPart("user_email", email)
+            .addFormDataPart("user_no_hp", noHp)
+            .addFormDataPart("user_jenis_kelamin", jk)
+
+        if (imageFile != null) {
+            val requestBody = imageFile.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
+            multipartBuilder.addFormDataPart("user_profil", imageFile.name, requestBody)
+        }
+
+        val request = Request.Builder()
+            .url("$BASE_URL/users/update/$adminId")
+            .post(multipartBuilder.build())
+            .header("Accept", "application/json")
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
 }

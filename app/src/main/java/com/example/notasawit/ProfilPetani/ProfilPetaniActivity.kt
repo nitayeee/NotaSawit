@@ -15,7 +15,9 @@ import com.example.notasawit.databinding.ActivityProfilPetaniBinding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
+import android.webkit.WebSettings
 import java.io.IOException
 
 class ProfilPetaniActivity : AppCompatActivity() {
@@ -25,6 +27,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         enableEdgeToEdge()
         binding = ActivityProfilPetaniBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -51,6 +54,19 @@ class ProfilPetaniActivity : AppCompatActivity() {
         if (petaniId == 0) {
             com.example.notasawit.utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
         }
+
+        // Konfigurasi WebView untuk Leaflet Map
+        binding.mapViewLahan.settings.javaScriptEnabled = true
+        binding.mapViewLahan.settings.domStorageEnabled = true
+        binding.mapViewLahan.settings.cacheMode = WebSettings.LOAD_DEFAULT
+        
+        // Memastikan peta bisa digeser tanpa menggeser ScrollView utama
+        binding.mapViewLahan.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
+        }
+        
+        binding.mapViewLahan.loadUrl("file:///android_asset/leaflet_map.html")
     }
 
     override fun onResume() {
@@ -154,12 +170,24 @@ class ProfilPetaniActivity : AppCompatActivity() {
                             val dataArray = jsonObject.optJSONArray("data")
                             val jumlahLahan = dataArray?.length() ?: 0
                             var totalLuas = 0.0
+                            val geoJsonList = JSONArray()
 
                             if (dataArray != null) {
                                 for (i in 0 until dataArray.length()) {
                                     val lahanObj = dataArray.optJSONObject(i)
                                     val luas = lahanObj?.optDouble("lahan_luas", 0.0) ?: 0.0
                                     totalLuas += luas
+
+                                    val areaLahan = lahanObj?.opt("area_lahan")
+                                    if (areaLahan is JSONObject) {
+                                        geoJsonList.put(areaLahan)
+                                    } else if (areaLahan is String && areaLahan.isNotEmpty() && areaLahan != "null") {
+                                        try {
+                                            geoJsonList.put(JSONObject(areaLahan))
+                                        } catch (e: Exception) {
+                                            Log.e("ProfilPetani", "Gagal parse string area_lahan ke JSON: ${e.message}")
+                                        }
+                                    }
                                 }
                             }
 
@@ -168,6 +196,14 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                 binding.tvTotalLuas.text = if (totalLuas > 0) String.format("%.2f", totalLuas) else "-"
                                 binding.tvInfoJumlahLahan.text = "$jumlahLahan Lahan"
                                 binding.tvInfoTotalLuas.text = if (totalLuas > 0) String.format("%.2f Hektar", totalLuas) else "- Hektar"
+
+                                if (geoJsonList.length() > 0) {
+                                    val jsCommand = "renderPolygons(${geoJsonList.toString()});"
+                                    // Panggil JS dengan sedikit delay agar memastikan webview dan leaflet sudah dimuat sepenuhnya
+                                    binding.mapViewLahan.postDelayed({
+                                        binding.mapViewLahan.evaluateJavascript(jsCommand, null)
+                                    }, 1000)
+                                }
                             }
                         } catch (e: Exception) {
                             Log.e("ProfilPetani", "Error parsing Lahan: ${e.message}")
