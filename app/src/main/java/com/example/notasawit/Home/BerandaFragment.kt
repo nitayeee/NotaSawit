@@ -333,12 +333,30 @@ class BerandaFragment : Fragment() {
                         if (jsonObject.optBoolean("success", false)) {
                             val dataArray = jsonObject.optJSONArray("data")
                             if (dataArray != null && dataArray.length() > 0) {
+                                val lahanList = mutableListOf<com.example.notasawit.Room.Lahan.LahanEntity>()
                                 for (i in 0 until dataArray.length()) {
                                     val lahanObj = dataArray.getJSONObject(i)
+                                    
+                                    val lahanId = lahanObj.optInt("lahan_id", 0)
+                                    val lahanNama = lahanObj.optString("lahan_nama", "")
+                                    lahanList.add(
+                                        com.example.notasawit.Room.Lahan.LahanEntity(
+                                            lahan_id = lahanId,
+                                            petani_id = petaniId,
+                                            lahan_nama = lahanNama
+                                        )
+                                    )
+                                    
                                     val tahunTanam = lahanObj.optString("tahun_tanam", "")
                                     if (tahunTanam.isNullOrEmpty() || tahunTanam == "null" || tahunTanam == "0") {
                                         hasEmptyTahunTanam = true
-                                        break
+                                        // Jangan break agar semua lahan tersimpan di lokal database
+                                    }
+                                }
+                                
+                                if (lahanList.isNotEmpty()) {
+                                    lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                        database.LahanDao().insertLahan(lahanList)
                                     }
                                 }
                             }

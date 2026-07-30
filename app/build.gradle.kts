@@ -116,6 +116,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
     implementation("androidx.activity:activity-compose:1.8.2")
 
+    // Location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
     // Chart Library
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

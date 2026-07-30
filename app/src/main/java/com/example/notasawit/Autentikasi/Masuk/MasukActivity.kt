@@ -143,7 +143,7 @@ getJenisKegiatan()
                                         putString("username", data?.petani_username ?: "")
                                         putString("profilPetani", data?.petani_profil ?: "")
                                         putInt("desaPetani", data?.desa_id ?: 0)
-                                        getLahan()
+                                        getLahan(data?.petani_id ?: 0)
                                         apply()
                                     }
                                 }else {
@@ -477,8 +477,8 @@ getJenisKegiatan()
 
         })
     }
-    private fun getLahan(){
-        PetaniApi.getLahanByPetani(sp_petaniId, object : Callback {
+    private fun getLahan(petaniId: Int){
+        PetaniApi.getLahanByPetani(petaniId, object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
             }
@@ -498,7 +498,7 @@ getJenisKegiatan()
 
                         LahanEntity(
                             lahan_id = it.lahan_id,
-                            petani_id = sp_petaniId,
+                            petani_id = petaniId,
                             lahan_nama = it.lahan_nama
                         )
 
