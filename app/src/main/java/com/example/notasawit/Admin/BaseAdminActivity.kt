@@ -56,6 +56,12 @@ class BaseAdminActivity : AppCompatActivity() {
                     true
                 }
 
+                R.id.petaLahan -> {
+                    val intent = Intent(this@BaseAdminActivity, com.example.notasawit.Admin.PetaLahan.PetaLahanActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
                 R.id.lainnya -> {
                     replaceFragment(SetelanFragment())
                     true

@@ -26,6 +26,9 @@
             android:name=".RiwayatKegiatan.RiwayatKegiatanActivity"
             android:exported="false" />
         <activity
+            android:name=".Admin.PetaLahan.PetaLahanActivity"
+            android:exported="false" />
+        <activity
             android:name=".Admin.AuditLahan.CobaActivity"
             android:exported="false" />
         <activity

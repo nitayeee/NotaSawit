@@ -18,6 +18,7 @@ import android.app.DatePickerDialog
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import com.example.notasawit.Room.Petani.PetaniEntity
 
 class KLSection1Fragment : Fragment() {
 
@@ -25,6 +26,7 @@ class KLSection1Fragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var database: AppDatabase
     private val viewModel: KunjunganLahanViewModel by activityViewModels()
+    private var listPetaniEntity: List<PetaniEntity> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,10 +63,18 @@ class KLSection1Fragment : Fragment() {
             }, year, month, day)
             dpd.show()
         }
-        binding.etDesaKebun.setText(viewModel.kunjunganLahanForm.desaKebun)
-        binding.etDesaKepengurusan.setText(viewModel.kunjunganLahanForm.desaKepengurusan)
+        binding.etDesaKebun.setText(viewModel.kunjunganLahanForm.desaKebun, false)
+        binding.etDesaKepengurusan.setText(viewModel.kunjunganLahanForm.desaKepengurusan, false)
         binding.acAuditor.setText(viewModel.kunjunganLahanForm.namaAuditor, false)
         binding.acPetani.setText(viewModel.kunjunganLahanForm.namaPetani, false)
+
+        binding.acPetani.setOnItemClickListener { _, _, position, _ ->
+            val selectedPetaniName = binding.acPetani.adapter.getItem(position) as String
+            val selectedPetani = listPetaniEntity.find { it.namaPetani == selectedPetaniName }
+            if (selectedPetani != null) {
+                updateLahanDropdown(selectedPetani.idPetani)
+            }
+        }
 
         binding.btnLanjut.setOnClickListener {
             val tanggal = binding.etTanggal.text.toString()
@@ -92,7 +102,9 @@ class KLSection1Fragment : Fragment() {
     private fun siapkanDanTampilkanDataMaster() {
         lifecycleScope.launch(Dispatchers.IO) {
             val listAuditor = database.masterDao().getAllAuditor().map { it.namaAuditor }
-            val listPetani = database.masterDao().getAllPetani().map { it.namaPetani }
+            listPetaniEntity = database.masterDao().getAllPetani()
+            val listPetaniNames = listPetaniEntity.map { it.namaPetani }
+            val listDesaNames = database.masterDao().getAllDesa().map { it.namaDesa }
 
             withContext(Dispatchers.Main) {
                 binding.acAuditor.setAdapter(
@@ -107,9 +119,87 @@ class KLSection1Fragment : Fragment() {
                     ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_dropdown_item_1line,
-                        listPetani
+                        listPetaniNames
                     )
                 )
+
+                binding.etDesaKepengurusan.setAdapter(
+                    ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        listDesaNames
+                    )
+                )
+
+                // Jika sudah ada petani yang dipilih sebelumnya, load lahan-lahannya
+                val savedPetaniName = viewModel.kunjunganLahanForm.namaPetani
+                if (savedPetaniName.isNotEmpty()) {
+                    val selectedPetani = listPetaniEntity.find { it.namaPetani == savedPetaniName }
+                    if (selectedPetani != null) {
+                        updateLahanDropdown(selectedPetani.idPetani, clearText = false)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateLahanDropdown(petaniId: Int, clearText: Boolean = true) {
+        com.example.notasawit.Network.PetaniApi.getLahanByPetani(petaniId, object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                loadLahanDariRoom(petaniId, clearText)
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (response.isSuccessful) {
+                    val json = response.body?.string()
+                    if (json != null) {
+                        try {
+                            val lahanResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.Model.LahanResponse::class.java)
+                            val lahanEntity = lahanResponse.data.map {
+                                com.example.notasawit.Room.Lahan.LahanEntity(
+                                    lahan_id = it.lahan_id,
+                                    petani_id = petaniId,
+                                    lahan_nama = it.lahan_nama
+                                )
+                            }
+                            
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                database.LahanDao().insertLahan(lahanEntity)
+                                loadLahanDariRoom(petaniId, clearText)
+                            }
+                        } catch (e: Exception) {
+                            loadLahanDariRoom(petaniId, clearText)
+                        }
+                    } else {
+                        loadLahanDariRoom(petaniId, clearText)
+                    }
+                } else {
+                    loadLahanDariRoom(petaniId, clearText)
+                }
+            }
+        })
+    }
+
+    private fun loadLahanDariRoom(petaniId: Int, clearText: Boolean) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val lahanList = database.LahanDao().getAllLahan().filter { it.petani_id == petaniId }
+            val lahanNames = lahanList.map { it.lahan_nama }
+
+            withContext(Dispatchers.Main) {
+                if (lahanNames.isEmpty()) {
+                    Toast.makeText(requireContext(), "Tidak ada lahan untuk petani ini", Toast.LENGTH_SHORT).show()
+                }
+
+                binding.etDesaKebun.setAdapter(
+                    ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        lahanNames
+                    )
+                )
+                if (clearText) {
+                    binding.etDesaKebun.setText("", false)
+                }
             }
         }
     }

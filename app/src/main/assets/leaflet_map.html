@@ -48,12 +48,27 @@
                             };
                         }
                     });
+
+                    // Tambahkan event click untuk membuka Maps
+                    polygon.on('click', function(e) {
+                        var bounds = e.sourceTarget.getBounds();
+                        var center = bounds.getCenter();
+                        var lahanNama = "Lahan";
+                        if (geoJsonObj.properties && geoJsonObj.properties.lahan_nama) {
+                            lahanNama = geoJsonObj.properties.lahan_nama;
+                        }
+                        
+                        // Panggil interface Android
+                        if (typeof Android !== "undefined") {
+                            Android.openGoogleMaps(center.lat, center.lng, lahanNama);
+                        }
+                    });
                     
                     featureGroup.addLayer(polygon);
                 });
                 
                 if (featureGroup.getLayers().length > 0) {
-                    // Zoom fokus ke lahan pertama saja (indeks 0)
+                    // Zoom fokus ke salah satu lahan saja (indeks 0)
                     var firstLand = featureGroup.getLayers()[0];
                     map.fitBounds(firstLand.getBounds(), {padding: [30, 30], maxZoom: 17});
                 }

@@ -31,6 +31,12 @@ data class KunjunganLahanForm(
     val q14_racunKontak: Boolean? = null,
     val q15_hamaPenyakit: Boolean? = null,
 
+    // === SECTION 3: BUKTI KUNJUNGAN ===
+    val fotoBuktiPath: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val waktuBukti: String? = null,
+
     val isSynced: Boolean = false,
     val pdfPath: String = ""
 )

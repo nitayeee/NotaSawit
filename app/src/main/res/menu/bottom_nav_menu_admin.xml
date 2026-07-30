@@ -13,6 +13,10 @@
         android:icon="@drawable/ic_audit2"
         android:title="Audit Lahan" />
     <item
+        android:id="@+id/petaLahan"
+        android:icon="@drawable/ic_map"
+        android:title="Peta Lahan" />
+    <item
         android:id="@+id/lainnya"
         android:icon="@drawable/ic_more"
         android:title="Setelan" />

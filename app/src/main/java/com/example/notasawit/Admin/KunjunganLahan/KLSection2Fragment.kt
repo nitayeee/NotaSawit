@@ -57,7 +57,7 @@ class KLSection2Fragment : Fragment() {
         binding.rvQuestion.layoutManager = LinearLayoutManager(requireContext())
         binding.rvQuestion.adapter = adapter
 
-        // SIMPAN
+        // SELANJUTNYA
         binding.btnSimpan.setOnClickListener {
             if (!adapter.isAllAnswered()) {
                 Toast.makeText(requireContext(), "Semua pertanyaan wajib dijawab!", Toast.LENGTH_SHORT).show()
@@ -68,27 +68,8 @@ class KLSection2Fragment : Fragment() {
             viewModel.section2Answers = adapter.getItems().toMutableList()
             simpanSection2()
 
-            // Simpan ke database Room
-            lifecycleScope.launch(Dispatchers.IO) {
-                // Generate PDF
-                val generatedPdfPath = PdfGeneratorKunjungan.generatePdf(requireContext(), viewModel.kunjunganLahanForm)
-                if (generatedPdfPath != null) {
-                    viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(pdfPath = generatedPdfPath)
-                }
-
-                database.KunjunganLahanDao().insertKunjunganLahan(viewModel.kunjunganLahanForm)
-                withContext(Dispatchers.Main) {
-                    triggerDataSync()
-                    com.example.notasawit.utils.CustomAlert.showSuccess(
-                        requireActivity(),
-                        "Berhasil",
-                        "Data & PDF disimpan & siap disinkron!"
-                    )
-                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                        requireActivity().finish() // Tutup activity setelah berhasil simpan
-                    }, 1500)
-                }
-            }
+            // Navigasi ke Section 3
+            (requireActivity() as KunjunganLahanActivity).navigateTo(KLSection3Fragment(), 3)
         }
 
         // BACK
