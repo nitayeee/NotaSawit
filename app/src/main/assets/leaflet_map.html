@@ -19,14 +19,29 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
     <script>
-        // Inisialisasi peta
-        var map = L.map('map').setView([0.5, 101.5], 13);
-        
-        // Menggunakan OpenStreetMap standar karena di browser ini tidak akan diblokir
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap'
-        }).addTo(map);
+        });
+
+        var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri'
+        });
+
+        // Inisialisasi peta dengan layer OSM sebagai default
+        var map = L.map('map', {
+            center: [0.5, 101.5],
+            zoom: 13,
+            layers: [osm]
+        });
+
+        // Tambahkan kontrol layer di pojok kanan atas
+        var baseMaps = {
+            "OSM Standar": osm,
+            "Satelit": satellite
+        };
+        L.control.layers(baseMaps).addTo(map);
 
         var featureGroup = new L.FeatureGroup();
         map.addLayer(featureGroup);
@@ -68,9 +83,9 @@
                 });
                 
                 if (featureGroup.getLayers().length > 0) {
-                    // Zoom fokus ke salah satu lahan saja (indeks 0)
-                    var firstLand = featureGroup.getLayers()[0];
-                    map.fitBounds(firstLand.getBounds(), {padding: [30, 30], maxZoom: 17});
+                    // Zoom fokus ke semua lahan yang ditampilkan
+                    var bounds = featureGroup.getBounds();
+                    map.fitBounds(bounds, {padding: [30, 30], maxZoom: 17});
                 }
             } catch (e) {
                 console.error("Error parsing GeoJSON: ", e);

@@ -10,10 +10,17 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Network.PetaniApi
+import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.databinding.ActivityPetaLahanBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -24,6 +31,8 @@ import java.io.IOException
 class PetaLahanActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPetaLahanBinding
+    private val allPolygonsList = mutableListOf<JSONObject>()
+    private val petaniList = mutableListOf<String>()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,69 +79,111 @@ class PetaLahanActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
-                runOnUiThread {
-                    binding.progressBar.visibility = View.GONE
-                    if (response.isSuccessful && body != null) {
-                        try {
-                            val jsonObject = JSONObject(body)
-                            val dataArray = jsonObject.getJSONArray("data")
-                            val geoJsonArray = JSONArray()
+                
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val petaniListFromRoom = AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getAllPetani()
+                    val petaniMap = petaniListFromRoom.associate { it.idPetani to it.namaPetani }
 
-                            if (dataArray.length() > 0) {
-                                Log.d("PETA", "Contoh data JSON item pertama: " + dataArray.getJSONObject(0).toString())
-                            }
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.GONE
+                        if (response.isSuccessful && body != null) {
+                            try {
+                                val jsonObject = JSONObject(body)
+                                val dataArray = jsonObject.getJSONArray("data")
+                                val uniquePetani = mutableSetOf<String>()
 
-                            for (i in 0 until dataArray.length()) {
-                                val item = dataArray.getJSONObject(i)
+                                allPolygonsList.clear()
+                                petaniList.clear()
+                                petaniList.add("Semua Petani")
+
+                                if (dataArray.length() > 0) {
+                                    Log.d("PETA", "Contoh data JSON item pertama: " + dataArray.getJSONObject(0).toString())
+                                }
+
+                                for (i in 0 until dataArray.length()) {
+                                    val item = dataArray.getJSONObject(i)
+                                    
+                                    var polyStr: String? = null
+                                    if (item.has("polygon") && !item.isNull("polygon")) {
+                                        polyStr = item.getString("polygon")
+                                    } else if (item.has("geo_json") && !item.isNull("geo_json")) {
+                                        polyStr = item.getString("geo_json")
+                                    } else if (item.has("lahan_polygon") && !item.isNull("lahan_polygon")) {
+                                        polyStr = item.getString("lahan_polygon")
+                                    } else if (item.has("koordinat") && !item.isNull("koordinat")) {
+                                        polyStr = item.getString("koordinat")
+                                    } else if (item.has("area_lahan") && !item.isNull("area_lahan")) {
+                                        polyStr = item.getString("area_lahan")
+                                    }
+
+                                    if (polyStr != null) {
+                                        try {
+                                            val polyJson = JSONObject(polyStr)
+                                            val properties = JSONObject()
+                                            properties.put("lahan_nama", item.optString("lahan_nama", "Lahan"))
+                                            
+                                            // Ambil ID petani dan cari di Room
+                                            val petaniId = item.optInt("petani_id", -1)
+                                            val petaniNama = petaniMap[petaniId] ?: "Unknown (ID: $petaniId)"
+                                            properties.put("petani_nama", petaniNama)
+                                            
+                                            polyJson.put("properties", properties)
+                                            allPolygonsList.add(polyJson)
+                                            
+                                            if (!petaniNama.startsWith("Unknown")) {
+                                                uniquePetani.add(petaniNama)
+                                            } else {
+                                                Log.d("PETA", "Petani ID $petaniId tidak ditemukan di Room")
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e("PETA", "Gagal parse polygon string: " + e.message)
+                                        }
+                                    }
+                                }
+
+                                petaniList.addAll(uniquePetani.toList().sorted())
+
+                                // Setup Spinner
+                                val adapter = ArrayAdapter(this@PetaLahanActivity, android.R.layout.simple_spinner_item, petaniList)
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                                binding.spinnerPetani.adapter = adapter
                                 
-                                // Cek berbagai kemungkinan nama field
-                                var polyStr: String? = null
-                                if (item.has("polygon") && !item.isNull("polygon")) {
-                                    polyStr = item.getString("polygon")
-                                } else if (item.has("geo_json") && !item.isNull("geo_json")) {
-                                    polyStr = item.getString("geo_json")
-                                } else if (item.has("lahan_polygon") && !item.isNull("lahan_polygon")) {
-                                    polyStr = item.getString("lahan_polygon")
-                                } else if (item.has("koordinat") && !item.isNull("koordinat")) {
-                                    polyStr = item.getString("koordinat")
+                                binding.spinnerPetani.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                                        val selectedPetani = petaniList[position]
+                                        filterAndRenderPolygons(selectedPetani)
+                                    }
+                                    override fun onNothingSelected(parent: AdapterView<*>) {}
                                 }
 
-                                if (polyStr != null) {
-                                    try {
-                                        val polyJson = JSONObject(polyStr)
-                                        // Sisipkan properti tambahan agar bisa diklik
-                                        val properties = JSONObject()
-                                        properties.put("lahan_nama", item.optString("lahan_nama", "Lahan"))
-                                        polyJson.put("properties", properties)
-                                        geoJsonArray.put(polyJson)
-                                    } catch (e: Exception) {
-                                        Log.e("PETA", "Gagal parse polygon string: " + e.message)
-                                    }
-                                } else if (item.has("geo_json") && !item.isNull("geo_json")) {
-                                    val polyStr = item.getString("geo_json")
-                                    try {
-                                        val polyJson = JSONObject(polyStr)
-                                        val properties = JSONObject()
-                                        properties.put("lahan_nama", item.optString("lahan_nama", "Lahan"))
-                                        polyJson.put("properties", properties)
-                                        geoJsonArray.put(polyJson)
-                                    } catch (e: Exception) {
-                                        Log.e("PETA", "Gagal parse geo_json string: " + e.message)
-                                    }
-                                }
+                                // Render semua polygon saat pertama kali
+                                filterAndRenderPolygons("Semua Petani")
+
+                            } catch (e: Exception) {
+                                Log.e("PETA", "Error parsing response: " + e.message)
                             }
-
-                            // Kirim GeoJSON ke WebView
-                            val script = "javascript:renderPolygons(${geoJsonArray.toString()})"
-                            binding.webViewPeta.evaluateJavascript(script, null)
-
-                        } catch (e: Exception) {
-                            Log.e("PETA", "Error parsing response: " + e.message)
                         }
                     }
                 }
             }
         })
+    }
+
+    private fun filterAndRenderPolygons(petani: String) {
+        val filteredArray = JSONArray()
+        for (poly in allPolygonsList) {
+            if (petani == "Semua Petani") {
+                filteredArray.put(poly)
+            } else {
+                val props = poly.optJSONObject("properties")
+                val pNama = props?.optString("petani_nama")
+                if (pNama == petani) {
+                    filteredArray.put(poly)
+                }
+            }
+        }
+        val script = "javascript:renderPolygons(${filteredArray.toString()})"
+        binding.webViewPeta.evaluateJavascript(script, null)
     }
 
     // Interface untuk menerima klik dari Javascript

@@ -248,6 +248,10 @@ class RiwayatActivity : AppCompatActivity() {
                 ) {
 
                     runOnUiThread {
+                        binding.rvTransaksi.visibility = View.GONE
+                        binding.layoutEmptyState.visibility = View.VISIBLE
+                        binding.ivEmptyState.setImageResource(R.drawable.ic_warning)
+                        binding.tvEmptyState.text = "Tidak ada koneksi jaringan"
 
                         Toast.makeText(
                             this@RiwayatActivity,
@@ -303,7 +307,15 @@ class RiwayatActivity : AppCompatActivity() {
                     }
 
                     runOnUiThread {
-
+                        if (list.isEmpty()) {
+                            binding.rvTransaksi.visibility = View.GONE
+                            binding.layoutEmptyState.visibility = View.VISIBLE
+                            binding.ivEmptyState.setImageResource(R.drawable.ic_no_data)
+                            binding.tvEmptyState.text = "Tidak ada riwayat"
+                        } else {
+                            binding.rvTransaksi.visibility = View.VISIBLE
+                            binding.layoutEmptyState.visibility = View.GONE
+                        }
                         adapter.updateData(list)
                     }
                 }
