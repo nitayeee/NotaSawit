@@ -54,35 +54,33 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Pilih / Cari Auditor">
+            android:hint="Nama Auditor">
 
-            <AutoCompleteTextView
-                android:id="@+id/acAuditor"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etAuditor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="#333333"
-                android:completionThreshold="1"/>
+                android:enabled="false"
+                android:textColor="#333333"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:hint="Pilih / Cari Petani">
+            android:hint="Nama Petani">
 
-            <AutoCompleteTextView
-                android:id="@+id/acPetani"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPetani"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="#333333"
-                android:completionThreshold="1"/>
+                android:enabled="false"
+                android:textColor="#333333"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

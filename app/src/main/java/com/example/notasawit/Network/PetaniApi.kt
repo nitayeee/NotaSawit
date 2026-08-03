@@ -564,6 +564,10 @@ object PetaniApi {
         desa: String,
         namaAuditor: String,
         namaPetani: String,
+        petaniId: Int?,
+        statusAudit: String,
+        keterangan: String,
+        auditAttempt: Int,
         pdfPath: String
     ): okhttp3.Call {
 
@@ -575,6 +579,13 @@ object PetaniApi {
             .addFormDataPart("desa", desa)
             .addFormDataPart("nama_auditor", namaAuditor)
             .addFormDataPart("nama_petani", namaPetani)
+            .addFormDataPart("status_audit", statusAudit)
+            .addFormDataPart("keterangan", keterangan)
+            .addFormDataPart("audit_attempt", auditAttempt.toString())
+            
+        if (petaniId != null) {
+            builder.addFormDataPart("petani_id", petaniId.toString())
+        }
 
         val file = java.io.File(pdfPath)
         if (file.exists()) {

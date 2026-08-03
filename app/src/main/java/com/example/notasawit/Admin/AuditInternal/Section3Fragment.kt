@@ -38,8 +38,19 @@ class Section3Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val data = if (viewModel.section3Answers.isEmpty()) {
-            Section3QuestionData.getQuestions()
+        val allQuestions = Section3QuestionData.getQuestions()
+
+        val data = if (viewModel.auditHeader.auditAttempt > 1) {
+            // Filter hanya pertanyaan yang dijawab "Tidak Sesuai" (false) pada audit sebelumnya
+            allQuestions.filter { item ->
+                if (item is AuditItem.Question) {
+                    viewModel.auditAnswers[item.key] == false
+                } else {
+                    true // Biarkan header (AuditItem.Header) tetap muncul
+                }
+            }
+        } else if (viewModel.section3Answers.isEmpty()) {
+            allQuestions
         } else {
             viewModel.section3Answers
         }
@@ -88,45 +99,10 @@ class Section3Fragment : Fragment() {
         _binding = null
     }
     private fun simpanSection3() {
-
-        var form = viewModel.auditForm
-
         adapter.getItems()
             .filterIsInstance<AuditItem.Question>()
             .forEach { item ->
-
-                form = when (item.key) {
-
-                    "dokumenQ1" -> form.copy(dokumenQ1 = item.answer)
-                    "dokumenQ2" -> form.copy(dokumenQ2 = item.answer)
-                    "dokumenQ3" -> form.copy(dokumenQ3 = item.answer)
-                    "dokumenQ4" -> form.copy(dokumenQ4 = item.answer)
-                    "dokumenQ5" -> form.copy(dokumenQ5 = item.answer)
-                    "dokumenQ6" -> form.copy(dokumenQ6 = item.answer)
-                    "dokumenQ7" -> form.copy(dokumenQ7 = item.answer)
-                    "dokumenQ8" -> form.copy(dokumenQ8 = item.answer)
-                    "dokumenQ9" -> form.copy(dokumenQ9 = item.answer)
-                    "dokumenQ10" -> form.copy(dokumenQ10 = item.answer)
-                    "dokumenQ11" -> form.copy(dokumenQ11 = item.answer)
-                    "dokumenQ12" -> form.copy(dokumenQ12 = item.answer)
-                    "dokumenQ13" -> form.copy(dokumenQ13 = item.answer)
-
-                    "kebunQ1" -> form.copy(kebunQ1 = item.answer)
-                    "kebunQ2" -> form.copy(kebunQ2 = item.answer)
-                    "kebunQ3" -> form.copy(kebunQ3 = item.answer)
-                    "kebunQ4" -> form.copy(kebunQ4 = item.answer)
-                    "kebunQ5" -> form.copy(kebunQ5 = item.answer)
-                    "kebunQ6" -> form.copy(kebunQ6 = item.answer)
-                    "kebunQ7" -> form.copy(kebunQ7 = item.answer)
-                    "kebunQ8" -> form.copy(kebunQ8 = item.answer)
-                    "kebunQ9" -> form.copy(kebunQ9 = item.answer)
-                    "kebunQ10" -> form.copy(kebunQ10 = item.answer)
-                    "kebunQ11" -> form.copy(kebunQ11 = item.answer)
-
-                    else -> form
-                }
+                viewModel.auditAnswers[item.key] = item.answer
             }
-
-        viewModel.auditForm = form
     }
 }

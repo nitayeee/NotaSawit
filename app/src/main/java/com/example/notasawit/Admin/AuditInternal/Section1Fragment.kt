@@ -30,6 +30,8 @@ class Section1Fragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var database: AppDatabase
     private val viewModel: AuditViewModel by activityViewModels()
+    
+    private var listPetaniEntity: List<PetaniEntity> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +51,7 @@ class Section1Fragment : Fragment() {
         // 2. Isi data dummy ke Room & tampilkan ke Dropdown Pencarian
         siapkanDanTampilkanDataMaster()
         // Tampilkan data yang sudah pernah disimpan
-        binding.etTanggal.setText(viewModel.auditForm.tanggal)
+        binding.etTanggal.setText(viewModel.auditHeader.tanggal)
 
         // Setup DatePicker agar format sesuai dengan yang diharapkan server (yyyy-MM-dd)
         binding.etTanggal.isFocusable = false
@@ -68,56 +70,69 @@ class Section1Fragment : Fragment() {
             }, year, month, day)
             dpd.show()
         }
-        binding.acDesa.setText(viewModel.auditForm.desa, false)
-        binding.acAuditor.setText(viewModel.auditForm.namaAuditor, false)
-        binding.acPetani.setText(viewModel.auditForm.namaPetani, false)
+        binding.acDesa.setText(viewModel.auditHeader.desa, false)
+        binding.etAuditor.setText(viewModel.auditHeader.namaAuditor)
+        binding.etPetani.setText(viewModel.auditHeader.namaPetani)
 
         // 3. Logika tombol Lanjut ke Section 2
         binding.btnLanjut.setOnClickListener {
             val tanggal = binding.etTanggal.text.toString()
             val desa = binding.acDesa.text.toString()
-            val auditor = binding.acAuditor.text.toString()
-            val petani = binding.acPetani.text.toString()
+            val auditor = binding.etAuditor.text.toString()
+            val petani = binding.etPetani.text.toString()
 
             if (tanggal.isEmpty() || desa.isEmpty() || auditor.isEmpty() || petani.isEmpty()) {
-                Toast.makeText(requireContext(), "Semua data wajib diisi/dipilih!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Semua data wajib diisi!", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.auditForm = viewModel.auditForm.copy(
+                lifecycleScope.launch {
+                    
+                    val currentPeriod = viewModel.auditHeader.periode
+                    val lastAudit = database.auditDao().getLastAuditForPetani(petani, currentPeriod)
+                    
+                    var isFollowUp = viewModel.auditHeader.auditAttempt > 1
+                    if (isFollowUp && lastAudit != null) {
+                        val answers = database.auditDao().getAnswersForAudit(lastAudit.idAudit)
+                        
+                        viewModel.auditHeader = viewModel.auditHeader.copy(
+                            parentAuditId = lastAudit.idAudit,
+                            tanggal = tanggal,
+                            desa = desa
+                        )
+                        
+                        // Load all answers to UI/ViewModel, so that true answers are carried over
+                        answers.forEach { ans ->
+                            viewModel.auditAnswers[ans.questionKey] = ans.answer
+                        }
+                    } else {
+                        viewModel.auditHeader = viewModel.auditHeader.copy(
+                            tanggal = tanggal,
+                            desa = desa
+                        )
+                    }
 
-                    tanggal = binding.etTanggal.text.toString(),
-
-                    desa = binding.acDesa.text.toString(),
-
-                    namaAuditor = binding.acAuditor.text.toString(),
-
-                    namaPetani = binding.acPetani.text.toString()
-
-                )
-
-                (requireActivity() as AuditInternalActivity)
-                    .navigateTo(Section2Fragment(),2)
+                    (requireActivity() as AuditInternalActivity)
+                        .navigateTo(Section2Fragment(),25)
+                }
             }
 
         }
+    }
+    
+    private fun getCurrentPeriod(): String {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1 // 1-12
+        val semester = if (month <= 6) "S1" else "S2"
+        return "$year-$semester"
     }
 
     private fun siapkanDanTampilkanDataMaster() {
         lifecycleScope.launch(Dispatchers.IO) {
 
-
-
             // Ambil data dari Room
             val listDesa = database.masterDao()
                 .getAllDesa()
                 .map { it.namaDesa }
-
-            val listAuditor = database.masterDao()
-                .getAllAuditor()
-                .map { it.namaAuditor }
-
-            val listPetani = database.masterDao()
-                .getAllPetani()
-                .map { it.namaPetani }
 
             withContext(Dispatchers.Main) {
 
@@ -126,22 +141,6 @@ class Section1Fragment : Fragment() {
                         requireContext(),
                         android.R.layout.simple_dropdown_item_1line,
                         listDesa
-                    )
-                )
-
-                binding.acAuditor.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listAuditor
-                    )
-                )
-
-                binding.acPetani.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listPetani
                     )
                 )
             }

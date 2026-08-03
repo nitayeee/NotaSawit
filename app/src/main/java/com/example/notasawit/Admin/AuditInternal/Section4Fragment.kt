@@ -46,7 +46,7 @@ class Section4Fragment : Fragment() {
                 outputStream.close()
                 
                 currentPhotoPath = file.absolutePath
-                viewModel.auditForm = viewModel.auditForm.copy(fotoPath = currentPhotoPath ?: "")
+                viewModel.auditHeader = viewModel.auditHeader.copy(fotoPath = currentPhotoPath ?: "")
                 
                 com.bumptech.glide.Glide.with(this)
                     .load(file)
@@ -79,17 +79,17 @@ class Section4Fragment : Fragment() {
 
         setupRadio()
         setupDatePicker()
-        binding.etTemuan.setText(viewModel.auditForm.ringkasanTemuan)
-        binding.etPerbaikan.setText(viewModel.auditForm.rencanaPerbaikan)
-        binding.etTanggalAudit.setText(viewModel.auditForm.rencanaPemeriksaan)
-        if (viewModel.auditForm.ringkasanTemuan.isBlank()) {
+        binding.etTemuan.setText(viewModel.auditHeader.ringkasanTemuan)
+        binding.etPerbaikan.setText(viewModel.auditHeader.rencanaPerbaikan)
+        binding.etTanggalAudit.setText(viewModel.auditHeader.rencanaPemeriksaan)
+        if (viewModel.auditHeader.ringkasanTemuan.isBlank()) {
             binding.rbTidakAdaTemuan.isChecked = true
         } else {
             binding.rbOtherTemuan.isChecked = true
             binding.etTemuan.isEnabled = true
         }
         
-        currentPhotoPath = viewModel.auditForm.fotoPath
+        currentPhotoPath = viewModel.auditHeader.fotoPath
         if (!currentPhotoPath.isNullOrEmpty()) {
             com.bumptech.glide.Glide.with(this)
                 .load(java.io.File(currentPhotoPath!!))
@@ -124,21 +124,36 @@ class Section4Fragment : Fragment() {
                 view.findViewById<android.widget.RadioButton>(selectedPerbaikanId).text.toString()
             }
 
-            viewModel.auditForm =
-                viewModel.auditForm.copy(
+            val hasFalseAnswers = viewModel.auditAnswers.values.any { it == false }
+            val statusAudit = if (hasFalseAnswers) "Perlu Perbaikan" else "Lulus"
+
+            viewModel.auditHeader =
+                viewModel.auditHeader.copy(
                     ringkasanTemuan = temuanValue,
                     rencanaPerbaikan = perbaikanValue,
-                    rencanaPemeriksaan = binding.etTanggalAudit.text.toString()
+                    rencanaPemeriksaan = binding.etTanggalAudit.text.toString(),
+                    statusAudit = statusAudit
                 )
 
             lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
                 // Generate PDF
-                val generatedPdfPath = PdfGenerator.generatePdf(requireContext(), viewModel.auditForm)
+                val generatedPdfPath = PdfGenerator.generatePdf(requireContext(), viewModel.auditHeader, viewModel.auditAnswers)
                 if (generatedPdfPath != null) {
-                    viewModel.auditForm = viewModel.auditForm.copy(pdfPath = generatedPdfPath)
+                    viewModel.auditHeader = viewModel.auditHeader.copy(pdfPath = generatedPdfPath)
                 }
 
-                database.auditDao().insert(viewModel.auditForm)
+                // Simpan Header
+                database.auditDao().insertHeader(viewModel.auditHeader)
+                
+                // Simpan Answers
+                val listAnswers = viewModel.auditAnswers.map { (key, value) ->
+                    com.example.notasawit.Room.AuditEntity.AuditAnswer(
+                        idAudit = viewModel.auditHeader.idAudit,
+                        questionKey = key,
+                        answer = value
+                    )
+                }
+                database.auditDao().insertAnswers(listAnswers)
                 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     triggerDataSync()

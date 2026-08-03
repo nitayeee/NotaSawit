@@ -9,7 +9,7 @@ import android.os.Environment
 import com.example.notasawit.Admin.AuditInternal.data.Section2QuestionData
 import com.example.notasawit.Admin.AuditInternal.data.Section3QuestionData
 import com.example.notasawit.Admin.AuditInternal.model.AuditItem
-import com.example.notasawit.Room.AuditEntity.AuditForm
+import com.example.notasawit.Room.AuditEntity.AuditHeader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -24,7 +24,7 @@ object PdfGenerator {
     private const val MARGIN_BOTTOM = 50f
     private const val MARGIN_LEFT = 50f
 
-    fun generatePdf(context: Context, auditForm: AuditForm): String? {
+    fun generatePdf(context: Context, auditHeader: AuditHeader, auditAnswers: Map<String, Boolean?>): String? {
         val pdfDocument = PdfDocument()
         
         // Define colors
@@ -96,13 +96,13 @@ object PdfGenerator {
         // Section 1: Data Awal
         canvas.drawText("BAGIAN 1: DATA AWAL", MARGIN_LEFT, yPosition, boldPaint)
         yPosition += lineSpacing + 5
-        canvas.drawText("Tanggal Audit: ${auditForm.tanggal}", MARGIN_LEFT + 20, yPosition, textPaint)
+        canvas.drawText("Tanggal Audit: ${auditHeader.tanggal}", MARGIN_LEFT + 20, yPosition, textPaint)
         yPosition += lineSpacing
-        canvas.drawText("Nama Auditor: ${auditForm.namaAuditor}", MARGIN_LEFT + 20, yPosition, textPaint)
+        canvas.drawText("Nama Auditor: ${auditHeader.namaAuditor}", MARGIN_LEFT + 20, yPosition, textPaint)
         yPosition += lineSpacing
-        canvas.drawText("Nama Petani: ${auditForm.namaPetani}", MARGIN_LEFT + 20, yPosition, textPaint)
+        canvas.drawText("Nama Petani: ${auditHeader.namaPetani}", MARGIN_LEFT + 20, yPosition, textPaint)
         yPosition += lineSpacing
-        canvas.drawText("Desa: ${auditForm.desa}", MARGIN_LEFT + 20, yPosition, textPaint)
+        canvas.drawText("Desa: ${auditHeader.desa}", MARGIN_LEFT + 20, yPosition, textPaint)
         yPosition += lineSpacing * 2
         checkNewPage()
 
@@ -117,7 +117,7 @@ object PdfGenerator {
                         checkNewPage()
                     }
                     is AuditItem.Question -> {
-                        val answerStr = getAnswerValue(auditForm, item.key)
+                        val answerStr = getAnswerValue(auditAnswers, item.key)
                         val questionText = "${item.question} Jawaban: $answerStr"
                         drawTextWrapped(questionText, MARGIN_LEFT + 10, textPaint, PAGE_WIDTH - MARGIN_LEFT - 20)
                     }
@@ -153,7 +153,7 @@ object PdfGenerator {
         canvas.drawText("Ringkasan Temuan:", MARGIN_LEFT + 10, yPosition, textPaint)
         yPosition += lineSpacing
         checkNewPage()
-        drawTextWrapped(auditForm.ringkasanTemuan.ifEmpty { "-" }, MARGIN_LEFT + 20, textPaint, PAGE_WIDTH - MARGIN_LEFT - 40)
+        drawTextWrapped(auditHeader.ringkasanTemuan.ifEmpty { "-" }, MARGIN_LEFT + 20, textPaint, PAGE_WIDTH - MARGIN_LEFT - 40)
         
         yPosition += lineSpacing
         checkNewPage()
@@ -161,18 +161,18 @@ object PdfGenerator {
         canvas.drawText("Rencana Perbaikan:", MARGIN_LEFT + 10, yPosition, textPaint)
         yPosition += lineSpacing
         checkNewPage()
-        drawTextWrapped(auditForm.rencanaPerbaikan.ifEmpty { "-" }, MARGIN_LEFT + 20, textPaint, PAGE_WIDTH - MARGIN_LEFT - 40)
+        drawTextWrapped(auditHeader.rencanaPerbaikan.ifEmpty { "-" }, MARGIN_LEFT + 20, textPaint, PAGE_WIDTH - MARGIN_LEFT - 40)
         
         yPosition += lineSpacing
         checkNewPage()
 
-        canvas.drawText("Rencana Pemeriksaan: ${auditForm.rencanaPemeriksaan}", MARGIN_LEFT + 10, yPosition, textPaint)
+        canvas.drawText("Rencana Pemeriksaan: ${auditHeader.rencanaPemeriksaan}", MARGIN_LEFT + 10, yPosition, textPaint)
         yPosition += lineSpacing * 2
         checkNewPage()
         
         // Bukti Pelaksanaan Audit (Image)
-        if (auditForm.fotoPath.isNotEmpty()) {
-            val imgFile = File(auditForm.fotoPath)
+        if (auditHeader.fotoPath.isNotEmpty()) {
+            val imgFile = File(auditHeader.fotoPath)
             if (imgFile.exists()) {
                 canvas.drawText("Bukti Pelaksanaan Audit:", MARGIN_LEFT + 10, yPosition, boldPaint)
                 yPosition += lineSpacing
@@ -215,7 +215,7 @@ object PdfGenerator {
         }
 
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "Audit_${auditForm.namaPetani.replace(" ", "_")}_$timeStamp.pdf"
+        val fileName = "Audit_${auditHeader.namaPetani.replace(" ", "_")}_$timeStamp.pdf"
         val file = File(directory, fileName)
 
         return try {
@@ -229,97 +229,8 @@ object PdfGenerator {
         }
     }
 
-    private fun getAnswerValue(auditForm: AuditForm, key: String): String {
-        val boolVal = when(key) {
-            "asosiasiQ1" -> auditForm.asosiasiQ1
-            "asosiasiQ2" -> auditForm.asosiasiQ2
-            "sopQ1" -> auditForm.sopQ1
-            "sopQ2" -> auditForm.sopQ2
-            "sopQ3" -> auditForm.sopQ3
-            "sopQ4" -> auditForm.sopQ4
-            "sopQ5" -> auditForm.sopQ5
-            "sopQ6" -> auditForm.sopQ6
-            "sopQ7" -> auditForm.sopQ7
-            "sopQ8" -> auditForm.sopQ8
-            "sopQ9" -> auditForm.sopQ9
-            "sopQ10" -> auditForm.sopQ10
-            "sopQ11" -> auditForm.sopQ11
-            "sopQ12" -> auditForm.sopQ12
-            "sopQ13" -> auditForm.sopQ13
-            "sopQ14" -> auditForm.sopQ14
-            "sopQ15" -> auditForm.sopQ15
-            "sopQ16" -> auditForm.sopQ16
-            "sopQ17" -> auditForm.sopQ17
-            "sopQ18" -> auditForm.sopQ18
-            "pelatihanQ1" -> auditForm.pelatihanQ1
-            "pelatihanQ2" -> auditForm.pelatihanQ2
-            "pelatihanQ3" -> auditForm.pelatihanQ3
-            "pelatihanQ4" -> auditForm.pelatihanQ4
-            "pelatihanQ5" -> auditForm.pelatihanQ5
-            "pelatihanQ6" -> auditForm.pelatihanQ6
-            "pelatihanQ7" -> auditForm.pelatihanQ7
-            "pelatihanQ8" -> auditForm.pelatihanQ8
-            "pelatihanQ9" -> auditForm.pelatihanQ9
-            "pelatihanQ10" -> auditForm.pelatihanQ10
-            "pelatihanQ11" -> auditForm.pelatihanQ11
-            "pelatihanQ12" -> auditForm.pelatihanQ12
-            "pelatihanQ13" -> auditForm.pelatihanQ13
-            "pelatihanQ14" -> auditForm.pelatihanQ14
-            "lb3Q1" -> auditForm.lb3Q1
-            "lb3Q2" -> auditForm.lb3Q2
-            "lb3Q3" -> auditForm.lb3Q3
-            "lb3Q4" -> auditForm.lb3Q4
-            "lb3Q5" -> auditForm.lb3Q5
-            "lb3Q6" -> auditForm.lb3Q6
-            "lb3Q7" -> auditForm.lb3Q7
-            "nktQ1" -> auditForm.nktQ1
-            "nktQ2" -> auditForm.nktQ2
-            "nktQ3" -> auditForm.nktQ3
-            "nktQ4" -> auditForm.nktQ4
-            "nktQ5" -> auditForm.nktQ5
-            "nktQ6" -> auditForm.nktQ6
-            "nktQ7" -> auditForm.nktQ7
-            "sosialTenagaKerjaQ1" -> auditForm.sosialTenagaKerjaQ1
-            "sosialTenagaKerjaQ2" -> auditForm.sosialTenagaKerjaQ2
-            "sosialTenagaKerjaQ3" -> auditForm.sosialTenagaKerjaQ3
-            "sosialTenagaKerjaQ4" -> auditForm.sosialTenagaKerjaQ4
-            "sosialTenagaKerjaQ5" -> auditForm.sosialTenagaKerjaQ5
-            "sosialTenagaKerjaQ6" -> auditForm.sosialTenagaKerjaQ6
-            "k3Q1" -> auditForm.k3Q1
-            "k3Q2" -> auditForm.k3Q2
-            "k3Q3" -> auditForm.k3Q3
-            "k3Q4" -> auditForm.k3Q4
-            "k3Q5" -> auditForm.k3Q5
-            "k3Q6" -> auditForm.k3Q6
-            "k3Q7" -> auditForm.k3Q7
-            "k3Q8" -> auditForm.k3Q8
-            "k3Q9" -> auditForm.k3Q9
-            "dokumenQ1" -> auditForm.dokumenQ1
-            "dokumenQ2" -> auditForm.dokumenQ2
-            "dokumenQ3" -> auditForm.dokumenQ3
-            "dokumenQ4" -> auditForm.dokumenQ4
-            "dokumenQ5" -> auditForm.dokumenQ5
-            "dokumenQ6" -> auditForm.dokumenQ6
-            "dokumenQ7" -> auditForm.dokumenQ7
-            "dokumenQ8" -> auditForm.dokumenQ8
-            "dokumenQ9" -> auditForm.dokumenQ9
-            "dokumenQ10" -> auditForm.dokumenQ10
-            "dokumenQ11" -> auditForm.dokumenQ11
-            "dokumenQ12" -> auditForm.dokumenQ12
-            "dokumenQ13" -> auditForm.dokumenQ13
-            "kebunQ1" -> auditForm.kebunQ1
-            "kebunQ2" -> auditForm.kebunQ2
-            "kebunQ3" -> auditForm.kebunQ3
-            "kebunQ4" -> auditForm.kebunQ4
-            "kebunQ5" -> auditForm.kebunQ5
-            "kebunQ6" -> auditForm.kebunQ6
-            "kebunQ7" -> auditForm.kebunQ7
-            "kebunQ8" -> auditForm.kebunQ8
-            "kebunQ9" -> auditForm.kebunQ9
-            "kebunQ10" -> auditForm.kebunQ10
-            "kebunQ11" -> auditForm.kebunQ11
-            else -> null
-        }
+    private fun getAnswerValue(auditAnswers: Map<String, Boolean?>, key: String): String {
+        val boolVal = auditAnswers[key]
         return when (boolVal) {
             true -> "Ya"
             false -> "Tidak"

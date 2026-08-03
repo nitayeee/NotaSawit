@@ -5,7 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.notasawit.Admin.AuditInternal.AuditDao.AuditDao
-import com.example.notasawit.Room.AuditEntity.AuditForm
+import com.example.notasawit.Room.AuditEntity.AuditHeader
+import com.example.notasawit.Room.AuditEntity.AuditAnswer
 import com.example.notasawit.Room.Auditor.AuditorEntity
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanDao
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
@@ -30,7 +31,8 @@ import com.example.notasawit.Room.KunjunganLahanEntity.KunjunganLahanDao
 
 @Database(
     entities = [
-        AuditForm::class,
+        AuditHeader::class,
+        AuditAnswer::class,
         DesaEntity::class,
         AuditorEntity::class,
         PetaniEntity::class,
@@ -44,7 +46,7 @@ import com.example.notasawit.Room.KunjunganLahanEntity.KunjunganLahanDao
         DetailPengeluaranEntity::class,
         KunjunganLahanForm::class
     ],
-    version = 19
+    version = 21
 )
 abstract class AppDatabase : RoomDatabase() {
 

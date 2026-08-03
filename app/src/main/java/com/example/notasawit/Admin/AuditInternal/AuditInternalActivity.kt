@@ -28,10 +28,10 @@ class AuditInternalActivity : AppCompatActivity() {
         // 1. Inisialisasi Room Database
         database = AppDatabase.getDatabase(this)
 
-        // 2. Pasang SectionOneFragment sebagai halaman pertama
+        // 2. Pasang DashboardAuditFragment sebagai halaman pertama
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, Section1Fragment())
+                .replace(R.id.fragmentContainer, DashboardAuditFragment())
                 .commit()
         }
 

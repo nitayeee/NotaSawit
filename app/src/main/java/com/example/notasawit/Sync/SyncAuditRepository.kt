@@ -29,12 +29,16 @@ class SyncAuditRepository(
 
             try {
                 val call = PetaniApi.postAuditInternal(
-                    idAudit = audit.idAudit,
+                    idAudit = audit.idAudit.toString(),
                     userId = userId,
                     tanggal = audit.tanggal,
                     desa = audit.desa,
                     namaAuditor = audit.namaAuditor,
                     namaPetani = audit.namaPetani,
+                    petaniId = audit.idPetani,
+                    statusAudit = audit.statusAudit,
+                    keterangan = audit.ringkasanTemuan,
+                    auditAttempt = audit.auditAttempt,
                     pdfPath = audit.pdfPath
                 )
 
