@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.os.Environment
 import com.example.notasawit.Admin.KunjunganLahan.data.KunjunganQuestionData
@@ -15,123 +16,163 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.max
 
 object PdfGeneratorKunjungan {
 
     private const val PAGE_WIDTH = 595
     private const val PAGE_HEIGHT = 842
+    private const val MARGIN_LEFT = 40f
+    private const val MARGIN_RIGHT = 40f
+    private const val MARGIN_TOP = 50f
     private const val MARGIN_BOTTOM = 50f
-    private const val MARGIN_LEFT = 50f
 
     fun generatePdf(context: Context, form: KunjunganLahanForm): String? {
         val pdfDocument = PdfDocument()
-        
-        // Define colors
-        val primaryColor = Color.parseColor("#2E7D32") // Dark Green
-        val textColor = Color.DKGRAY
-        
+
         val titlePaint = Paint().apply {
             textAlign = Paint.Align.CENTER
-            textSize = 24f
+            textSize = 14f
             isFakeBoldText = true
-            color = Color.WHITE
-        }
-        val headerPaint = Paint().apply {
-            color = primaryColor
-            style = Paint.Style.FILL
+            isUnderlineText = true
+            color = Color.BLACK
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
         val textPaint = Paint().apply {
-            textSize = 12f
-            color = textColor
+            textSize = 10.5f
+            color = Color.BLACK
         }
-        val boldPaint = Paint().apply {
-            textSize = 14f
-            color = primaryColor
+        val boldTextPaint = Paint().apply {
+            textSize = 10.5f
+            color = Color.BLACK
+            isFakeBoldText = true
+        }
+        val answerPaint = Paint().apply {
+            textSize = 11f
+            color = Color.BLACK
             isFakeBoldText = true
         }
         val borderPaint = Paint().apply {
-            color = primaryColor
+            color = Color.BLACK
             style = Paint.Style.STROKE
-            strokeWidth = 2f
+            strokeWidth = 1f
         }
-        val lineSpacing = 22f
+        val lineSpacing = 16f
 
         var pageNumber = 1
         var pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
-        var yPosition = 90f
+        var yPosition = MARGIN_TOP
 
-        fun checkNewPage() {
-            if (yPosition > PAGE_HEIGHT - MARGIN_BOTTOM - 20) {
-                // Draw border for the current page before finishing
-                canvas.drawRect(MARGIN_LEFT - 10, 20f, PAGE_WIDTH - MARGIN_LEFT + 10, PAGE_HEIGHT - 20f, borderPaint)
+        fun checkNewPage(force: Boolean = false, requiredSpace: Float = 0f) {
+            if (force || yPosition + requiredSpace > PAGE_HEIGHT - MARGIN_BOTTOM) {
                 pdfDocument.finishPage(page)
                 pageNumber++
                 pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create()
                 page = pdfDocument.startPage(pageInfo)
                 canvas = page.canvas
-                yPosition = 50f 
+                yPosition = MARGIN_TOP
             }
         }
 
-        fun drawTextWrapped(text: String, x: Float, paint: Paint, maxWidth: Float) {
-            val lines = wrapText(text, paint, maxWidth)
-            for (line in lines) {
-                canvas.drawText(line, x, yPosition, paint)
-                yPosition += lineSpacing
-                checkNewPage()
-            }
-        }
+        // TITLE
+        canvas.drawText("HASIL KUNJUNGAN LAPANGAN", PAGE_WIDTH / 2f, yPosition, titlePaint)
+        yPosition += 40f
 
-        // Draw Top Header Background
-        canvas.drawRect(0f, 0f, PAGE_WIDTH.toFloat(), 80f, headerPaint)
-        // Draw Title
-        canvas.drawText("Laporan Kunjungan Lahan", PAGE_WIDTH / 2f, 50f, titlePaint)
+        // HEADER
+        val labelCol1 = MARGIN_LEFT
+        val colonCol1 = MARGIN_LEFT + 120f
+        val valCol1 = colonCol1 + 10f
+
+        val labelCol2 = PAGE_WIDTH / 2f - 20f
+        val colonCol2 = labelCol2 + 100f
+        val valCol2 = colonCol2 + 10f
+
+        canvas.drawText("Nama", labelCol1, yPosition, textPaint)
+        canvas.drawText(":", colonCol1, yPosition, textPaint)
+        canvas.drawText(form.namaPetani, valCol1, yPosition, textPaint)
+
+        canvas.drawText("Desa Kebun", labelCol2, yPosition, textPaint)
+        canvas.drawText(":", colonCol2, yPosition, textPaint)
+        canvas.drawText(form.desaKebun, valCol2, yPosition, textPaint)
+
+        yPosition += lineSpacing + 5f
+
+        canvas.drawText("Desa Kepengurusan", labelCol1, yPosition, textPaint)
+        canvas.drawText(":", colonCol1, yPosition, textPaint)
+        canvas.drawText(form.desaKepengurusan, valCol1, yPosition, textPaint)
+
+        canvas.drawText("Tanggal Kunjungan", labelCol2, yPosition, textPaint)
+        canvas.drawText(":", colonCol2, yPosition, textPaint)
+        canvas.drawText(form.tanggal, valCol2, yPosition, textPaint)
+
+        yPosition += 30f
+
+        // QUESTIONS
+        val questions = KunjunganQuestionData.getQuestions()
         
-        yPosition = 100f
-
-        // Section 1: Data Awal
-        canvas.drawText("BAGIAN 1: DATA AWAL", MARGIN_LEFT, yPosition, boldPaint)
-        yPosition += lineSpacing + 5
-        canvas.drawText("Tanggal: ${form.tanggal}", MARGIN_LEFT + 20, yPosition, textPaint)
-        yPosition += lineSpacing
-        canvas.drawText("Nama Auditor: ${form.namaAuditor}", MARGIN_LEFT + 20, yPosition, textPaint)
-        yPosition += lineSpacing
-        canvas.drawText("Nama Petani: ${form.namaPetani}", MARGIN_LEFT + 20, yPosition, textPaint)
-        yPosition += lineSpacing
-        canvas.drawText("Desa Kebun: ${form.desaKebun}", MARGIN_LEFT + 20, yPosition, textPaint)
-        yPosition += lineSpacing
-        canvas.drawText("Desa Kepengurusan: ${form.desaKepengurusan}", MARGIN_LEFT + 20, yPosition, textPaint)
-        yPosition += lineSpacing * 2
-        checkNewPage()
-
-        fun drawQuestions(items: List<KunjunganItem>) {
-            for (item in items) {
-                when (item) {
-                    is KunjunganItem.Header -> {
-                        yPosition += lineSpacing // Extra space before header
-                        checkNewPage()
-                        canvas.drawText(item.title, MARGIN_LEFT, yPosition, boldPaint)
-                        yPosition += lineSpacing
-                        checkNewPage()
-                    }
-                    is KunjunganItem.Question -> {
-                        val answerStr = getAnswerValue(form, item.key)
-                        val questionText = "${item.question} Jawaban: $answerStr"
-                        drawTextWrapped(questionText, MARGIN_LEFT + 10, textPaint, PAGE_WIDTH - MARGIN_LEFT - 20)
-                    }
+        val leftBoxWidth = 340f
+        val rightBoxWidth = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT - leftBoxWidth
+        
+        for (item in questions) {
+            if (item is KunjunganItem.Question) {
+                val answerText = getAnswerValue(form, item.key)
+                
+                // Calculate required height
+                val standardLines = wrapText(item.standard, boldTextPaint, rightBoxWidth - 10f)
+                val answerLines = wrapText(answerText, answerPaint, leftBoxWidth - 20f)
+                
+                val qLines = wrapText(item.question, textPaint, leftBoxWidth - 10f)
+                
+                val maxContentLines = max(standardLines.size, max(answerLines.size, 2))
+                val boxHeight = maxContentLines * lineSpacing + 20f // 10f padding top and bottom
+                
+                val totalRequiredSpace = (qLines.size * lineSpacing) + boxHeight + 15f
+                
+                checkNewPage(requiredSpace = totalRequiredSpace)
+                
+                // Draw Question
+                for (line in qLines) {
+                    canvas.drawText(line, MARGIN_LEFT, yPosition, textPaint)
+                    yPosition += lineSpacing
                 }
+                
+                // Draw "Standar" word slightly above the box on the right
+                canvas.drawText("Standar", MARGIN_LEFT + leftBoxWidth + 2f, yPosition - 4f, textPaint)
+                
+                // Draw Rectangles
+                canvas.drawRect(MARGIN_LEFT, yPosition, MARGIN_LEFT + leftBoxWidth, yPosition + boxHeight, borderPaint)
+                canvas.drawRect(MARGIN_LEFT + leftBoxWidth, yPosition, PAGE_WIDTH - MARGIN_RIGHT, yPosition + boxHeight, borderPaint)
+                
+                // Draw Standard text (centered vertically and horizontally)
+                val standardTotalHeight = standardLines.size * lineSpacing
+                var standardY = yPosition + (boxHeight - standardTotalHeight) / 2f + textPaint.textSize - 2f
+                for (line in standardLines) {
+                    val textWidth = boldTextPaint.measureText(line)
+                    val startX = MARGIN_LEFT + leftBoxWidth + (rightBoxWidth - textWidth) / 2f
+                    canvas.drawText(line, startX, standardY, boldTextPaint)
+                    standardY += lineSpacing
+                }
+
+                // Draw Answer text (centered vertically)
+                val answerTotalHeight = answerLines.size * lineSpacing
+                var answerY = yPosition + (boxHeight - answerTotalHeight) / 2f + answerPaint.textSize - 2f
+                for (line in answerLines) {
+                    canvas.drawText(line, MARGIN_LEFT + 10f, answerY, answerPaint)
+                    answerY += lineSpacing
+                }
+                
+                yPosition += boxHeight + 8f
             }
         }
-
-        drawQuestions(KunjunganQuestionData.getQuestions())
         
-        yPosition += lineSpacing
-        checkNewPage()
+        // Signatures
+        checkNewPage(requiredSpace = 80f)
+        yPosition += 20f
+        canvas.drawText("(Auditor)", MARGIN_LEFT + 40f, yPosition + 50f, boldTextPaint)
+        canvas.drawText("(Petani)", PAGE_WIDTH - MARGIN_RIGHT - 80f, yPosition + 50f, boldTextPaint)
 
-        // Final page border
-        canvas.drawRect(MARGIN_LEFT - 10, 20f, PAGE_WIDTH - MARGIN_LEFT + 10, PAGE_HEIGHT - 20f, borderPaint)
         pdfDocument.finishPage(page)
 
         // Save
@@ -177,7 +218,7 @@ object PdfGeneratorKunjungan {
         return when (boolVal) {
             true -> "Ya"
             false -> "Tidak"
-            else -> "Belum Diisi"
+            else -> ""
         }
     }
 
