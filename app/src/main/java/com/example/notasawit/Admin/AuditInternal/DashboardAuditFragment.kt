@@ -128,7 +128,6 @@ class DashboardAuditFragment : Fragment() {
             }
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -10,9 +10,9 @@ import androidx.fragment.app.Fragment
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.databinding.FragmentBerandaAdminBinding
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -94,11 +94,24 @@ class BerandaAdminFragment : Fragment() {
                                     )
                                 }
                             }
+                            
+                            var lulusCount = 0
+                            var perbaikanCount = 0
+                            var diauditCount = 0
+                            if (dataObj.has("status_audit")) {
+                                val statusAuditObj = dataObj.getJSONObject("status_audit")
+                                lulusCount = statusAuditObj.optInt("lulus", 0)
+                                perbaikanCount = statusAuditObj.optInt("perlu_perbaikan", 0)
+                                diauditCount = statusAuditObj.optInt("pending", 0)
+                            }
 
                             activity?.runOnUiThread {
                                 binding.tvJumlahPetani.text = jumlahPetani.toString()
                                 binding.tvLuasLahan.text = String.format("%.2f", jumlahLahan)
-                                setupBarChart(pemasukanArray)
+                                binding.tvLulusCount.text = lulusCount.toString()
+                                binding.tvPerbaikanCount.text = perbaikanCount.toString()
+                                binding.tvDiauditCount.text = diauditCount.toString()
+                                setupLineChart(pemasukanArray)
                                 setupPieChart(pengeluaranArray)
                                 setupPengingatList(pengingatList)
                             }
@@ -111,25 +124,26 @@ class BerandaAdminFragment : Fragment() {
         })
     }
 
-    private fun setupBarChart(pemasukanArray: org.json.JSONArray) {
-        val entries = ArrayList<BarEntry>()
+    private fun setupLineChart(pemasukanArray: org.json.JSONArray) {
+        val entries = ArrayList<Entry>()
         for (i in 0 until pemasukanArray.length()) {
-            entries.add(BarEntry(i.toFloat(), pemasukanArray.getInt(i).toFloat()))
+            entries.add(Entry(i.toFloat(), pemasukanArray.getInt(i).toFloat()))
         }
 
-        val dataSet = BarDataSet(entries, "Pemasukan")
+        val dataSet = LineDataSet(entries, "Pemasukan")
         dataSet.colors = ColorTemplate.MATERIAL_COLORS.toList()
         dataSet.valueTextSize = 10f
+        dataSet.lineWidth = 2f
+        dataSet.circleRadius = 4f
+        dataSet.setCircleColors(ColorTemplate.MATERIAL_COLORS.toList())
 
-        val data = BarData(dataSet)
-        data.barWidth = 0.5f
+        val data = LineData(dataSet)
 
         val months = arrayOf("Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des")
 
-        binding.barChartPemasukan.apply {
+        binding.lineChartPemasukan.apply {
             this.data = data
             description.isEnabled = false
-            setFitBars(true)
 
             xAxis.apply {
                 valueFormatter = IndexAxisValueFormatter(months)
@@ -142,7 +156,7 @@ class BerandaAdminFragment : Fragment() {
             axisLeft.axisMinimum = 0f
             axisRight.isEnabled = false
 
-            animateY(1000)
+            animateX(1000)
             invalidate()
         }
     }

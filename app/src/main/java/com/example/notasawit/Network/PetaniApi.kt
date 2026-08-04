@@ -80,6 +80,25 @@ object PetaniApi {
         ApiClient.client.newCall(request).enqueue(callback)
     }
 
+    fun lupaPin(username: String, email: String, pinBaru: String, callback: Callback) {
+        val json = """
+        {
+            "username": "$username",
+            "email": "$email",
+            "pin_baru": "$pinBaru"
+        }
+        """.trimIndent()
+        
+        val body = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("$BASE_URL/lupa-pin")
+            .post(body)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
     fun getJenisKegiatan(callback: Callback) {
         val request = Request.Builder()
             .url("$BASE_URL/jenis-kegiatan")

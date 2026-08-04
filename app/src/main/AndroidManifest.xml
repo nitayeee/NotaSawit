@@ -102,6 +102,9 @@
             android:name=".Autentikasi.Masuk.MasukActivity"
             android:exported="false" />
         <activity
+            android:name=".Autentikasi.Masuk.LupaPinActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

@@ -210,6 +210,11 @@ getJenisKegiatan()
 //                                       ))
 
         }
+        
+        binding.tvLupaPin.setOnClickListener {
+            startActivity(Intent(this@MasukActivity, LupaPinActivity::class.java))
+        }
+
         binding.btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
         }

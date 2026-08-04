@@ -277,8 +277,8 @@
                         android:textSize="13sp"
                         android:layout_marginBottom="16dp" />
 
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/barChartPemasukan"
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/lineChartPemasukan"
                         android:layout_width="match_parent"
                         android:layout_height="220dp"
                         android:background="#F7FAFC" />
