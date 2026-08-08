@@ -20,6 +20,12 @@ interface MasterDao {
     @Query("SELECT * FROM master_petani")
     suspend fun getAllPetani(): List<PetaniEntity>
 
+    @Query("SELECT * FROM master_petani WHERE desaId = :desaId")
+    suspend fun getPetaniByDesa(desaId: Int): List<PetaniEntity>
+
+    @Query("DELETE FROM master_petani")
+    suspend fun deleteAllPetani()
+
     // ==========================================
     // 2. DATA DESA
     // ==========================================

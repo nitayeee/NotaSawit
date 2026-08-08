@@ -152,6 +152,7 @@ getJenisKegiatan()
                                         putInt("user_id", data?.user_id ?: 0)
                                         putString("username", data?.user_username ?: "")
                                         putString("user_role", data?.user_role ?: "")
+                                        putInt("admin_desa_id", data?.desa_id ?: 0)
                                         apply()
                                     }
                                 }
@@ -561,17 +562,31 @@ getJenisKegiatan()
                         try {
                             val jsonObject = org.json.JSONObject(body)
                             val dataArray = jsonObject.getJSONArray("data")
+                            
                             val listPetani = mutableListOf<com.example.notasawit.Room.Petani.PetaniEntity>()
                             for (i in 0 until dataArray.length()) {
                                 val item = dataArray.getJSONObject(i)
+                                val desaId = item.optInt("desa_id", 0)
+                                
+                                val namaDesa = if (item.has("desa") && !item.isNull("desa")) {
+                                    item.getJSONObject("desa").getString("nama_desa")
+                                } else {
+                                    item.getString("petani_username") 
+                                }
+
                                 listPetani.add(com.example.notasawit.Room.Petani.PetaniEntity(
                                     idPetani = item.getInt("petani_id"),
                                     namaPetani = item.getString("petani_nama"),
-                                    namaDesa = item.getString("petani_username") 
+                                    namaDesa = namaDesa,
+                                    desaId = desaId
                                 ))
                             }
-                            if (listPetani.isNotEmpty()) {
-                                lifecycleScope.launch(Dispatchers.IO) {
+                            
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                // Bersihkan data room lama sebelum memasukkan data baru
+                                database.masterDao().deleteAllPetani()
+                                
+                                if (listPetani.isNotEmpty()) {
                                     database.masterDao().insertPetani(listPetani)
                                 }
                             }

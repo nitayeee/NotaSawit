@@ -92,7 +92,14 @@ class DashboardAuditFragment : Fragment() {
 
     private fun loadData() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val petaniList = database.masterDao().getAllPetani()
+            val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+            
+            val petaniList = if (adminDesaId != 0) {
+                database.masterDao().getPetaniByDesa(adminDesaId)
+            } else {
+                database.masterDao().getAllPetani()
+            }
             val auditDataList = mutableListOf<PetaniAuditData>()
 
             for (petani in petaniList) {

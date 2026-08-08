@@ -102,7 +102,15 @@ class KLSection1Fragment : Fragment() {
     private fun siapkanDanTampilkanDataMaster() {
         lifecycleScope.launch(Dispatchers.IO) {
             val listAuditor = database.masterDao().getAllAuditor().map { it.namaAuditor }
-            listPetaniEntity = database.masterDao().getAllPetani()
+            
+            val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
+            val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+            
+            listPetaniEntity = if (adminDesaId != 0) {
+                database.masterDao().getPetaniByDesa(adminDesaId)
+            } else {
+                database.masterDao().getAllPetani()
+            }
             val listPetaniNames = listPetaniEntity.map { it.namaPetani }
             val listDesaNames = database.masterDao().getAllDesa().map { it.namaDesa }
 
