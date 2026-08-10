@@ -40,17 +40,15 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-        android:fontFamily="@font/poppins_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profil saya"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:fontFamily="@font/poppins_bold" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
@@ -156,24 +154,20 @@
                             android:layout_marginStart="16dp">
 
                             <TextView
-        android:fontFamily="@font/poppins_bold"
                                 android:id="@+id/tvNamaProfile"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Memuat..."
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
+                                android:textColor="@color/agri_green_dark"  android:fontFamily="@font/poppins_bold" />
 
                             <TextView
-        android:fontFamily="@font/poppins_bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Warga Terverifikasi"
                                 android:textSize="13sp"
                                 android:textColor="@color/agri_green_dark"
-                                android:textStyle="bold"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="4dp"  android:fontFamily="@font/poppins_bold" />
 
                             <androidx.cardview.widget.CardView
                                 android:layout_width="wrap_content"
@@ -221,14 +215,12 @@
                             android:orientation="vertical"
                             android:gravity="center">
                             <TextView
-        android:fontFamily="@font/poppins_bold"
                                 android:id="@+id/tvJumlahLahan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
+                                android:textColor="@color/agri_green_dark"  android:fontFamily="@font/poppins_bold" />
                             <TextView
         android:fontFamily="@font/poppins_regular"
                                 android:layout_width="wrap_content"
@@ -246,14 +238,12 @@
                             android:orientation="vertical"
                             android:gravity="center">
                             <TextView
-        android:fontFamily="@font/poppins_bold"
                                 android:id="@+id/tvTotalLuas"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0.0"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
+                                android:textColor="@color/agri_green_dark"  android:fontFamily="@font/poppins_bold" />
                             <TextView
         android:fontFamily="@font/poppins_regular"
                                 android:layout_width="wrap_content"
@@ -303,14 +293,12 @@
                         android:layout_marginBottom="24dp">
 
                         <TextView
-        android:fontFamily="@font/poppins_bold"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Data Diri"
                             android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/agri_green_dark" />
+                            android:textColor="@color/agri_green_dark"  android:fontFamily="@font/poppins_bold" />
 
                         <LinearLayout
                             android:id="@+id/btnEditProfil"
@@ -321,15 +309,13 @@
                             android:clickable="true"
                             android:focusable="true">
                             <TextView
-        android:fontFamily="@font/poppins_bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Edit"
                                 android:textSize="15sp"
-                                android:textStyle="bold"
                                 android:textColor="@color/agri_green_dark"
                                 android:drawableStart="@android:drawable/ic_menu_edit"
-                                android:drawablePadding="4dp"/>
+                                android:drawablePadding="4dp" android:fontFamily="@font/poppins_bold" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -553,14 +539,12 @@
                             android:layout_marginBottom="24dp">
 
                             <TextView
-                                android:fontFamily="@font/poppins_bold"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="Informasi Lahan"
                                 android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/agri_green_dark" />
+                                android:textColor="@color/agri_green_dark"  android:fontFamily="@font/poppins_bold" />
 
                             <LinearLayout
                                 android:id="@+id/btnEditLahan"
@@ -571,15 +555,13 @@
                                 android:clickable="true"
                                 android:focusable="true">
                                 <TextView
-                                    android:fontFamily="@font/poppins_bold"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Edit"
                                     android:textSize="14sp"
-                                    android:textStyle="bold"
                                     android:textColor="@color/agri_green_dark"
                                     android:drawableStart="@android:drawable/ic_menu_edit"
-                                    android:drawablePadding="4dp"/>
+                                    android:drawablePadding="4dp" android:fontFamily="@font/poppins_bold" />
                             </LinearLayout>
                         </LinearLayout>
 

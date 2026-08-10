@@ -46,7 +46,7 @@ import com.example.notasawit.Room.KunjunganLahanEntity.KunjunganLahanDao
         DetailPengeluaranEntity::class,
         KunjunganLahanForm::class
     ],
-    version = 22
+    version = 23
 )
 abstract class AppDatabase : RoomDatabase() {
 

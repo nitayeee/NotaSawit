@@ -33,9 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Sosial dan Tenaga Kerja"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,10 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/ibu tahu berapa Upah Minimum Kabupaten (UMK) atau Upah Minimum Provinsi (UMP) sekarang?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ1"
@@ -82,10 +78,8 @@
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/ibu tahu bahwa ada larangan mempekerjakan anak di bawah umur?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ2"
@@ -111,10 +105,8 @@
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/ibu tahu bahwa ada larangan diskriminasi atau ketidakadilan terhadap tenaga kerja?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ3"
@@ -139,10 +131,8 @@
                 android:layout_height="wrap_content"
                 android:text="4. Apakah Bapak/ibu tahu bahwa tidak boleh terjadi perbudakan atau tenaga kerja paksa dan pelecehan seksual?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ4"
@@ -168,10 +158,8 @@
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/ibu tahu jika memiliki pekerja wajib dan sudah membuat kontrak kerja dengan pekerja (khusus bagi yang memiliki pekerja)?\nNB : Bagi Petani yang tidak memiliki pekerja silahkan memilih pilihan (Ya)."
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ5"
@@ -196,10 +184,8 @@
                 android:layout_height="wrap_content"
                 android:text="6.Apakah Bapak/ibu tahu bahwa pekerja berhak berserikat/berorganisasi?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/sosialTenagaKerjaQ6"
@@ -219,6 +205,6 @@
             android:text="LANJUT KE SECTION 3"
             app:backgroundTint="@color/agri_green_dark"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>

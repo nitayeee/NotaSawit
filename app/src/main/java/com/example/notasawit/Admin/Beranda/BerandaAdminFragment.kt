@@ -25,6 +25,8 @@ import org.json.JSONObject
 import java.io.IOException
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class BerandaAdminFragment : Fragment() {
     private var _binding: FragmentBerandaAdminBinding? = null
@@ -55,7 +57,59 @@ class BerandaAdminFragment : Fragment() {
             startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.ProfilAdmin.ProfilAdminActivity::class.java))
         }
 
+        binding.swipeRefreshBeranda.setOnRefreshListener {
+            refreshAllData()
+        }
+
         fetchDashboardData()
+    }
+
+    private fun refreshAllData() {
+        binding.swipeRefreshBeranda.isRefreshing = true
+        fetchDashboardData()
+
+        PetaniApi.getAllPetani(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                activity?.runOnUiThread {
+                    binding.swipeRefreshBeranda.isRefreshing = false
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val json = response.body?.string()
+                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    if (response.isSuccessful && !json.isNullOrEmpty()) {
+                        try {
+                            val jsonObject = JSONObject(json)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listPetani = mutableListOf<com.example.notasawit.Room.Petani.PetaniEntity>()
+
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                val desaId = item.optInt("desa_id", 0)
+                                val namaDesa = item.optJSONObject("desa")?.optString("desa_nama", "-") ?: "-"
+
+                                listPetani.add(
+                                    com.example.notasawit.Room.Petani.PetaniEntity(
+                                        idPetani = item.optInt("petani_id", 0),
+                                        namaPetani = item.optString("petani_nama", "-"),
+                                        namaDesa = namaDesa,
+                                        desaId = desaId
+                                    )
+                                )
+                            }
+                            com.example.notasawit.Room.AppDatabase.getDatabase(requireContext()).masterDao().insertPetani(listPetani)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        binding.swipeRefreshBeranda.isRefreshing = false
+                    }
+                }
+            }
+        })
     }
 
     private fun fetchDashboardData() {

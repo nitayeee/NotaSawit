@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pilih Periode"
-        android:textStyle="bold"
+        android:fontFamily="@font/poppins_bold"
         android:textSize="18sp"/>
 
     <TextView

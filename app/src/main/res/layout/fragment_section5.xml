@@ -33,9 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Tentang Bahan Kimia dan Limbah Bahan Berbahaya &amp; Beracun (LB3)"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,10 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/Ibu tahu larangan semprot total?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q1"
@@ -82,10 +78,8 @@
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/Ibu tahu bahan aktif Paraquat (racun bakar) dilarang penggunaannya?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q2"
@@ -111,10 +105,8 @@
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/Ibu tahu kebun yang di pinggir sungai dilarang disemprot minimal 3 pokok (20 meter) dari pinggir sungai?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q3"
@@ -139,10 +131,8 @@
                 android:layout_height="wrap_content"
                 android:text="4. Apakah Bapak/Ibu tahu alat alat pelindung diri yang digunakan saat menyemprot ?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q4"
@@ -168,10 +158,8 @@
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/Ibu tahu tata cara penyimpanan bahan pestisida yang tepat?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q5"
@@ -196,10 +184,8 @@
                 android:layout_height="wrap_content"
                 android:text="6. Apakah Bapak/Ibu tahu cara penanganan terhadap keracunan pestisida?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q6"
@@ -224,10 +210,8 @@
                 android:layout_height="wrap_content"
                 android:text="7. Apakah Bapak/Ibu sudah mengumpulkan wadah bekas pestisida di tempat yang aman?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/lb3Q7"
@@ -247,6 +231,6 @@
             android:text="LANJUT KE SECTION 3"
             app:backgroundTint="@color/agri_green_dark"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>

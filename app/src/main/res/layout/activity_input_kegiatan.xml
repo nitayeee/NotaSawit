@@ -61,7 +61,7 @@
                     android:text="Input Kegiatan"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="0.01" />
 
                 <TextView
@@ -132,7 +132,7 @@
                         android:text="TANGGAL"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginBottom="6dp" />
 
@@ -178,7 +178,7 @@
                         android:text="WAKTU"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginBottom="6dp" />
 
@@ -230,7 +230,7 @@
                     android:text="  DETAIL KEGIATAN  "
                     android:textColor="#9AB09D"
                     android:textSize="10sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="0.08" />
 
                 <View
@@ -247,7 +247,7 @@
                 android:text="JENIS KEGIATAN"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginBottom="6dp" />
 
@@ -281,7 +281,7 @@
                 android:text="BAHAN / HASIL KERJA"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginTop="14dp"
                 android:layout_marginBottom="6dp" />
@@ -330,7 +330,7 @@
                         android:text="DOSIS / JUMLAH"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginBottom="6dp" />
 
@@ -372,7 +372,7 @@
                         android:text="LAHAN"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginBottom="6dp" />
 
@@ -437,7 +437,7 @@
                     android:text="  TENAGA &amp; BIAYA  "
                     android:textColor="#9AB09D"
                     android:textSize="10sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="0.08" />
 
                 <View
@@ -454,7 +454,7 @@
                 android:text="TENAGA KERJA"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginBottom="6dp" />
 
@@ -495,7 +495,7 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 app:icon="@drawable/ic_save"
                 app:iconTint="#FFFFFF"
                 app:iconSize="18dp"

@@ -23,7 +23,7 @@
             android:text="Berhasil"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/poppins_bold" />
 
         <TextView
             android:id="@+id/tvAlertMessage"

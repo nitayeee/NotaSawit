@@ -14,7 +14,7 @@
         android:text="Setelan"
         android:textColor="#2B462C"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:fontFamily="@font/poppins_bold" />
 
     <!-- Ubah Kata Sandi -->
     <LinearLayout
@@ -139,7 +139,7 @@
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/poppins_bold"
         app:backgroundTint="#D32F2F"
         app:cornerRadius="12dp"
         app:icon="@android:drawable/ic_lock_power_off"

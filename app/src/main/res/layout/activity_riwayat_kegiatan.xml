@@ -58,7 +58,7 @@
                     android:text="Riwayat Kegiatan"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:letterSpacing="0.01" />
 
                 <TextView

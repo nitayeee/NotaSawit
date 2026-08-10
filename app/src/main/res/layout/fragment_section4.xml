@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RINGKASAN TEMUAN *"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textSize="16sp"/>
 
                 <RadioGroup
@@ -90,7 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RENCANA PERBAIKAN *"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textSize="16sp"/>
 
                 <RadioGroup
@@ -151,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="BUKTI PELAKSANAAN AUDIT (OPSIONAL)"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textSize="16sp"/>
 
                 <ImageView
@@ -196,7 +196,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RENCANA AUDIT PEMERIKSAAN PERBAIKAN *"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textSize="16sp"/>
 
                 <com.google.android.material.textfield.TextInputLayout

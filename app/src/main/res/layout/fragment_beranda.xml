@@ -71,7 +71,7 @@
                             android:text="Halo, "
                             android:textColor="#000000"
                             android:textSize="17sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                         <TextView
                             android:id="@+id/username"
@@ -80,7 +80,7 @@
                             android:text="Dika!"
                             android:textColor="#2B462C"
                             android:textSize="17sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -96,7 +96,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:textSize="16sp"
                         android:textColor="@android:color/white"
                         android:background="@drawable/bg_avatar_circle"/>
@@ -238,7 +238,7 @@
                             android:text="12.4 Ton"
                             android:textColor="@color/white"
                             android:textSize="34sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/poppins_bold"
                             android:letterSpacing="-0.03" />
 
                         <TextView
@@ -297,7 +297,7 @@
                                 android:text="↓ PEMASUKAN"
                                 android:textColor="#999999"
                                 android:textSize="11sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/poppins_bold"
                                 android:letterSpacing="0.03" />
 
                             <TextView
@@ -308,7 +308,7 @@
                                 android:text="Rp 45.0M"
                                 android:textColor="#2B462C"
                                 android:textSize="17sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/poppins_bold" />
 
                             <TextView
                                 android:id="@+id/tv_badge_pemasukan"
@@ -359,7 +359,7 @@
                                 android:text="↑ PENGELUARAN"
                                 android:textColor="#999999"
                                 android:textSize="11sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/poppins_bold"
                                 android:letterSpacing="0.03" />
 
                             <TextView
@@ -370,7 +370,7 @@
                                 android:text="Rp 12.5M"
                                 android:textColor="#C62828"
                                 android:textSize="17sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/poppins_bold" />
 
                             <TextView
                                 android:id="@+id/tv_badge_pengeluaran"
@@ -398,7 +398,7 @@
                 android:text="Manajemen Kebun"
                 android:textColor="#444444"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/poppins_bold" />
 
             <!-- MENU GRID -->
             <GridLayout
@@ -449,7 +449,7 @@
                             android:text="Edukasi"
                             android:textColor="#333333"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -496,7 +496,7 @@
                             android:text="Input Kegiatan"
                             android:textColor="#333333"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -543,7 +543,7 @@
                             android:text="Pemasukan"
                             android:textColor="#333333"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -590,7 +590,7 @@
                             android:text="Pengeluaran"
                             android:textColor="#333333"
                             android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -650,9 +650,7 @@
                                 android:text="QUOTE HARI INI"
                                 android:textColor="#2B462C"
                                 android:textSize="10sp"
-                                android:letterSpacing="0.15"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/poppins_semibold"/>
+                                android:letterSpacing="0.15" android:fontFamily="@font/poppins_bold" />
                         </LinearLayout>
 
                         <!-- Teks quote -->

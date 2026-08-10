@@ -47,7 +47,7 @@
                     android:text="Peta Digital Lahan"
                     android:textColor="#333333"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="@font/poppins_bold" />
                     
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>

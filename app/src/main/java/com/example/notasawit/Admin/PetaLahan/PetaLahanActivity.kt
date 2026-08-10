@@ -81,7 +81,13 @@ class PetaLahanActivity : AppCompatActivity() {
                 val body = response.body?.string()
                 
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val petaniListFromRoom = AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getAllPetani()
+                    val sharedPref = getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
+                    val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+                    val petaniListFromRoom = if (adminDesaId != 0) {
+                        AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getPetaniByDesa(adminDesaId)
+                    } else {
+                        AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getAllPetani()
+                    }
                     val petaniMap = petaniListFromRoom.associate { it.idPetani to it.namaPetani }
 
                     withContext(Dispatchers.Main) {

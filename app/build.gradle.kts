@@ -110,6 +110,9 @@ dependencies {
 //    Untuk Work Manager
     implementation("androidx.work:work-runtime-ktx:2.10.2")
 
+    // SwipeRefreshLayout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     // untuk audit lahan
     implementation("androidx.compose.ui:ui:1.6.1")
     implementation("androidx.compose.material3:material3:1.2.0")

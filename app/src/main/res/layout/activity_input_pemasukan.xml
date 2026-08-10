@@ -59,9 +59,7 @@
                     android:text="Input Pemasukan"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.01" />
+                    android:letterSpacing="0.01"  android:fontFamily="@font/poppins_bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,10 +129,8 @@
                         android:text="TANGGAL"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:textStyle="bold"
                         android:letterSpacing="0.06"
-                        android:layout_marginBottom="6dp" />
+                        android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -179,7 +175,7 @@
                         android:text="WAKTU"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginBottom="6dp" />
 
@@ -219,7 +215,7 @@
                 android:text="LAHAN"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginBottom="6dp" />
 
@@ -286,7 +282,7 @@
                         android:text="JUMLAH HASIL PANEN (Kg)"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginTop="14dp"
                         android:layout_marginBottom="6dp" />
@@ -329,7 +325,7 @@
                         android:text="HARGA PER KG"
                         android:textColor="#1B5E20"
                         android:textSize="11sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:letterSpacing="0.06"
                         android:layout_marginTop="14dp"
                         android:layout_marginBottom="6dp" />
@@ -365,10 +361,8 @@
                 android:text="CATATAN TAMBAHAN"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -400,11 +394,9 @@
                 android:text="BUKTI NOTA"
                 android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="0.06"
                 android:layout_marginTop="14dp"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardUploadNota"
@@ -431,7 +423,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tambah Bukti Nota"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/poppins_bold"
                         android:textColor="#1B5E20"
                         android:layout_marginTop="8dp" />
 
@@ -473,7 +465,7 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 app:icon="@drawable/ic_save"
                 app:iconTint="#FFFFFF"
                 app:iconSize="18dp"

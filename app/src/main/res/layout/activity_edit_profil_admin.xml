@@ -34,17 +34,15 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:fontFamily="@font/poppins_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Profil"
             android:textColor="@color/agri_green_dark"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:fontFamily="@font/poppins_bold" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView

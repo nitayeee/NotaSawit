@@ -99,6 +99,9 @@
             android:name=".Autentikasi.Daftar.DaftarActivity"
             android:exported="false" />
         <activity
+            android:name=".TutorialActivity"
+            android:exported="false" />
+        <activity
             android:name=".Autentikasi.Masuk.MasukActivity"
             android:exported="false" />
         <activity

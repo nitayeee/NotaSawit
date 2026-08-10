@@ -30,7 +30,7 @@
             android:text="Ubah PIN"
             android:textColor="#2B462C"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:fontFamily="@font/poppins_bold" />
     </LinearLayout>
 
     <View
@@ -110,7 +110,7 @@
                 android:text="Simpan PIN"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 app:cornerRadius="8dp" />
 
         </LinearLayout>

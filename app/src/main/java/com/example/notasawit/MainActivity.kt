@@ -29,13 +29,18 @@ class MainActivity : AppCompatActivity() {
             delay(2000) //simulasi pengambilan data selama 2 detik
 
             val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val isFirstTime = sharedPref.getBoolean("is_first_time", true)
             val role = sharedPref.getString("role", "")
             
-            val intent = Intent(this@MainActivity, MasukActivity::class.java)
-            if (role == "petani" || role == "admin") {
-                intent.putExtra("SHOW_FINGERPRINT", true)
+            if (isFirstTime) {
+                startActivity(Intent(this@MainActivity, TutorialActivity::class.java))
+            } else {
+                val intent = Intent(this@MainActivity, MasukActivity::class.java)
+                if (role == "petani" || role == "admin") {
+                    intent.putExtra("SHOW_FINGERPRINT", true)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
             finish()
         }
     }

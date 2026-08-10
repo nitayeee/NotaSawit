@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pemupukan"
-            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"
             android:textSize="18sp"
             android:textColor="#1B5E20"/>
 
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="150 Kg"
-            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"
             android:textColor="#2E7D32"
             android:layout_marginTop="6dp"/>
 

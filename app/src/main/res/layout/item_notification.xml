@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="Judul Notifikasi"
                 android:textSize="14sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:textColor="#2B462C"/>
 
             <TextView

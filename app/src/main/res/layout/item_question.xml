@@ -17,10 +17,8 @@
             android:layout_height="wrap_content"
             android:text="1. Apakah Bapak/Ibu tahu Prosedur Keanggotaan?"
             android:textColor="#333333"
-            android:fontFamily="@font/poppins_semibold"
             android:textSize="15sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
         <RadioGroup
             android:id="@+id/rgAnswer"

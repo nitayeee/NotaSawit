@@ -569,14 +569,14 @@ getJenisKegiatan()
                                 val desaId = item.optInt("desa_id", 0)
                                 
                                 val namaDesa = if (item.has("desa") && !item.isNull("desa")) {
-                                    item.getJSONObject("desa").getString("nama_desa")
+                                    item.getJSONObject("desa").optString("nama_desa", "-")
                                 } else {
-                                    item.getString("petani_username") 
+                                    item.optString("petani_username", "-") 
                                 }
 
                                 listPetani.add(com.example.notasawit.Room.Petani.PetaniEntity(
-                                    idPetani = item.getInt("petani_id"),
-                                    namaPetani = item.getString("petani_nama"),
+                                    idPetani = item.optInt("petani_id", 0),
+                                    namaPetani = item.optString("petani_nama", "-"),
                                     namaDesa = namaDesa,
                                     desaId = desaId
                                 ))

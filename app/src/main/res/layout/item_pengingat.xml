@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="Judul Pengingat"
                 android:textColor="#1A202C"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 android:textSize="14sp" />
 
             <TextView
@@ -72,7 +72,7 @@
                     android:text="2024-12-31"
                     android:textColor="#4A5568"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="@font/poppins_bold" />
                     
                 <TextView
                     android:id="@+id/tvStatusBadge"
@@ -85,7 +85,7 @@
                     android:text="Selesai"
                     android:textColor="#1E4620"
                     android:textSize="10sp"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/poppins_bold"
                     android:visibility="gone" />
 
             </LinearLayout>

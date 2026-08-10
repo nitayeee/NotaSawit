@@ -33,9 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Tentang Nilai Konversi Tinggi (NKT)"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,10 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/ibu tahu bahwa asosiasi sudah melakukan identifikasi dan memiliki laporan Nilai Konservasi Tinggi (NKT)?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ1"
@@ -82,10 +78,8 @@
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/ibu tahu daftar hewan dan tumbuhan yang dilindungi?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ2"
@@ -111,10 +105,8 @@
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/ibu tahu penanganan jika menjumpai hewan dan tumbuhan yang dilindungi?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ3"
@@ -139,10 +131,8 @@
                 android:layout_height="wrap_content"
                 android:text="4. Apakah Bapak/ibu tahu terdapat larangan membuka lahan dengan cara bakar?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ4"
@@ -168,10 +158,8 @@
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/ibu tahu  terdapat larangan membuang sampah ke sungai?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ5"
@@ -196,10 +184,8 @@
                 android:layout_height="wrap_content"
                 android:text="6. Apakah Bapak/ibu tahu bahwa menangkap ikan dengan cara meracuni sungai itu dilarang?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ6"
@@ -224,10 +210,8 @@
                 android:layout_height="wrap_content"
                 android:text="7. Apakah Bapak/ibu tahu pengeloaan lahan jika ditemukan areal lahan miring?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/nktQ7"
@@ -247,6 +231,6 @@
             android:text="LANJUT KE SECTION 3"
             app:backgroundTint="@color/agri_green_dark"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>

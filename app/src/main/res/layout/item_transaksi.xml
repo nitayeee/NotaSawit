@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#222222"
                 android:textSize="15sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/poppins_bold"
                 tools:text="Penjualan TBS" />
 
             <TextView
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:textSize="15sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ivChevron"
             app:layout_constraintTop_toTopOf="parent"

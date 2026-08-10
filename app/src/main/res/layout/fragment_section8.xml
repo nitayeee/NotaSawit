@@ -33,9 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Keselamatan dan Kesehatan Kerja (K3)"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,10 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/Ibu sudah mengetahui terkait Hasil Identifikasi dan Mitigasi Resiko Kerja (HIRA) yang ada di Asosiasi?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q1"
@@ -82,10 +78,8 @@
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/ibu (Petani terdaftar) sudah ikut program BPJS ketenagakerjaan ?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q2"
@@ -111,10 +105,8 @@
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/Ibu (Petani Terdaftar) sudah memiliki dan menggunakan Alat Pelindung Diri (APD) untuk seluruh jenis pekerjaan?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q3"
@@ -139,10 +131,8 @@
                 android:layout_height="wrap_content"
                 android:text="4. Apakah pekerja Bapak/Ibu sudah memiliki dan menggunakan Alat Pelindung Diri (APD) untuk seluruh jenis pekerjaan?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q4"
@@ -168,10 +158,8 @@
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/ibu (petani terdaftar) memastikan tidak pernah mengalami kecelakaan kerja sewaktu melakukan aktivitas di lahan?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q5"
@@ -196,10 +184,8 @@
                 android:layout_height="wrap_content"
                 android:text="6. Apakah pekerja Bapak/ibu memastikan tidak pernah mengalami kecelakaan kerja sewaktu melakukan aktivitas di lahan (jika memiliki pekerja)?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q6"
@@ -224,10 +210,8 @@
                 android:layout_height="wrap_content"
                 android:text="7. Apakah Bapak/Ibu tahu cara penggunaan isi kotak Pertolongan Pertama Pada Kecelakaan Kerja (P3K)?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q7"
@@ -252,10 +236,8 @@
                 android:layout_height="wrap_content"
                 android:text="8. Apakah Bapak/Ibu tahu apa yang harus dilakukan jika terjadi keadaan Darurat (Kebakaran, Gempa Bumi, Banjir)?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q8"
@@ -280,10 +262,8 @@
                 android:layout_height="wrap_content"
                 android:text="9. Apakah Bapak/Ibu sudah mengetahui tindakan jika terjadi kecelakaan kerja?"
                 android:textColor="#333333"
-                android:fontFamily="@font/poppins_semibold"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
             <RadioGroup
                 android:id="@+id/k3Q9"
@@ -303,6 +283,6 @@
             android:text="LANJUT KE SECTION 3"
             app:backgroundTint="@color/agri_green_dark"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>
