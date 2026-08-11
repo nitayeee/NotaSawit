@@ -2,166 +2,268 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView" android:layout_width="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FFFFFF"
     android:fitsSystemWindows="true"
     tools:context=".Autentikasi.Daftar.DataDiri.DataDiri2Fragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="24dp">
+        android:layout_margin="16dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#FFFFFF">
 
-        <LinearLayout
-            android:id="@+id/form_header"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="32dp">
 
+            <LinearLayout
+                android:id="@+id/form_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="Lengkapi Profil Anda"
+                    android:textColor="#333333"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Tahap 2: Informasi Kontak"
+                    android:textColor="#888888"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Email -->
             <TextView
+                android:id="@+id/tvLabelEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_bold"
-                android:textAlignment="center"
-                android:text="Ayo Isi Data Diri Anda"
-                android:textColor="#212121"
-                android:textSize="22sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
+                android:layout_marginTop="32dp"
+                android:text="Email"
+                android:textColor="#555555"
                 android:fontFamily="@font/poppins_regular"
-                android:text="Lengkapi data diri Anda dalam 3 tahap"
-                android:textColor="#8E8E8E"
-                android:textSize="14sp" />
-        </LinearLayout>
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/form_header" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/EmailLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:textColorHint="#555555"
-            app:hintTextColor="@color/agri_green_dark"
-            app:boxStrokeColor="@color/agri_green_dark"
-            app:boxStrokeWidth="1.5dp"
-            app:boxStrokeWidthFocused="2.5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/form_header"
-            app:startIconDrawable="@drawable/ic_name"
-            app:startIconTint="#444444">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/EmailLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:textColor="#222222" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="#F6F7F9"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:hintEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/tvLabelEmail">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/NomorHandphoneLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="Nomor Handphone"
-            android:textColorHint="#555555"
-            app:hintTextColor="@color/agri_green_dark"
-            app:boxStrokeColor="@color/agri_green_dark"
-            app:boxStrokeWidth="1.5dp"
-            app:boxStrokeWidthFocused="2.5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/EmailLayout"
-            app:startIconDrawable="@drawable/ic_name"
-            app:startIconTint="#444444">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:hint="contoh@gmail.com"
+                    android:textColorHint="#AAAAAA"
+                    android:inputType="textEmailAddress"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#222222" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNomorHandphone"
+            <!-- Nomor Handphone -->
+            <TextView
+                android:id="@+id/tvLabelNomorHandphone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Nomor Handphone"
+                android:textColor="#555555"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/EmailLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/NomorHandphoneLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:textColor="#222222" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="#F6F7F9"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:hintEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/tvLabelNomorHandphone">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/AlamatLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="Alamat"
-            android:textColorHint="#555555"
-            app:hintTextColor="@color/agri_green_dark"
-            app:boxStrokeColor="@color/agri_green_dark"
-            app:boxStrokeWidth="1.5dp"
-            app:boxStrokeWidthFocused="2.5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/NomorHandphoneLayout"
-            app:startIconDrawable="@drawable/ic_calendar_month"
-            app:startIconTint="#444444">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNomorHandphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:hint="081234567890"
+                    android:textColorHint="#AAAAAA"
+                    android:inputType="phone"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#222222" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAlamat"
+            <!-- Alamat -->
+            <TextView
+                android:id="@+id/tvLabelAlamat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Alamat"
+                android:textColor="#555555"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/NomorHandphoneLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/AlamatLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPostalAddress"
-                android:textColor="#222222" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="#F6F7F9"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:hintEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/tvLabelAlamat">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/DesaLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="Desa"
-            android:textColorHint="#555555"
-            app:hintTextColor="@color/agri_green_dark"
-            app:boxStrokeColor="@color/agri_green_dark"
-            app:boxStrokeWidth="1.5dp"
-            app:boxStrokeWidthFocused="2.5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/AlamatLayout"
-            app:startIconDrawable="@drawable/ic_calendar_month"
-            app:endIconMode="dropdown_menu"
-            app:startIconTint="#444444">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAlamat"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Jl. Raya Sawit No. 1"
+                    android:textColorHint="#AAAAAA"
+                    android:inputType="textPostalAddress"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#222222" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <AutoCompleteTextView
-                android:id="@+id/etDesa"
+            <!-- Desa -->
+            <TextView
+                android:id="@+id/tvLabelDesa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Desa"
+                android:textColor="#555555"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/AlamatLayout" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/DesaLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:textColor="#222222"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="#F6F7F9"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:hintEnabled="false"
+                app:layout_constraintTop_toBottomOf="@+id/tvLabelDesa">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/agri_green_dark"
-            android:text="Login"
-            app:icon="@drawable/ic_login"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/DesaLayout"
-            app:layout_constraintVertical_bias="0.0" />
+                <AutoCompleteTextView
+                    android:id="@+id/etDesa"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:paddingVertical="0dp"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Pilih Desa"
+                    android:textColorHint="#AAAAAA"
+                    android:inputType="none"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="#222222"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNext"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#334D35"
+                android:text="Selanjutnya"
+                android:textAllCaps="false"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="16sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_arrow_right"
+                app:iconGravity="textEnd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/DesaLayout" />
+
+            <LinearLayout
+                android:id="@+id/tvSecure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/btnNext">
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_shield"
+                    app:tint="#888888" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Data Anda aman bersama kami"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="12sp"
+                    android:textColor="#888888" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.core.widget.NestedScrollView>

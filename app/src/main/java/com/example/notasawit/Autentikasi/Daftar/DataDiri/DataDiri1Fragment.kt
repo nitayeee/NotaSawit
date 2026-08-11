@@ -1,7 +1,6 @@
 package com.example.notasawit.Autentikasi.Daftar.DataDiri
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,24 +14,24 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import android.graphics.Color
+import android.content.res.ColorStateList
 
 class DataDiri1Fragment : Fragment() {
-    // GUNAKAN 'by lazy' agar requireActivity() tidak langsung dipanggil saat Fragment dibuat
     private val sharedPref by lazy {
         requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
     }
 
-    // Pindahkan pengambilan data string ini ke dalam fungsi atau gunakan lazy juga
-
     private val sp_namaPetani by lazy { sharedPref.getString("namaPetani", "") }
-    private val username by lazy { sharedPref.getString("username", "") }
+    private val sp_username by lazy { sharedPref.getString("username", "") }
     private val sp_tanggalLahir by lazy { sharedPref.getString("tanggalLahir", "") }
     private val sp_jenisKelamin by lazy { sharedPref.getString("jenisKelamin", "") }
     private val sp_usia by lazy { sharedPref.getString("usia", "") }
 
-
     private var _binding: FragmentDataDiri1Binding? = null
     private val binding get() = _binding!!
+    
+    private var selectedJenisKelamin: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,25 +45,24 @@ class DataDiri1Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.btnNext.isEnabled = false
         binding.btnNext.alpha = 0.5f
 
         binding.etTanggalLahir.setOnClickListener {
             tampilkanDatePicker()
         }
+        
         binding.etNamaDepan.setText(sp_namaPetani)
+        binding.etUsername.setText(sp_username)
+        binding.etTanggalLahir.setText(sp_tanggalLahir)
+        binding.etUsia.setText(sp_usia)
+        
+        if (sp_jenisKelamin?.isNotEmpty() == true) {
+            setJenisKelamin(sp_jenisKelamin!!)
+        }
 
         binding.etUsia.isEnabled = false
         binding.etUsia.setTextColor(resources.getColor(android.R.color.black, null))
-
-        val jenisKelaminAdapter = android.widget.ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            arrayOf("Laki-laki", "Perempuan")
-        )
-        binding.etJenisKelamin.setAdapter(jenisKelaminAdapter)
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -77,23 +75,28 @@ class DataDiri1Fragment : Fragment() {
         binding.etNamaDepan.addTextChangedListener(textWatcher)
         binding.etUsername.addTextChangedListener(textWatcher)
         binding.etTanggalLahir.addTextChangedListener(textWatcher)
-        binding.etJenisKelamin.addTextChangedListener(textWatcher)
         binding.etUsia.addTextChangedListener(textWatcher)
+        
+        binding.btnPria.setOnClickListener {
+            setJenisKelamin("Laki-laki")
+        }
+        binding.btnWanita.setOnClickListener {
+            setJenisKelamin("Perempuan")
+        }
 
         binding.btnNext.setOnClickListener {
             val namaPetani = binding.etNamaDepan.text.toString().trim()
             val username = binding.etUsername.text.toString().trim()
             val tanggalLahir = binding.etTanggalLahir.text.toString().trim()
-            val jenisKelamin = binding.etJenisKelamin.text.toString().trim()
             val usia = binding.etUsia.text.toString().trim()
 
             if (namaPetani.isNotEmpty() && tanggalLahir.isNotEmpty()
-                && jenisKelamin.isNotEmpty() && usia.isNotEmpty()&& username.isNotEmpty()) {
+                && selectedJenisKelamin.isNotEmpty() && usia.isNotEmpty() && username.isNotEmpty()) {
                 // Simpan ke SharedPreferences
                 sharedPref.edit().apply {
                     putString("namaPetani", namaPetani)
                     putString("tanggalLahir", tanggalLahir)
-                    putString("jenisKelamin", jenisKelamin)
+                    putString("jenisKelamin", selectedJenisKelamin)
                     putString("username", username)
                     putString("usia", usia)
                     apply()
@@ -103,17 +106,54 @@ class DataDiri1Fragment : Fragment() {
                 bapakActivity?.nextStep()
             }
         }
+        
+        periksaKelengkapanData()
+    }
+    
+    private fun setJenisKelamin(jk: String) {
+        selectedJenisKelamin = jk
+        val activeBgColor = Color.parseColor("#E8F5E9")
+        val activeTextColor = Color.parseColor("#2E7D32")
+        val activeStrokeColor = Color.parseColor("#2E7D32")
+
+        val inactiveBgColor = Color.TRANSPARENT
+        val inactiveTextColor = Color.parseColor("#555555")
+        val inactiveStrokeColor = Color.parseColor("#DDDDDD")
+
+        if (jk == "Laki-laki") {
+            binding.btnPria.setBackgroundColor(activeBgColor)
+            binding.btnPria.setTextColor(activeTextColor)
+            binding.btnPria.iconTint = ColorStateList.valueOf(activeTextColor)
+            binding.btnPria.strokeColor = ColorStateList.valueOf(activeStrokeColor)
+
+            binding.btnWanita.setBackgroundColor(inactiveBgColor)
+            binding.btnWanita.setTextColor(inactiveTextColor)
+            binding.btnWanita.iconTint = ColorStateList.valueOf(inactiveTextColor)
+            binding.btnWanita.strokeColor = ColorStateList.valueOf(inactiveStrokeColor)
+        } else if (jk == "Perempuan") {
+            binding.btnWanita.setBackgroundColor(activeBgColor)
+            binding.btnWanita.setTextColor(activeTextColor)
+            binding.btnWanita.iconTint = ColorStateList.valueOf(activeTextColor)
+            binding.btnWanita.strokeColor = ColorStateList.valueOf(activeStrokeColor)
+
+            binding.btnPria.setBackgroundColor(inactiveBgColor)
+            binding.btnPria.setTextColor(inactiveTextColor)
+            binding.btnPria.iconTint = ColorStateList.valueOf(inactiveTextColor)
+            binding.btnPria.strokeColor = ColorStateList.valueOf(inactiveStrokeColor)
+        }
+        periksaKelengkapanData()
     }
 
     private fun periksaKelengkapanData() {
         val namaDepan = binding.etNamaDepan.text.toString().trim()
+        val username = binding.etUsername.text.toString().trim()
         val tanggalLahir = binding.etTanggalLahir.text.toString().trim()
-        val jenisKelamin = binding.etJenisKelamin.text.toString().trim()
         val usia = binding.etUsia.text.toString().trim()
 
         val semuaSudahIsi = namaDepan.isNotEmpty() &&
+                username.isNotEmpty() &&
                 tanggalLahir.isNotEmpty() &&
-                jenisKelamin.isNotEmpty() &&
+                selectedJenisKelamin.isNotEmpty() &&
                 usia.isNotEmpty()
 
         if (semuaSudahIsi) {
@@ -129,6 +169,7 @@ class DataDiri1Fragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
     private fun tampilkanDatePicker() {
         // 1. Inisialisasi MaterialDatePicker
         val builder = MaterialDatePicker.Builder.datePicker()
@@ -159,5 +200,4 @@ class DataDiri1Fragment : Fragment() {
 
         picker.show(parentFragmentManager, "DATE_PICKER_TAG")
     }
-
 }

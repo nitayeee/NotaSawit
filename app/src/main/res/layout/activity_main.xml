@@ -3,10 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/white"
+    android:background="@drawable/bg_splash_gradient"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/view_blob_top"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="-60dp"
+        android:layout_marginStart="-60dp"
+        android:background="@drawable/bg_blob"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_blob_bottom"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_marginEnd="-80dp"
+        android:layout_marginBottom="-80dp"
+        android:background="@drawable/bg_blob"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/ll_center_content"
@@ -21,47 +41,107 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.435">
 
-        <ImageView
-            android:id="@+id/iv_logo"
-            android:layout_width="142dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="Logo Nota Sawit"
-            android:src="@drawable/logo" />
+        <FrameLayout
+            android:id="@+id/fl_logo_wrapper"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@drawable/bg_logo_circle"
+            android:elevation="6dp">
+
+            <ImageView
+                android:id="@+id/iv_logo"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="Logo Nota Sawit"
+                android:src="@drawable/logo" />
+
+            <View
+                android:id="@+id/view_shine"
+                android:layout_width="40dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_shine"
+                android:rotation="25" />
+
+        </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/ll_brand_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NOTA"
+                android:text="SI"
                 android:textColor="#000000"
-                android:textSize="28sp"  android:fontFamily="@font/poppins_bold" />
+                android:textSize="28sp"
+                android:fontFamily="@font/poppins_bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SAWIT"
+                android:text="LAUSA"
                 android:textColor="#264A2B"
-                android:textSize="28sp"  android:fontFamily="@font/poppins_bold" />
+                android:textSize="28sp"
+                android:fontFamily="@font/poppins_bold" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_version"
+    <LinearLayout
+        android:id="@+id/ll_bottom_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
-        android:text="Versi 1.0.0"
-        android:textColor="#7D8A80"
-        android:textSize="14sp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_loading_dots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/view_dot1"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_dot" />
+
+            <View
+                android:id="@+id/view_dot2"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_dot" />
+
+            <View
+                android:id="@+id/view_dot3"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_dot" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Versi 1.0.0"
+            android:textColor="#7D8A80"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
