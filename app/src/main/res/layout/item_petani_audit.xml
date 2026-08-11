@@ -94,30 +94,29 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/tvTanggalAudit"
+                android:id="@+id/tvBelumAda"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tanggal Audit: -"
-                android:textSize="14sp"
+                android:text="Belum ada riwayat audit di periode ini."
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/black"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <!-- Container for dynamic history rows -->
+            <LinearLayout
+                android:id="@+id/llHistoryContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="end">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBukaPdf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Buka PDF"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_marginEnd="8dp"
-                    android:visibility="gone"
-                    app:strokeColor="@color/agri_green_dark"
-                    android:textColor="@color/agri_green_dark" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAudit"

@@ -114,25 +114,27 @@ class DashboardAuditFragment : Fragment() {
                             statusAudit = "Belum Audit",
                             tanggalAudit = "-",
                             pdfPath = "",
-                            auditAttempt = 0
+                            auditAttempt = 0,
+                            history = emptyList()
                         )
                     )
                 } else {
-                    for ((index, audit) in allAudits.withIndex()) {
-                        val auditText = if (allAudits.size > 1) "(Audit ke-${index + 1})" else ""
-                        auditDataList.add(
-                            PetaniAuditData(
-                                idPetani = petani.idPetani,
-                                namaPetani = petani.namaPetani,
-                                desa = petani.namaDesa ?: "-",
-                                statusAudit = audit.statusAudit ?: "Belum Audit",
-                                tanggalAudit = audit.tanggal ?: "-",
-                                pdfPath = audit.pdfPath ?: "",
-                                auditAttempt = audit.auditAttempt ?: 0,
-                                auditLabel = auditText
-                            )
+                    // allAudits is sorted by attempt or date (usually we want latest first)
+                    // Wait, let's assume allAudits is ordered. AuditDao usually returns latest last, or we can sort it.
+                    val latestAudit = allAudits.maxByOrNull { it.auditAttempt } ?: allAudits.first()
+                    
+                    auditDataList.add(
+                        PetaniAuditData(
+                            idPetani = petani.idPetani,
+                            namaPetani = petani.namaPetani,
+                            desa = petani.namaDesa ?: "-",
+                            statusAudit = latestAudit.statusAudit ?: "Belum Audit",
+                            tanggalAudit = latestAudit.tanggal ?: "-",
+                            pdfPath = latestAudit.pdfPath ?: "",
+                            auditAttempt = latestAudit.auditAttempt ?: 0,
+                            history = allAudits.sortedByDescending { it.auditAttempt }
                         )
-                    }
+                    )
                 }
             }
 

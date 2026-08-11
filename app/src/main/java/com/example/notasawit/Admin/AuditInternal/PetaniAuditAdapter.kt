@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notasawit.databinding.ItemPetaniAuditBinding
+import com.example.notasawit.Room.AuditEntity.AuditHeader
 import java.io.File
 
 data class PetaniAuditData(
@@ -21,7 +22,8 @@ data class PetaniAuditData(
     val pdfPath: String,
     val isExpanded: Boolean = false,
     val auditAttempt: Int = 0,
-    val auditLabel: String = ""
+    val auditLabel: String = "",
+    val history: List<AuditHeader> = emptyList()
 )
 
 class PetaniAuditAdapter(
@@ -45,20 +47,44 @@ class PetaniAuditAdapter(
                 else -> binding.tvStatus.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
             }
 
-            if (item.statusAudit == "Belum Audit") {
-                binding.tvTanggalAudit.text = "Belum ada riwayat audit di periode ini."
-                binding.btnBukaPdf.visibility = View.GONE
-                binding.btnAudit.text = "Lakukan Audit"
-            } else {
-                binding.tvTanggalAudit.text = "Tanggal Audit: ${item.tanggalAudit}"
-                binding.btnBukaPdf.visibility = View.VISIBLE
-                
+            binding.tvBelumAda.visibility = if (item.statusAudit == "Belum Audit") View.VISIBLE else View.GONE
+            binding.llHistoryContainer.removeAllViews()
+
+            if (item.statusAudit != "Belum Audit" && item.history.isNotEmpty()) {
+                for (historyItem in item.history) {
+                    val historyView = LayoutInflater.from(binding.root.context).inflate(com.example.notasawit.R.layout.item_history_audit, binding.llHistoryContainer, false)
+                    
+                    val tvAttemptTitle = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAttemptTitle)
+                    val tvAuditorName = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAuditorName)
+                    val tvStatusBadge = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvStatusBadge)
+                    val btnBukaPdfHistory = historyView.findViewById<com.google.android.material.button.MaterialButton>(com.example.notasawit.R.id.btnBukaPdfHistory)
+
+                    tvAttemptTitle.text = "Audit ke-${historyItem.auditAttempt} (${historyItem.tanggal})"
+                    tvAuditorName.text = "Auditor: ${historyItem.namaAuditor}"
+                    tvStatusBadge.text = historyItem.statusAudit
+
+                    when (historyItem.statusAudit) {
+                        "Lulus" -> tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_lulus)
+                        "Perlu Perbaikan" -> tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_perbaikan)
+                        else -> tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
+                    }
+
+                    btnBukaPdfHistory.setOnClickListener {
+                        openPdf(binding.root.context, historyItem.pdfPath)
+                    }
+
+                    binding.llHistoryContainer.addView(historyView)
+                }
+
                 if (item.statusAudit == "Perlu Perbaikan") {
                     binding.btnAudit.text = "Audit Ulang"
                     binding.btnAudit.visibility = View.VISIBLE
                 } else {
                     binding.btnAudit.visibility = View.GONE
                 }
+            } else {
+                binding.btnAudit.text = "Lakukan Audit"
+                binding.btnAudit.visibility = View.VISIBLE
             }
 
             binding.layoutDetail.visibility = if (item.isExpanded) View.VISIBLE else View.GONE
@@ -72,10 +98,6 @@ class PetaniAuditAdapter(
 
             binding.btnAudit.setOnClickListener {
                 onAuditClicked(item)
-            }
-
-            binding.btnBukaPdf.setOnClickListener {
-                openPdf(binding.root.context, item.pdfPath)
             }
         }
     }
