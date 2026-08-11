@@ -11,5 +11,7 @@ data class LahanEntity(
 
     val petani_id: Int,
 
-    val lahan_nama: String
+    val lahan_nama: String,
+
+    val lahan_luas: Double = 0.0
 )

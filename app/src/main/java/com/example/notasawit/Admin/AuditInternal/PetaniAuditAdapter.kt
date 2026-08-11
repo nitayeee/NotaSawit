@@ -20,7 +20,8 @@ data class PetaniAuditData(
     val tanggalAudit: String,
     val pdfPath: String,
     val isExpanded: Boolean = false,
-    val auditAttempt: Int = 0
+    val auditAttempt: Int = 0,
+    val auditLabel: String = ""
 )
 
 class PetaniAuditAdapter(
@@ -30,7 +31,11 @@ class PetaniAuditAdapter(
 
     inner class ViewHolder(val binding: ItemPetaniAuditBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PetaniAuditData, position: Int) {
-            binding.tvNamaPetani.text = item.namaPetani
+            binding.tvNamaPetani.text = if (item.auditLabel.isNotEmpty()) {
+                "${item.namaPetani} ${item.auditLabel}"
+            } else {
+                item.namaPetani
+            }
             binding.tvDesa.text = item.desa
             binding.tvStatus.text = item.statusAudit
 

@@ -103,24 +103,37 @@ class DashboardAuditFragment : Fragment() {
             val auditDataList = mutableListOf<PetaniAuditData>()
 
             for (petani in petaniList) {
-                val lastAudit = database.auditDao().getLastAuditForPetani(petani.namaPetani, selectedPeriode)
+                val allAudits = database.auditDao().getAllAuditsForPetani(petani.namaPetani, selectedPeriode)
                 
-                val status = lastAudit?.statusAudit ?: "Belum Audit"
-                val tgl = lastAudit?.tanggal ?: "-"
-                val pdf = lastAudit?.pdfPath ?: ""
-                val attempt = lastAudit?.auditAttempt ?: 0
-
-                auditDataList.add(
-                    PetaniAuditData(
-                        idPetani = petani.idPetani,
-                        namaPetani = petani.namaPetani,
-                        desa = petani.namaDesa ?: "-",
-                        statusAudit = status,
-                        tanggalAudit = tgl,
-                        pdfPath = pdf,
-                        auditAttempt = attempt
+                if (allAudits.isEmpty()) {
+                    auditDataList.add(
+                        PetaniAuditData(
+                            idPetani = petani.idPetani,
+                            namaPetani = petani.namaPetani,
+                            desa = petani.namaDesa ?: "-",
+                            statusAudit = "Belum Audit",
+                            tanggalAudit = "-",
+                            pdfPath = "",
+                            auditAttempt = 0
+                        )
                     )
-                )
+                } else {
+                    for ((index, audit) in allAudits.withIndex()) {
+                        val auditText = if (allAudits.size > 1) "(Audit ke-${index + 1})" else ""
+                        auditDataList.add(
+                            PetaniAuditData(
+                                idPetani = petani.idPetani,
+                                namaPetani = petani.namaPetani,
+                                desa = petani.namaDesa ?: "-",
+                                statusAudit = audit.statusAudit ?: "Belum Audit",
+                                tanggalAudit = audit.tanggal ?: "-",
+                                pdfPath = audit.pdfPath ?: "",
+                                auditAttempt = audit.auditAttempt ?: 0,
+                                auditLabel = auditText
+                            )
+                        )
+                    }
+                }
             }
 
             // Apply filter

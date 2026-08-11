@@ -165,18 +165,30 @@ class InputPemasukanActivity : AppCompatActivity() {
                 )
                 val produksiId = database.ProduksiDao().insert(produksi)
 
-                // Simpan semua lahan yang dipilih
-                selectedLahanIds.forEach { lahanId ->
+                // Hitung produksi proporsional
+                val lahanTerpilih = listLahan.filter { selectedLahanIds.contains(it.lahan_id) }
+                val totalLuasLahan = lahanTerpilih.sumOf { it.lahan_luas }
+                val totalProduksi = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
+                
+                val produksiPerHektar = if (totalLuasLahan > 0) totalProduksi / totalLuasLahan else 0.0
+                var totalProduksiDihitung = 0.0
+
+                lahanTerpilih.forEachIndexed { index, lahan ->
+                    val produksiLahan: Double
+                    if (index == lahanTerpilih.lastIndex) {
+                        produksiLahan = totalProduksi - totalProduksiDihitung
+                    } else {
+                        produksiLahan = lahan.lahan_luas * produksiPerHektar
+                    }
+                    totalProduksiDihitung += produksiLahan
 
                     database.DetailProduksiDao().insert(
-
                         DetailProduksiEntity(
                             produksiId = produksiId.toInt(),
-                            lahanId  = lahanId
+                            lahanId  = lahan.lahan_id,
+                            jumlahProduksi = produksiLahan
                         )
-
                     )
-
                 }
                 triggerDataSync()
 

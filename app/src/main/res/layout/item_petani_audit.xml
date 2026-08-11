@@ -54,26 +54,27 @@
                     android:ellipsize="end" />
 
                 <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Belum Audit"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/rounded_bg_gray"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@color/black" />
+
+                <TextView
                     android:id="@+id/tvDesa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="Desa"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="#757575" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Belum Audit"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:background="@drawable/rounded_bg_gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="@color/black"
-                android:layout_marginEnd="8dp"/>
 
             <ImageView
                 android:id="@+id/ivExpand"
@@ -123,6 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lakukan Audit"
+                    android:textColor="@color/white"
                     app:backgroundTint="@color/agri_green_dark" />
             </LinearLayout>
 

@@ -271,7 +271,7 @@ object PetaniApi {
         jumlahTbs: Int,
         hargaTbs: Double,
         petaniId: Int,
-        lahanIds: List<Int>,
+        detailLahan: List<com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity>,
         produksiKet: String,
         totalPendapatan: Double,
         imageUri: Uri?
@@ -286,11 +286,9 @@ object PetaniApi {
             .addFormDataPart("produksi_ket", produksiKet)
             .addFormDataPart("total_pendapatan", totalPendapatan.toString())
 
-        lahanIds.forEach { id ->
-            builder.addFormDataPart(
-                "lahan_id[]",
-                id.toString()
-            )
+        detailLahan.forEach { detail ->
+            builder.addFormDataPart("lahan_id[]", detail.lahanId.toString())
+            builder.addFormDataPart("jumlah_produksi[]", detail.jumlahProduksi.toString())
         }
 
         imageUri?.let { uri ->

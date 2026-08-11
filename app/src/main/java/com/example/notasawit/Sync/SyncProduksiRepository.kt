@@ -26,28 +26,23 @@ class SyncProduksiRepository(
             // 2. Ambil data lahan yang terhubung dengan produksi ini
             val detailLahan = database.DetailProduksiDao().getByProduksi(produksi.localId) // Sesuaikan method Dao Anda
 
-            val lahanIds = detailLahan.map { it.lahanId }
-
-            if (lahanIds.isEmpty()) {
-                // Jika tidak ada lahan terkait, lewati atau hapus data kotor ini
+            if (detailLahan.isEmpty()) {
                 database.ProduksiDao().deleteById(produksi.localId)
                 return@forEach
             }
 
-            Log.d("SYNC_PRODUKSI", "==========================")
             Log.d("SYNC_PRODUKSI", "Mengirim Produksi ID Lokal: ${produksi.localId}")
 
             try {
-                val imageUri = produksi.imagePath?.let { Uri.parse(it) }
+                val imageUri = produksi.imagePath?.let { android.net.Uri.parse(it) }
 
-                // 3. Panggil postProduksi bentukan OkHttp yang baru (.Call)
-                val call = PetaniApi.postProduksi(
+                val call = com.example.notasawit.Network.PetaniApi.postProduksi(
                     context = context,
-                    produksiTanggal = produksi.produksi_tanggal, // Sudah yyyy-MM-dd
+                    produksiTanggal = produksi.produksi_tanggal,
                     jumlahTbs = produksi.jumlah_tbs,
                     hargaTbs = produksi.harga_tbs,
                     petaniId = produksi.petaniId,
-                    lahanIds = lahanIds, // Kirim list lahan sekaligus
+                    detailLahan = detailLahan,
                     produksiKet = produksi.produksi_ket ?: "",
                     totalPendapatan = produksi.total_pendapatan,
                     imageUri = imageUri

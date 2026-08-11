@@ -505,7 +505,8 @@ getJenisKegiatan()
                         LahanEntity(
                             lahan_id = it.lahan_id,
                             petani_id = petaniId,
-                            lahan_nama = it.lahan_nama
+                            lahan_nama = it.lahan_nama,
+                            lahan_luas = it.lahan_luas
                         )
 
                     }

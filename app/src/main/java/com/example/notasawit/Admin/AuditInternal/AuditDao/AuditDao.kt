@@ -34,4 +34,7 @@ interface AuditDao {
     @Query("SELECT * FROM audit_header WHERE namaPetani = :namaPetani AND periode = :periode ORDER BY auditAttempt DESC LIMIT 1")
     suspend fun getLastAuditForPetani(namaPetani: String, periode: String): AuditHeader?
 
+    // Ambil SEMUA audit petani pada periode tertentu
+    @Query("SELECT * FROM audit_header WHERE namaPetani = :namaPetani AND periode = :periode ORDER BY auditAttempt ASC")
+    suspend fun getAllAuditsForPetani(namaPetani: String, periode: String): List<AuditHeader>
 }
