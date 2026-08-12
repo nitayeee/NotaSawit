@@ -708,4 +708,18 @@ object PetaniApi {
 
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun getAllAuditByDesa(desa: String?, callback: Callback) {
+        val url = if (desa.isNullOrEmpty()) {
+            "$BASE_URL/audit-internal/all"
+        } else {
+            "$BASE_URL/audit-internal/all?desa=$desa"
+        }
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
 }

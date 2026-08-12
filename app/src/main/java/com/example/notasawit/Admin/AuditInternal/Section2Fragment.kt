@@ -41,10 +41,10 @@ class Section2Fragment : Fragment() {
         val allQuestions = Section2QuestionData.getQuestions()
 
         val data = if (viewModel.auditHeader.auditAttempt > 1) {
-            // Filter hanya pertanyaan yang dijawab "Tidak Sesuai" (false) pada audit sebelumnya
+            // Filter hanya pertanyaan yang tidak dijawab "Sesuai" (true) pada audit sebelumnya
             allQuestions.filter { item ->
                 if (item is AuditItem.Question) {
-                    viewModel.auditAnswers[item.key] == false
+                    viewModel.previousAnswers[item.key] != true
                 } else {
                     true // Biarkan header (AuditItem.Header) tetap muncul
                 }

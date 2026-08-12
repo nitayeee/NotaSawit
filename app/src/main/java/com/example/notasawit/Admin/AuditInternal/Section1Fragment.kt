@@ -91,18 +91,11 @@ class Section1Fragment : Fragment() {
                     
                     var isFollowUp = viewModel.auditHeader.auditAttempt > 1
                     if (isFollowUp && lastAudit != null) {
-                        val answers = database.auditDao().getAnswersForAudit(lastAudit.idAudit)
-                        
                         viewModel.auditHeader = viewModel.auditHeader.copy(
                             parentAuditId = lastAudit.idAudit,
                             tanggal = tanggal,
                             desa = desa
                         )
-                        
-                        // Load all answers to UI/ViewModel, so that true answers are carried over
-                        answers.forEach { ans ->
-                            viewModel.auditAnswers[ans.questionKey] = ans.answer
-                        }
                     } else {
                         viewModel.auditHeader = viewModel.auditHeader.copy(
                             tanggal = tanggal,

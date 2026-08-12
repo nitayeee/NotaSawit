@@ -14,6 +14,9 @@ class AuditViewModel : ViewModel() {
     // Menyimpan semua jawaban dengan format Map<questionKey, Boolean?>
     val auditAnswers = mutableMapOf<String, Boolean?>()
 
+    // Menyimpan jawaban dari audit sebelumnya (untuk Audit Ulang)
+    val previousAnswers = mutableMapOf<String, Boolean?>()
+
     // Jawaban Section 2 yang sedang di-load di UI
     var section2Answers = mutableListOf<AuditItem>()
 

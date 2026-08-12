@@ -1,12 +1,15 @@
 package com.example.notasawit
 
 import android.animation.Animator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -36,10 +39,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         startAmbientBlobs()
-        runEntranceAnimation()
+        startDotsBounce(listOf(binding.viewDot1, binding.viewDot2, binding.viewDot3))
 
         lifecycleScope.launch {
-            delay(2000) // simulasi pengambilan data selama 2 detik
+            runEntranceSequence()
+
+            delay(1000) // simulasi loading / jeda
 
             stopLoopingAnimators()
 
@@ -62,64 +67,72 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun runEntranceAnimation() {
+    private suspend fun runEntranceSequence() {
         val logoWrapper = binding.flLogoWrapper
-        val brandText = binding.llBrandText
-        val versionInfo = binding.llBottomInfo
+        val brandTitle = binding.tvBrandTitle
+        val bottomInfo = binding.llBottomInfo
         val shine = binding.viewShine
+        val borderGlow = binding.viewBorderGlow
 
         logoWrapper.apply { alpha = 0f; scaleX = 0.4f; scaleY = 0.4f }
-        brandText.apply { alpha = 0f; translationY = 60f }
-        versionInfo.apply { alpha = 0f }
+        brandTitle.text = ""
+        bottomInfo.apply { alpha = 0f }
         shine.alpha = 0f
 
-        val logoSet = AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(logoWrapper, View.ALPHA, 0f, 1f),
-                ObjectAnimator.ofFloat(logoWrapper, View.SCALE_X, 0.4f, 1f),
-                ObjectAnimator.ofFloat(logoWrapper, View.SCALE_Y, 0.4f, 1f)
-            )
+        // 1. Logo Appears
+        ObjectAnimator.ofFloat(logoWrapper, View.ALPHA, 0f, 1f).apply { duration = 650 }.start()
+        ObjectAnimator.ofFloat(logoWrapper, View.SCALE_X, 0.4f, 1f).apply {
             duration = 650
             interpolator = OvershootInterpolator(2f)
+        }.start()
+        ObjectAnimator.ofFloat(logoWrapper, View.SCALE_Y, 0.4f, 1f).apply {
+            duration = 650
+            interpolator = OvershootInterpolator(2f)
+        }.start()
+
+        delay(650)
+        startPulseLoop(logoWrapper)
+
+        // 2. Animate brand text letter by letter
+        val text = "SILAUSA"
+        var currentText = ""
+        for (i in text.indices) {
+            currentText += text[i]
+            val spannable = SpannableString(currentText)
+            if (currentText.length > 2) {
+                spannable.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#000000")),
+                    0, 2,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                spannable.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#264A2B")),
+                    2, currentText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            } else {
+                spannable.setSpan(
+                    ForegroundColorSpan(Color.parseColor("#000000")),
+                    0, currentText.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            brandTitle.text = spannable
+            delay(150)
         }
 
-        val textSet = AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(brandText, View.ALPHA, 0f, 1f),
-                ObjectAnimator.ofFloat(brandText, View.TRANSLATION_Y, 60f, 0f)
-            )
-            duration = 500
-            interpolator = AccelerateDecelerateInterpolator()
-            startDelay = 300
-        }
+        // 3. Version text appears
+        ObjectAnimator.ofFloat(bottomInfo, View.ALPHA, 0f, 1f).apply { duration = 400 }.start()
+        delay(400)
 
-        val infoFade = ObjectAnimator.ofFloat(versionInfo, View.ALPHA, 0f, 1f).apply {
-            duration = 400
-            startDelay = 700
-        }
+        // 4. Shine on logo
+        ObjectAnimator.ofFloat(shine, View.ALPHA, 0f, 1f, 0f).apply { duration = 550 }.start()
+        ObjectAnimator.ofFloat(shine, View.TRANSLATION_X, -180f, 180f).apply { duration = 550 }.start()
+        delay(550)
 
-        // sapuan "shine" satu kali di atas logo, setelah logo pop selesai
-        val shineSet = AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(shine, View.ALPHA, 0f, 1f, 0f).apply { duration = 550 },
-                ObjectAnimator.ofFloat(shine, View.TRANSLATION_X, -180f, 180f).apply { duration = 550 }
-            )
-            startDelay = 600
-        }
-
-        AnimatorSet().apply {
-            playTogether(logoSet, textSet, infoFade, shineSet)
-            addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {}
-                override fun onAnimationEnd(animation: Animator) {
-                    startPulseLoop(logoWrapper)
-                    startDotsBounce(listOf(binding.viewDot1, binding.viewDot2, binding.viewDot3))
-                }
-                override fun onAnimationCancel(animation: Animator) {}
-                override fun onAnimationRepeat(animation: Animator) {}
-            })
-            start()
-        }
+        // 5. Glow / Vignette appear
+        ObjectAnimator.ofFloat(borderGlow, View.ALPHA, 0f, 1f).apply { duration = 700 }.start()
+        delay(700)
     }
 
     private fun startAmbientBlobs() {

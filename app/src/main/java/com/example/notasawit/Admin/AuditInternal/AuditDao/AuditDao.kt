@@ -37,4 +37,7 @@ interface AuditDao {
     // Ambil SEMUA audit petani pada periode tertentu
     @Query("SELECT * FROM audit_header WHERE namaPetani = :namaPetani AND periode = :periode ORDER BY auditAttempt ASC")
     suspend fun getAllAuditsForPetani(namaPetani: String, periode: String): List<AuditHeader>
+
+    @Query("UPDATE audit_header SET statusAudit = :status, ringkasanTemuan = :keterangan WHERE idAudit = :idAudit")
+    suspend fun updateAuditStatus(idAudit: String, status: String, keterangan: String?)
 }

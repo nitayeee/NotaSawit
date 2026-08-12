@@ -78,12 +78,18 @@ class PetaniAuditAdapter(
 
                 if (item.statusAudit == "Perlu Perbaikan") {
                     binding.btnAudit.text = "Audit Ulang"
+                    binding.btnAudit.isEnabled = true
+                    binding.btnAudit.visibility = View.VISIBLE
+                } else if (item.statusAudit == "Menunggu Keputusan") {
+                    binding.btnAudit.text = "Menunggu Hasil"
+                    binding.btnAudit.isEnabled = false
                     binding.btnAudit.visibility = View.VISIBLE
                 } else {
                     binding.btnAudit.visibility = View.GONE
                 }
             } else {
                 binding.btnAudit.text = "Lakukan Audit"
+                binding.btnAudit.isEnabled = true
                 binding.btnAudit.visibility = View.VISIBLE
             }
 

@@ -124,8 +124,8 @@ class Section4Fragment : Fragment() {
                 view.findViewById<android.widget.RadioButton>(selectedPerbaikanId).text.toString()
             }
 
-            val hasFalseAnswers = viewModel.auditAnswers.values.any { it == false }
-            val statusAudit = if (hasFalseAnswers) "Perlu Perbaikan" else "Lulus"
+            // Status selalu Menunggu Keputusan agar Admin yang memvalidasi
+            val statusAudit = "Menunggu Keputusan"
 
             viewModel.auditHeader =
                 viewModel.auditHeader.copy(

@@ -40,7 +40,66 @@ class DashboardAuditFragment : Fragment() {
 
         setupDropdowns()
         setupRecyclerView()
+        
+        binding.swipeRefresh.setOnRefreshListener {
+            fetchAuditsFromServer()
+        }
+        
         loadData()
+    }
+    
+    private fun fetchAuditsFromServer() {
+        binding.swipeRefresh.isRefreshing = true
+        val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+        val adminDesaNama = sharedPref.getString("admin_desa", "") // Ensure admin_desa is saved in Login or use null to get all
+
+        com.example.notasawit.Network.PetaniApi.getAllAuditByDesa(if (adminDesaNama.isNullOrEmpty()) null else adminDesaNama, object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    binding.swipeRefresh.isRefreshing = false
+                    android.widget.Toast.makeText(requireContext(), "Gagal terhubung ke server", android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                val body = response.body?.string()
+                if (response.isSuccessful && body != null) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            try {
+                                val jsonObject = org.json.JSONObject(body)
+                                val dataArray = jsonObject.getJSONArray("data")
+
+                                for (i in 0 until dataArray.length()) {
+                                    val item = dataArray.getJSONObject(i)
+                                    val idAudit = item.getString("id_audit")
+                                    
+                                    if (item.isNull("status_audit")) continue
+                                    val status = item.getString("status_audit")
+                                    
+                                    // Mencegah NOT NULL constraint failed dengan pass "" jika null
+                                    val keterangan = if (item.isNull("keterangan")) "" else item.getString("keterangan")
+                                    
+                                    database.auditDao().updateAuditStatus(idAudit, status, keterangan)
+                                }
+                                
+                                withContext(Dispatchers.Main) {
+                                    binding.swipeRefresh.isRefreshing = false
+                                    loadData()
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                withContext(Dispatchers.Main) {
+                                    binding.swipeRefresh.isRefreshing = false
+                                }
+                            }
+                        }
+                } else {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        binding.swipeRefresh.isRefreshing = false
+                    }
+                }
+            }
+        })
     }
 
     private fun setupDropdowns() {
@@ -85,7 +144,34 @@ class DashboardAuditFragment : Fragment() {
             viewModel.updatePetaniAndAuditor(data.idPetani, data.namaPetani, username)
             viewModel.updatePeriodeAndAttempt(selectedPeriode, nextAttempt)
 
-            (activity as? AuditInternalActivity)?.navigateTo(Section1Fragment(), 25)
+            val previousIdAudit = if (isFollowUp && data.history.isNotEmpty()) {
+                val latestAudit = data.history.maxByOrNull { it.auditAttempt } ?: data.history.first()
+                latestAudit.idAudit
+            } else null
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                // Bersihkan previousAnswers dulu
+                viewModel.previousAnswers.clear()
+                viewModel.auditAnswers.clear() // Bersihkan juga current answers untuk audit baru
+                
+                if (previousIdAudit != null) {
+                    val answers = database.auditDao().getAnswersForAudit(previousIdAudit)
+                    answers.forEach {
+                        viewModel.previousAnswers[it.questionKey] = it.answer
+                    }
+                }
+                
+                // Copy previous true answers to current answers to pre-fill them
+                viewModel.previousAnswers.forEach { (key, value) ->
+                    if (value == true) {
+                        viewModel.auditAnswers[key] = true
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    (activity as? AuditInternalActivity)?.navigateTo(Section1Fragment(), 25)
+                }
+            }
         }
         binding.rvPetaniAudit.adapter = adapter
     }
