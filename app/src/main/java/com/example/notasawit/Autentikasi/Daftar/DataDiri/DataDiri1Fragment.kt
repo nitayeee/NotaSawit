@@ -112,9 +112,9 @@ class DataDiri1Fragment : Fragment() {
     
     private fun setJenisKelamin(jk: String) {
         selectedJenisKelamin = jk
-        val activeBgColor = Color.parseColor("#E8F5E9")
-        val activeTextColor = Color.parseColor("#2E7D32")
-        val activeStrokeColor = Color.parseColor("#2E7D32")
+        val activeBgColor = Color.parseColor("#E8ECE9")
+        val activeTextColor = Color.parseColor("#1B4D2E")
+        val activeStrokeColor = Color.parseColor("#1B4D2E")
 
         val inactiveBgColor = Color.TRANSPARENT
         val inactiveTextColor = Color.parseColor("#555555")

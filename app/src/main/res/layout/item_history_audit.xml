@@ -58,7 +58,7 @@
             android:id="@+id/btnBukaPdfHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#334D35"
+            android:backgroundTint="#1B4D2E"
             android:fontFamily="@font/poppins_medium"
             android:text="PDF"
             android:textColor="@color/white"

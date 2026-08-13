@@ -25,14 +25,14 @@
             <View
                 android:layout_width="4dp"
                 android:layout_height="match_parent"
-                android:background="#4CAF50"
+                android:background="#1B4D2E"
                 android:layout_marginEnd="12dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tentang Bahan Kimia dan Limbah Bahan Berbahaya &amp; Beracun (LB3)"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/Ibu tahu larangan semprot total?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/Ibu tahu bahan aktif Paraquat (racun bakar) dilarang penggunaannya?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/Ibu tahu kebun yang di pinggir sungai dilarang disemprot minimal 3 pokok (20 meter) dari pinggir sungai?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -130,7 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="4. Apakah Bapak/Ibu tahu alat alat pelindung diri yang digunakan saat menyemprot ?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -157,7 +157,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/Ibu tahu tata cara penyimpanan bahan pestisida yang tepat?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -183,7 +183,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="6. Apakah Bapak/Ibu tahu cara penanganan terhadap keracunan pestisida?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -209,7 +209,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="7. Apakah Bapak/Ibu sudah mengumpulkan wadah bekas pestisida di tempat yang aman?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -229,8 +229,8 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:text="LANJUT KE SECTION 3"
-            app:backgroundTint="@color/agri_green_dark"
-            android:textColor="#FFFFFF"
+            app:backgroundTint="@color/secondary"
+            android:textColor="@color/tertiary"
             android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>

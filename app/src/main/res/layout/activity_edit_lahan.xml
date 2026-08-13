@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F8"
+    android:background="#F8F9FA"
     tools:context=".ProfilPetani.EditLahanActivity">
 
     <!-- Top App Bar -->
@@ -97,7 +97,7 @@
                         android:layout_height="48dp"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="#F4F6F8"
+                        app:cardBackgroundColor="#F8F9FA"
                         android:layout_marginBottom="16dp">
                         <Spinner
                             android:id="@+id/spinnerLahan"

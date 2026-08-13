@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Section 1: Data Kunjungan Lahan"
-            android:textColor="#333333"
+            android:textColor="#002617"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginBottom="20dp" />
@@ -33,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:textColor="#333333"/>
+                android:textColor="#002617"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:completionThreshold="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:completionThreshold="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:completionThreshold="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:completionThreshold="1"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,8 +107,8 @@
             android:text="LANJUT KE SECTION 2"
             android:textSize="15sp"
             android:fontFamily="@font/poppins_bold"
-            app:backgroundTint="@color/agri_green_dark"
-            android:textColor="#FFFFFF"/>
+            app:backgroundTint="@color/secondary"
+            android:textColor="@color/tertiary"/>
 
     </LinearLayout>
 </ScrollView>

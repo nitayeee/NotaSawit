@@ -58,7 +58,7 @@ class RiwayatAdapter(
                     "+ Rp ${formatRupiah(item.nominal)}"
 
                 holder.binding.tvAmount.setTextColor(
-                    Color.parseColor("#2E7D32")
+                    Color.parseColor("#1B4D2E")
                 )
 
                 holder.binding.ivIcon.setImageResource(

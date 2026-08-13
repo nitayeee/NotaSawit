@@ -20,7 +20,7 @@
         android:fontFamily="@font/poppins_bold"
         android:text="Judul Tutorial"
         android:textAlignment="center"
-        android:textColor="#264A2B"
+        android:textColor="#1B4D2E"
         android:textSize="22sp" />
 
     <TextView

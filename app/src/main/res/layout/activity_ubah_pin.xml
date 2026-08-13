@@ -21,14 +21,14 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_arrow_left"
-            app:tint="#2B462C" />
+            app:tint="#1B4D2E" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Ubah PIN"
-            android:textColor="#2B462C"
+            android:textColor="#1B4D2E"
             android:textSize="20sp"
             android:fontFamily="@font/poppins_bold" />
     </LinearLayout>
@@ -62,8 +62,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:hint="Masukkan PIN Baru (6 digit)"
-                app:boxBackgroundColor="#F4F6F8"
-                app:boxStrokeColor="#2B462C"
+                app:boxBackgroundColor="#F8F9FA"
+                app:boxStrokeColor="#1B4D2E"
                 app:boxCornerRadiusBottomEnd="8dp"
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
                     android:maxLength="6"
-                    android:textColor="#333333" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -85,8 +85,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:hint="Konfirmasi PIN Baru"
-                app:boxBackgroundColor="#F4F6F8"
-                app:boxStrokeColor="#2B462C"
+                app:boxBackgroundColor="#F8F9FA"
+                app:boxStrokeColor="#1B4D2E"
                 app:boxCornerRadiusBottomEnd="8dp"
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
@@ -99,14 +99,14 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
                     android:maxLength="6"
-                    android:textColor="#333333" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/btnSimpan"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:backgroundTint="#2B462C"
+                android:backgroundTint="#1B4D2E"
                 android:text="Simpan PIN"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"

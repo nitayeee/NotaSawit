@@ -44,7 +44,7 @@
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#264A2B"
+            android:backgroundTint="#1B4D2E"
             android:fontFamily="@font/poppins_semibold"
             android:text="Selanjutnya"
             android:textColor="#FFFFFF" />

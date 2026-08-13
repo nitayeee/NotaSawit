@@ -25,14 +25,14 @@
             <View
                 android:layout_width="4dp"
                 android:layout_height="match_parent"
-                android:background="#4CAF50"
+                android:background="#1B4D2E"
                 android:layout_marginEnd="12dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tentang Nilai Konversi Tinggi (NKT)"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="16sp"  android:fontFamily="@font/poppins_bold" />
         </LinearLayout>
 
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="1. Apakah Bapak/ibu tahu bahwa asosiasi sudah melakukan identifikasi dan memiliki laporan Nilai Konservasi Tinggi (NKT)?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -77,7 +77,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="2. Apakah Bapak/ibu tahu daftar hewan dan tumbuhan yang dilindungi?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="3. Apakah Bapak/ibu tahu penanganan jika menjumpai hewan dan tumbuhan yang dilindungi?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -130,7 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="4. Apakah Bapak/ibu tahu terdapat larangan membuka lahan dengan cara bakar?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -157,7 +157,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="5. Apakah Bapak/ibu tahu  terdapat larangan membuang sampah ke sungai?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -183,7 +183,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="6. Apakah Bapak/ibu tahu bahwa menangkap ikan dengan cara meracuni sungai itu dilarang?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -209,7 +209,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="7. Apakah Bapak/ibu tahu pengeloaan lahan jika ditemukan areal lahan miring?"
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="12sp"
                 android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
 
@@ -229,8 +229,8 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:text="LANJUT KE SECTION 3"
-            app:backgroundTint="@color/agri_green_dark"
-            android:textColor="#FFFFFF"
+            app:backgroundTint="@color/secondary"
+            android:textColor="@color/tertiary"
             android:fontFamily="@font/poppins_bold"/>
     </LinearLayout>
 </ScrollView>

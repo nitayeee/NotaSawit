@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F8"
+    android:background="#F8F9FA"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="Setelan"
-        android:textColor="#2B462C"
+        android:textColor="#1B4D2E"
         android:textSize="20sp"
         android:fontFamily="@font/poppins_bold" />
 
@@ -40,7 +40,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:text="Ubah PIN"
-            android:textColor="#333333"
+            android:textColor="#002617"
             android:textSize="16sp" />
 
         <ImageView
@@ -80,7 +80,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:text="Tentang Aplikasi"
-            android:textColor="#333333"
+            android:textColor="#002617"
             android:textSize="16sp" />
 
         <TextView
@@ -120,7 +120,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:text="Bantuan &amp; Dukungan"
-            android:textColor="#333333"
+            android:textColor="#002617"
             android:textSize="16sp" />
     </LinearLayout>
 

@@ -28,8 +28,8 @@ object PdfGenerator {
         val pdfDocument = PdfDocument()
         
         // Define colors
-        val primaryColor = Color.parseColor("#2E7D32") // Dark Green
-        val secondaryColor = Color.parseColor("#4CAF50")
+        val primaryColor = Color.parseColor("#1B4D2E") // Dark Green
+        val secondaryColor = Color.parseColor("#1B4D2E")
         val textColor = Color.DKGRAY
         
         val titlePaint = Paint().apply {

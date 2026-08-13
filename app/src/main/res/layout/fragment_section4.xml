@@ -164,7 +164,7 @@
                     android:contentDescription="Bukti Audit"/>
 
                 <Button
-            app:backgroundTint="@color/agri_green_dark"
+            app:backgroundTint="@color/secondary"
                     android:id="@+id/btnPilihFoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
             android:orientation="horizontal">
 
             <Button
-            app:backgroundTint="@color/agri_green_dark"
+            app:backgroundTint="@color/secondary"
                 android:id="@+id/btnBack"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
@@ -241,7 +241,7 @@
                 android:layout_height="1dp"/>
 
             <Button
-            app:backgroundTint="@color/agri_green_dark"
+            app:backgroundTint="@color/secondary"
                 android:id="@+id/btnSelesai"
                 android:layout_width="0dp"
                 android:layout_height="50dp"

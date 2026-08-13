@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:text="Lengkapi Profil Anda"
-                    android:textColor="#333333"
+                    android:textColor="#002617"
                     android:textSize="20sp" />
 
                 <TextView
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                app:boxBackgroundColor="#F6F7F9"
+                app:boxBackgroundColor="#F8F9FA"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
                 app:boxCornerRadiusTopStart="12dp"
@@ -91,7 +91,7 @@
                     android:inputType="textPersonName"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
-                    android:textColor="#222222" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Nama Belakang / Username -->
@@ -113,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                app:boxBackgroundColor="#F6F7F9"
+                app:boxBackgroundColor="#F8F9FA"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
                 app:boxCornerRadiusTopStart="12dp"
@@ -134,7 +134,7 @@
                     android:inputType="textPersonName"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
-                    android:textColor="#222222" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Tanggal Lahir -->
@@ -156,7 +156,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                app:boxBackgroundColor="#F6F7F9"
+                app:boxBackgroundColor="#F8F9FA"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
                 app:boxCornerRadiusTopStart="12dp"
@@ -183,7 +183,7 @@
                     android:cursorVisible="false"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
-                    android:textColor="#222222" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Usia -->
@@ -205,7 +205,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                app:boxBackgroundColor="#F6F7F9"
+                app:boxBackgroundColor="#F8F9FA"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
                 app:boxCornerRadiusTopStart="12dp"
@@ -226,7 +226,7 @@
                     android:inputType="number"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
-                    android:textColor="#222222" />
+                    android:textColor="#002617" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Jenis Kelamin -->
@@ -291,7 +291,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#334D35"
+                android:backgroundTint="#1B4D2E"
                 android:text="Selanjutnya"
                 android:textAllCaps="false"
                 android:fontFamily="@font/poppins_semibold"

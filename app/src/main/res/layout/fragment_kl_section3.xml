@@ -38,7 +38,7 @@
                 android:id="@+id/btnAmbilFoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/agri_green_dark"
+                app:backgroundTint="@color/secondary"
                 android:text="Ambil Foto"
                 android:layout_marginBottom="24dp"/>
 
@@ -69,7 +69,7 @@
                 android:id="@+id/btnGetLokasiWaktu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/agri_green_dark"
+                app:backgroundTint="@color/secondary"
                 android:text="Dapatkan Lokasi &amp; Waktu"/>
 
         </LinearLayout>
@@ -85,7 +85,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            app:backgroundTint="@color/agri_green_dark"
+            app:backgroundTint="@color/secondary"
             android:text="Kembali"/>
 
         <Space
@@ -97,7 +97,7 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            app:backgroundTint="@color/agri_green_dark"
+            app:backgroundTint="@color/secondary"
             android:text="Simpan"/>
 
     </LinearLayout>

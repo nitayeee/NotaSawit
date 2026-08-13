@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4F1">
+    android:background="#F8F9FA">
 
     <!-- TOP BAR -->
     <com.google.android.material.appbar.AppBarLayout
@@ -69,7 +69,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Halo, "
-                            android:textColor="#000000"
+                            android:textColor="#002617"
                             android:textSize="17sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -78,7 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Dika!"
-                            android:textColor="#2B462C"
+                            android:textColor="#1B4D2E"
                             android:textSize="17sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -283,7 +283,7 @@
                         <View
                             android:layout_width="4dp"
                             android:layout_height="match_parent"
-                            android:background="#2B462C" />
+                            android:background="#1B4D2E" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -306,7 +306,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
                                 android:text="Rp 45.0M"
-                                android:textColor="#2B462C"
+                                android:textColor="#1B4D2E"
                                 android:textSize="17sp"
                                 android:fontFamily="@font/poppins_bold" />
 
@@ -316,7 +316,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="↑ Bulan ini"
-                                android:textColor="#2B462C"
+                                android:textColor="#1B4D2E"
                                 android:textSize="10sp"
                                 android:background="@drawable/bg_badge_green"
                                 android:paddingHorizontal="7dp"
@@ -430,14 +430,14 @@
                             android:layout_height="52dp"
                             app:cardCornerRadius="14dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#E8EEE8">
+                            app:cardBackgroundColor="#E8ECE9">
 
                             <ImageView
                                 android:layout_width="26dp"
                                 android:layout_height="26dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_edukasi"
-                                app:tint="#2B462C"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="Edukasi" />
 
                         </androidx.cardview.widget.CardView>
@@ -447,7 +447,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Edukasi"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="13sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -494,7 +494,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Input Kegiatan"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="13sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -524,14 +524,14 @@
                             android:layout_height="52dp"
                             app:cardCornerRadius="14dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#E8EEE8">
+                            app:cardBackgroundColor="#E8ECE9">
 
                             <ImageView
                                 android:layout_width="26dp"
                                 android:layout_height="26dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_pemasukan"
-                                app:tint="#2B462C"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="Pemasukan" />
 
                         </androidx.cardview.widget.CardView>
@@ -541,7 +541,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Pemasukan"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="13sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -588,7 +588,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:text="Pengeluaran"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="13sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -604,7 +604,7 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#E8EEE8"> <!-- Menggunakan warna hijau soft senada dengan icon menu -->
+                app:cardBackgroundColor="#E8ECE9"> <!-- Menggunakan warna hijau soft senada dengan icon menu -->
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -641,14 +641,14 @@
                             <View
                                 android:layout_width="3dp"
                                 android:layout_height="14dp"
-                                android:background="#4CAF50"
+                                android:background="#1B4D2E"
                                 android:layout_marginEnd="8dp"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="QUOTE HARI INI"
-                                android:textColor="#2B462C"
+                                android:textColor="#1B4D2E"
                                 android:textSize="10sp"
                                 android:letterSpacing="0.15" android:fontFamily="@font/poppins_bold" />
                         </LinearLayout>
@@ -659,7 +659,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Keuntungan besar dimulai dari pencatatan kecil yang konsisten."
-                            android:textColor="#2B462C"
+                            android:textColor="#1B4D2E"
                             android:textSize="15sp"
                             android:lineSpacingMultiplier="1.5"
                             android:fontFamily="@font/poppins_medium"

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F6"
+    android:background="#F8F9FA"
     tools:context=".RiwayatKeuangan.RiwayatActivity">
 
     <!-- Top Bar -->
@@ -100,7 +100,7 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         app:tabTextColor="#888888"
-        app:tabSelectedTextColor="#4A6B53"
+        app:tabSelectedTextColor="#1B4D2E"
         app:tabTextAppearance="@style/CustomTabTextAppearance"
         app:layout_constraintTop_toBottomOf="@id/topBar">
 
@@ -271,7 +271,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:text="Rp 0"
-                            android:textColor="#2E7D32"
+                            android:textColor="#1B4D2E"
                             android:fontFamily="@font/poppins_bold"/>
 
                     </LinearLayout>

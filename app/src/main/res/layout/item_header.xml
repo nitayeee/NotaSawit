@@ -13,7 +13,7 @@
         <View
             android:layout_width="4dp"
             android:layout_height="match_parent"
-            android:background="#4CAF50"/>
+            android:background="#1B4D2E"/>
 
         <TextView
             android:id="@+id/tvHeader"

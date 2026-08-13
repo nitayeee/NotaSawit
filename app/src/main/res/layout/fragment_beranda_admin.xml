@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F4F1"
+    android:background="#F8F9FA"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Admin.Beranda.BerandaAdminFragment">
 
@@ -14,7 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        app:elevation="2dp"
+        android:elevation="8dp"
+        app:elevation="8dp"
+        android:outlineProvider="bounds"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -37,7 +39,7 @@
                     android:layout_marginEnd="12dp"
                     app:cardCornerRadius="10dp"
                     app:cardBackgroundColor="@color/agri_green_light"
-                    app:cardElevation="0dp">
+                    app:cardElevation="6dp">
 
                     <ImageView
                         android:layout_width="40dp"
@@ -72,7 +74,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Halo, "
-                            android:textColor="#000000"
+                            android:textColor="#002617"
                             android:textSize="17sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -81,7 +83,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Dika!"
-                            android:textColor="#2B462C"
+                            android:textColor="#1B4D2E"
                             android:textSize="17sp"
                             android:fontFamily="@font/poppins_bold" />
 
@@ -153,13 +155,14 @@
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
                         app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardElevation="6dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="#A4C2E6">
+                        app:cardBackgroundColor="@android:color/transparent">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/bg_gradient_petani"
                             android:padding="16dp">
 
                             <LinearLayout
@@ -174,7 +177,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Jumlah Petani"
-                                    android:textColor="#1A365D"
+                                    android:textColor="@color/white"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="12sp" />
 
@@ -183,7 +186,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="13"
-                                    android:textColor="#1A365D"
+                                    android:textColor="@color/white"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="28sp"
                                     android:layout_marginTop="4dp" />
@@ -197,7 +200,7 @@
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/ic_profile"
                                 android:contentDescription="Icon Petani"
-                                app:tint="#1A365D" />
+                                app:tint="@color/white" />
                         </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -207,13 +210,14 @@
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardElevation="6dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="#A8D5BA">
+                        app:cardBackgroundColor="@android:color/transparent">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@drawable/bg_gradient_lahan"
                             android:padding="16dp">
 
                             <LinearLayout
@@ -228,7 +232,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Luas Lahan (Ha)"
-                                    android:textColor="#1B4332"
+                                    android:textColor="@color/tertiary"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="12sp" />
 
@@ -237,7 +241,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="29"
-                                    android:textColor="#1B4332"
+                                    android:textColor="@color/tertiary"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="28sp"
                                     android:layout_marginTop="4dp" />
@@ -251,7 +255,7 @@
                                 android:layout_centerInParent="true"
                                 android:src="@drawable/ic_map"
                                 android:contentDescription="Icon Peta"
-                                app:tint="#1B4332" />
+                                app:tint="@color/tertiary" />
                         </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -361,7 +365,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:src="@drawable/ic_check_circle"
-                                app:tint="#1E4620"
+                                app:tint="#1B4D2E"
                                 android:layout_marginEnd="12dp"/>
 
                             <LinearLayout
@@ -373,14 +377,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="670"
-                                    android:textColor="#1E4620"
+                                    android:textColor="#1B4D2E"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="18sp"/>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="LULUS"
-                                    android:textColor="#1E4620"
+                                    android:textColor="#1B4D2E"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="10sp"/>
                             </LinearLayout>
@@ -399,7 +403,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:src="@drawable/ic_info"
-                                app:tint="#855B00"
+                                app:tint="#D4AF37"
                                 android:layout_marginEnd="12dp"/>
 
                             <LinearLayout
@@ -411,14 +415,14 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="130"
-                                    android:textColor="#855B00"
+                                    android:textColor="#D4AF37"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="18sp"/>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="PERLU PERBAIKAN"
-                                    android:textColor="#855B00"
+                                    android:textColor="#D4AF37"
                                     android:fontFamily="@font/poppins_bold"
                                     android:textSize="10sp"/>
                             </LinearLayout>

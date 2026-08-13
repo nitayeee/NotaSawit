@@ -101,18 +101,18 @@ class MainActivity : AppCompatActivity() {
             val spannable = SpannableString(currentText)
             if (currentText.length > 2) {
                 spannable.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#000000")),
+                    ForegroundColorSpan(Color.parseColor("#002617")),
                     0, 2,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 spannable.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#264A2B")),
+                    ForegroundColorSpan(Color.parseColor("#1B4D2E")),
                     2, currentText.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             } else {
                 spannable.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#000000")),
+                    ForegroundColorSpan(Color.parseColor("#002617")),
                     0, currentText.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )

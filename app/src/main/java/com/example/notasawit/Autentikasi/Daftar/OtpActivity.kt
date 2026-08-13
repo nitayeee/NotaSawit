@@ -111,7 +111,7 @@ class OtpActivity : AppCompatActivity() {
                 // 3. Ketika waktu habis
                 binding.tvTimer.text = "00:00"
                 binding.btnKirimUlang.isEnabled = true
-                binding.btnKirimUlang.setTextColor(Color.parseColor("#264A2B")) // Ganti ke warna hijau sawitmu
+                binding.btnKirimUlang.setTextColor(Color.parseColor("#1B4D2E")) // Ganti ke warna hijau sawitmu
             }
         }.start()
     }

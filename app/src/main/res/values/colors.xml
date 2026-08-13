@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- New Color Palette -->
+    <color name="primary">#1B4D2E</color>
+    <color name="secondary">#D4AF37</color>
+    <color name="tertiary">#002617</color>
+    <color name="neutral">#F8F9FA</color>
+
+    <!-- Base Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="agri_green_dark">#1B5E20</color> <color name="agri_green_light">#E2EBE2</color> <color name="text_primary">#1D1D1D</color>
+    
+    <!-- Legacy Mapped Colors -->
+    <color name="agri_green_dark">@color/primary</color>
+    <color name="agri_green_light">#E8ECE9</color>
+    <color name="text_primary">@color/tertiary</color>
     <color name="text_secondary">#7A7A7A</color>
-    <color name="bg_input">#F5F7F5</color>
+    <color name="bg_input">@color/neutral</color>
     <color name="stroke_input">#DCDEDC</color>
-    <color name="bg_main">#FAFCFA</color>
+    <color name="bg_main">@color/neutral</color>
 </resources>

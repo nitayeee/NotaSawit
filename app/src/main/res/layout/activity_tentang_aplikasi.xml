@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F8"
+    android:background="#F8F9FA"
     android:orientation="vertical">
 
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Tentang Aplikasi"
-            android:textColor="#2B462C"
+            android:textColor="#1B4D2E"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_bold" />
     </LinearLayout>
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notasawit"
-                android:textColor="#2B462C"
+                android:textColor="#1B4D2E"
                 android:textSize="24sp"
                 android:fontFamily="@font/poppins_bold" />
 
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Notasawit adalah aplikasi pencatatan dan pengelolaan kebun kelapa sawit yang dirancang untuk memudahkan para petani dalam mencatat hasil panen, pengeluaran, serta aktivitas harian di kebun."
-                android:textColor="#333333"
+                android:textColor="#002617"
                 android:textSize="16sp"
                 android:lineSpacingExtra="4dp"
                 android:textAlignment="center"

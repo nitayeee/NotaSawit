@@ -45,8 +45,8 @@ class NotificationAdapter(
         when (item.type) {
             "produksi" -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_income)
-                holder.ivIcon.setColorFilter(Color.parseColor("#4CAF50"))
-                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#E8F5E9"))
+                holder.ivIcon.setColorFilter(Color.parseColor("#1B4D2E"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#E8ECE9"))
             }
             "pengeluaran" -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_outcome)
@@ -61,13 +61,13 @@ class NotificationAdapter(
             else -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_notification)
                 holder.ivIcon.setColorFilter(Color.parseColor("#9E9E9E"))
-                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F5F5F5"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F8F9FA"))
             }
         }
 
         if (item.is_read == 0) {
             holder.indicatorUnread.visibility = View.VISIBLE
-            holder.rootCard.setCardBackgroundColor(Color.parseColor("#E8F5E9"))
+            holder.rootCard.setCardBackgroundColor(Color.parseColor("#E8ECE9"))
         } else {
             holder.indicatorUnread.visibility = View.INVISIBLE
             holder.rootCard.setCardBackgroundColor(Color.parseColor("#FFFFFF"))

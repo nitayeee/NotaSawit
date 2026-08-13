@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="#F8F9FA">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,7 +55,7 @@
         android:scrollbars="none"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
-        android:background="#F5F5F5">
+        android:background="#F8F9FA">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -81,9 +81,9 @@
                 android:text="Belum Dibaca"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:textColor="#2B462C"
+                android:textColor="#1B4D2E"
                 android:background="@drawable/bg_badge_green"
-                android:backgroundTint="#E8EEE8"
+                android:backgroundTint="#E8ECE9"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_marginEnd="8dp"/>
 
@@ -94,9 +94,9 @@
                 android:text="Sudah Dibaca"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:textColor="#2B462C"
+                android:textColor="#1B4D2E"
                 android:background="@drawable/bg_badge_green"
-                android:backgroundTint="#E8EEE8"
+                android:backgroundTint="#E8ECE9"
                 android:fontFamily="@font/poppins_bold"
                 android:layout_marginEnd="8dp"/>
 
@@ -126,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Batal"
-            android:textColor="#333333"
+            android:textColor="#002617"
             android:backgroundTint="#EEEEEE"
             android:layout_marginEnd="8dp"/>
 
@@ -137,7 +137,7 @@
             android:layout_weight="1"
             android:text="Tandai Dibaca (0)"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#2B462C"/>
+            android:backgroundTint="#1B4D2E"/>
 
     </LinearLayout>
 

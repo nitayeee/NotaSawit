@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F8"
+    android:background="#F8F9FA"
     tools:context=".Admin.ProfilAdmin.ProfilAdminActivity">
 
     <!-- Header Background (Dark Blue) -->
@@ -173,7 +173,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="#F0F2F5"
+                                app:cardBackgroundColor="#F8F9FA"
                                 app:cardElevation="0dp"
                                 android:layout_marginTop="6dp">
                                 <LinearLayout
@@ -270,7 +270,7 @@
                             android:layout_height="40dp"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#F4F6F8">
+                            app:cardBackgroundColor="#F8F9FA">
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
@@ -303,7 +303,7 @@
                         </LinearLayout>
                     </LinearLayout>
                     
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F2F5" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F8F9FA" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
                     
                     <!-- Row Username -->
                     <LinearLayout
@@ -316,7 +316,7 @@
                             android:layout_height="40dp"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#F4F6F8">
+                            app:cardBackgroundColor="#F8F9FA">
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
@@ -349,7 +349,7 @@
                         </LinearLayout>
                     </LinearLayout>
                     
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F0F2F5" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F8F9FA" android:layout_marginStart="56dp" android:layout_marginVertical="16dp"/>
                     
                     <!-- Row Email -->
                     <LinearLayout
@@ -362,7 +362,7 @@
                             android:layout_height="40dp"
                             app:cardCornerRadius="20dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#F4F6F8">
+                            app:cardBackgroundColor="#F8F9FA">
                             <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"

@@ -27,7 +27,7 @@
             android:layout_marginStart="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#F5F5F5">
+            app:cardBackgroundColor="#F8F9FA">
 
             <ImageView
                 android:id="@+id/ivIcon"
@@ -51,7 +51,7 @@
                 android:text="Judul Notifikasi"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#2B462C"/>
+                android:textColor="#1B4D2E"/>
 
             <TextView
                 android:id="@+id/tvAuditor"
@@ -82,7 +82,7 @@
             android:visibility="gone"
             android:clickable="false"
             android:focusable="false"
-            android:buttonTint="#2B462C" />
+            android:buttonTint="#1B4D2E" />
 
         </LinearLayout>
 

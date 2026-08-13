@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F6"
+    android:background="#F8F9FA"
     tools:context=".DetailRiwayatKeuangan.RiwayatPengeluaranActivity">
     <!-- ===================== TOOLBAR ===================== -->
     <LinearLayout
@@ -185,7 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Detail Biaya"
-                        android:textColor="#1B5E20"
+                        android:textColor="#1B4D2E"
                         android:textSize="15sp"
                         android:fontFamily="@font/poppins_semibold"
                         android:layout_marginBottom="12dp" />
@@ -209,7 +209,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_tag"
-                                app:tint="#1B5E20"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="@null" />
                         </FrameLayout>
 
@@ -220,7 +220,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:text="Nama Biaya : -"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_medium" />
                     </LinearLayout>
@@ -250,7 +250,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_wallet"
-                                app:tint="#1B5E20"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="@null" />
                         </FrameLayout>
 
@@ -261,7 +261,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:text="Jumlah Biaya : -"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_medium" />
                     </LinearLayout>
@@ -289,7 +289,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Informasi Lokasi"
-                        android:textColor="#1B5E20"
+                        android:textColor="#1B4D2E"
                         android:textSize="15sp"
                         android:fontFamily="@font/poppins_semibold"
                         android:layout_marginBottom="12dp" />
@@ -313,7 +313,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_profile"
-                                app:tint="#1B5E20"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="@null" />
                         </FrameLayout>
 
@@ -324,7 +324,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:text="Petani : -"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_medium" />
                     </LinearLayout>
@@ -354,7 +354,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_home"
-                                app:tint="#1B5E20"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="@null" />
                         </FrameLayout>
 
@@ -365,7 +365,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:text="Desa : -"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_medium" />
                     </LinearLayout>
@@ -395,7 +395,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_map_pin"
-                                app:tint="#1B5E20"
+                                app:tint="#1B4D2E"
                                 android:contentDescription="@null" />
                         </FrameLayout>
 
@@ -406,7 +406,7 @@
                             android:layout_weight="1"
                             android:layout_marginStart="12dp"
                             android:text="Lahan : -"
-                            android:textColor="#333333"
+                            android:textColor="#002617"
                             android:textSize="14sp"
                             android:fontFamily="@font/poppins_medium" />
                     </LinearLayout>
@@ -440,7 +440,7 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:src="@drawable/ic_note"
-                            app:tint="#1B5E20"
+                            app:tint="#1B4D2E"
                             android:contentDescription="@null" />
 
                         <TextView
@@ -448,7 +448,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:text="Keterangan"
-                            android:textColor="#1B5E20"
+                            android:textColor="#1B4D2E"
                             android:textSize="15sp"
                             android:fontFamily="@font/poppins_semibold" />
                     </LinearLayout>
@@ -480,7 +480,7 @@
                     android:layout_height="220dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="3dp"
-                    app:cardBackgroundColor="#F5F5F5">
+                    app:cardBackgroundColor="#F8F9FA">
 
                     <ImageView
                         android:id="@+id/imgBuktiBiaya"

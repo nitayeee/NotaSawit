@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="↗ +12% dari bulan lalu"
-                    android:textColor="#4A6B53"
+                    android:textColor="#1B4D2E"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_bold"
                     android:paddingHorizontal="12dp"

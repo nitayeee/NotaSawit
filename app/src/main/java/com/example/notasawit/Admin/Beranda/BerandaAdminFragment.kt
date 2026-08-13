@@ -185,11 +185,14 @@ class BerandaAdminFragment : Fragment() {
         }
 
         val dataSet = LineDataSet(entries, "Pemasukan")
-        dataSet.colors = ColorTemplate.MATERIAL_COLORS.toList()
+        val primaryColor = Color.parseColor("#1B4D2E")
+        val secondaryColor = Color.parseColor("#D4AF37")
+        dataSet.color = primaryColor
         dataSet.valueTextSize = 10f
-        dataSet.lineWidth = 2f
+        dataSet.lineWidth = 2.5f
         dataSet.circleRadius = 4f
-        dataSet.setCircleColors(ColorTemplate.MATERIAL_COLORS.toList())
+        dataSet.setCircleColor(secondaryColor)
+        dataSet.circleHoleColor = Color.WHITE
 
         val data = LineData(dataSet)
 
@@ -223,7 +226,14 @@ class BerandaAdminFragment : Fragment() {
         }
 
         val dataSet = PieDataSet(entries, "")
-        dataSet.colors = ColorTemplate.COLORFUL_COLORS.toList()
+        val pieColors = listOf(
+            Color.parseColor("#1B4D2E"), // Primary
+            Color.parseColor("#D4AF37"), // Secondary
+            Color.parseColor("#002617"), // Tertiary
+            Color.parseColor("#638965"), // Medium Green
+            Color.parseColor("#EED57B")  // Light Gold
+        )
+        dataSet.colors = pieColors
         dataSet.valueTextSize = 12f
         dataSet.valueTextColor = Color.WHITE
 

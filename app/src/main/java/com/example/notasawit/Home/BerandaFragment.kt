@@ -78,7 +78,7 @@ class BerandaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val username = sharedPref.getString("username", "") ?: ""
         binding.username.setText("$username!")
-        binding.username.setTextColor(Color.parseColor("#1B5E20"))
+        binding.username.setTextColor(Color.parseColor("#1B4D2E"))
         // quote pertama
         loadQuote()
         database = AppDatabase.getDatabase(requireContext())
@@ -257,7 +257,7 @@ class BerandaFragment : Fragment() {
                                 if (pemasukanIni > pemasukanLalu) {
                                     binding.tvBadgePemasukan.text = "↑ Meningkat"
                                     binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
-                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#2B462C"))
+                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#1B4D2E"))
                                 } else if (pemasukanIni < pemasukanLalu) {
                                     binding.tvBadgePemasukan.text = "↓ Menurun"
                                     binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_red)
@@ -265,14 +265,14 @@ class BerandaFragment : Fragment() {
                                 } else {
                                     binding.tvBadgePemasukan.text = "Stabil"
                                     binding.tvBadgePemasukan.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
-                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#2B462C"))
+                                    binding.tvBadgePemasukan.setTextColor(Color.parseColor("#1B4D2E"))
                                 }
 
                                 // Logic Pengeluaran
                                 if (pengeluaranIni < pengeluaranLalu) {
                                     binding.tvBadgePengeluaran.text = "↓ Lebih hemat"
                                     binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
-                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#2B462C"))
+                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#1B4D2E"))
                                 } else if (pengeluaranIni > pengeluaranLalu) {
                                     binding.tvBadgePengeluaran.text = "↑ Lebih boros"
                                     binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_red)
@@ -280,7 +280,7 @@ class BerandaFragment : Fragment() {
                                 } else {
                                     binding.tvBadgePengeluaran.text = "Stabil"
                                     binding.tvBadgePengeluaran.setBackgroundResource(com.example.notasawit.R.drawable.bg_badge_green)
-                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#2B462C"))
+                                    binding.tvBadgePengeluaran.setTextColor(Color.parseColor("#1B4D2E"))
                                 }
                             }
                         }

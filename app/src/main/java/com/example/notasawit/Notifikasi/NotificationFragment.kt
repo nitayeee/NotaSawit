@@ -161,10 +161,10 @@ class NotificationFragment : Fragment() {
     }
 
     private fun updateFilterUI() {
-        val activeBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2B462C"))
-        val inactiveBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E8EEE8"))
+        val activeBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1B4D2E"))
+        val inactiveBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E8ECE9"))
         val activeText = android.graphics.Color.parseColor("#FFFFFF")
-        val inactiveText = android.graphics.Color.parseColor("#2B462C")
+        val inactiveText = android.graphics.Color.parseColor("#1B4D2E")
 
         filterSemua.backgroundTintList = if (currentFilter == "semua") activeBg else inactiveBg
         filterSemua.setTextColor(if (currentFilter == "semua") activeText else inactiveText)
