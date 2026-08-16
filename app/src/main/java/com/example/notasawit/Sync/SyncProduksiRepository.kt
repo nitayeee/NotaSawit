@@ -66,7 +66,7 @@ class SyncProduksiRepository(
                         Log.d("SYNC_PRODUKSI", "Data Utama Produksi ID ${produksi.localId} bersih dari lokal Room.")
                     }
                 } else {
-                    Log.e("SYNC_PRODUKSI", "Gagal ke server untuk Produksi ${produksi.localId}: ${response.code}")
+                    Log.e("SYNC_PRODUKSI", "Gagal ke server untuk Produksi ${produksi.localId}: Code ${response.code} | Response: $body")
                     allSuccess = false
                 }
 

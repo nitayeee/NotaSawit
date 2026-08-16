@@ -3,149 +3,103 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@drawable/bg_splash_gradient"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- White Background (SplashScreen 3 & 4) -->
     <View
-        android:id="@+id/view_blob_top"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
-        android:layout_marginTop="-60dp"
-        android:layout_marginStart="-60dp"
-        android:background="@drawable/bg_blob"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/view_blob_bottom"
-        android:layout_width="260dp"
-        android:layout_height="260dp"
-        android:layout_marginEnd="-80dp"
-        android:layout_marginBottom="-80dp"
-        android:background="@drawable/bg_blob"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/ll_center_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.435">
-
-        <FrameLayout
-            android:id="@+id/fl_logo_wrapper"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@drawable/bg_logo_circle"
-            android:elevation="6dp">
-
-            <ImageView
-                android:id="@+id/iv_logo"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="Logo Nota Sawit"
-                android:src="@drawable/logo" />
-
-            <View
-                android:id="@+id/view_shine"
-                android:layout_width="40dp"
-                android:layout_height="220dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_shine"
-                android:rotation="25" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_brand_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_brand_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#002617"
-                android:textSize="28sp"
-                android:fontFamily="@font/poppins_bold" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_bottom_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:id="@+id/ll_loading_dots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/view_dot1"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_dot" />
-
-            <View
-                android:id="@+id/view_dot2"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_dot" />
-
-            <View
-                android:id="@+id/view_dot3"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/bg_dot" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Versi 1.0.0"
-            android:textColor="#7D8A80"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <!-- Edge Glow -->
-    <View
-        android:id="@+id/view_border_glow"
+        android:id="@+id/view_white_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_splash_glow"
-        android:alpha="0"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="#FFFFFF" />
+
+    <!-- Dark Green Background (SplashScreen 1 & 2) -->
+    <View
+        android:id="@+id/view_green_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1B4D2E" />
+
+    <!-- Centered Content Wrapper -->
+    <LinearLayout
+        android:id="@+id/ll_center_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Logo & Brand Name Horizontal Container -->
+        <LinearLayout
+            android:id="@+id/ll_logo_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!-- Frame Layout for overlapping White & Colored logo icons -->
+            <FrameLayout
+                android:id="@+id/fl_logo_wrapper"
+                android:layout_width="68dp"
+                android:layout_height="68dp">
+
+                <!-- White Logo Icon (SplashScreen 2) -->
+                <ImageView
+                    android:id="@+id/iv_logo_white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:contentDescription="White Logo"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/logo_splash_screen" />
+
+                <!-- Colored Logo Icon (SplashScreen 3 & 4) -->
+                <ImageView
+                    android:id="@+id/iv_logo_colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:contentDescription="Colored Logo"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/logo" />
+
+            </FrameLayout>
+
+            <!-- Brand Name Text (SplashScreen 4) -->
+            <TextView
+                android:id="@+id/tv_brand_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-6dp"
+                android:alpha="0"
+                android:fontFamily="@font/poppins_bold"
+                android:includeFontPadding="false"
+                android:text="SILAUSA"
+                android:textColor="#002617"
+                android:textSize="32sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Subtitle / Tagline (SplashScreen 4) -->
+        <TextView
+            android:id="@+id/tv_tagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="20dp"
+            android:alpha="0"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:text="sistem informasi lahan, audit, dan keuangan sawit"
+            android:textColor="#556B5C"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,8 @@ data class DetailProduksiEntity(
 
     val lahanId: Int,
 
-    val jumlahProduksi: Double = 0.0
+    val jumlahProduksi: Double = 0.0,
+
+    val subtotalPendapatan: Double = 0.0
 
 )

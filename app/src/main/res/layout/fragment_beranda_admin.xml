@@ -124,6 +124,14 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- HEADER DROP SHADOW -->
+    <View
+        android:id="@+id/view_header_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="@drawable/bg_header_shadow"
+        app:layout_constraintTop_toBottomOf="@+id/appBar" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshBeranda"
         android:layout_width="match_parent"
@@ -178,7 +186,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Jumlah Petani"
                                     android:textColor="@color/white"
-                                    android:fontFamily="@font/poppins_bold"
+                                    android:fontFamily="@font/poppins_medium"
                                     android:textSize="12sp" />
 
                                 <TextView
@@ -229,11 +237,11 @@
                                 android:layout_centerInParent="true">
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="145dp"
                                     android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_medium"
                                     android:text="Luas Lahan (Ha)"
                                     android:textColor="@color/tertiary"
-                                    android:fontFamily="@font/poppins_bold"
                                     android:textSize="12sp" />
 
                                 <TextView

@@ -28,8 +28,10 @@ import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.Room.Produksi.ProduksiEntity
 import com.example.notasawit.Sync.SyncKegiatanRepository
+import com.example.notasawit.Sync.SyncProduksiRepository
 import com.example.notasawit.Sync.SyncWorker
 import com.example.notasawit.databinding.ActivityInputPemasukanBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -165,28 +167,48 @@ class InputPemasukanActivity : AppCompatActivity() {
                 )
                 val produksiId = database.ProduksiDao().insert(produksi)
 
-                // Hitung produksi proporsional
+                // Hitung produksi & pendapatan proporsional per-lahan
                 val lahanTerpilih = listLahan.filter { selectedLahanIds.contains(it.lahan_id) }
                 val totalLuasLahan = lahanTerpilih.sumOf { it.lahan_luas }
+                val countLahan = lahanTerpilih.size
                 val totalProduksi = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
+                val totalPendapatan = produksi.total_pendapatan
                 
                 val produksiPerHektar = if (totalLuasLahan > 0) totalProduksi / totalLuasLahan else 0.0
+                val pendapatanPerHektar = if (totalLuasLahan > 0) totalPendapatan / totalLuasLahan else 0.0
+
+                val produksiRata = if (countLahan > 0) totalProduksi / countLahan else 0.0
+                val pendapatanRata = if (countLahan > 0) totalPendapatan / countLahan else 0.0
+
                 var totalProduksiDihitung = 0.0
+                var totalPendapatanDihitung = 0.0
 
                 lahanTerpilih.forEachIndexed { index, lahan ->
                     val produksiLahan: Double
+                    val pendapatanLahan: Double
+
                     if (index == lahanTerpilih.lastIndex) {
                         produksiLahan = totalProduksi - totalProduksiDihitung
+                        pendapatanLahan = totalPendapatan - totalPendapatanDihitung
                     } else {
-                        produksiLahan = lahan.lahan_luas * produksiPerHektar
+                        if (totalLuasLahan > 0) {
+                            produksiLahan = lahan.lahan_luas * produksiPerHektar
+                            pendapatanLahan = lahan.lahan_luas * pendapatanPerHektar
+                        } else {
+                            produksiLahan = produksiRata
+                            pendapatanLahan = pendapatanRata
+                        }
                     }
+
                     totalProduksiDihitung += produksiLahan
+                    totalPendapatanDihitung += pendapatanLahan
 
                     database.DetailProduksiDao().insert(
                         DetailProduksiEntity(
                             produksiId = produksiId.toInt(),
                             lahanId  = lahan.lahan_id,
-                            jumlahProduksi = produksiLahan
+                            jumlahProduksi = produksiLahan,
+                            subtotalPendapatan = pendapatanLahan
                         )
                     )
                 }
@@ -384,6 +406,16 @@ class InputPemasukanActivity : AppCompatActivity() {
 
     }
     private fun triggerDataSync() {
+        // 🔄 Eksekusi sinkronisasi langsung ke server di background coroutine
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val success = SyncProduksiRepository(applicationContext, database).syncProduksi()
+                Log.d("SYNC_DIRECT", "Produksi direct sync success: $success")
+            } catch (e: Exception) {
+                Log.e("SYNC_DIRECT", "Produksi direct sync failed, background worker will retry", e)
+            }
+        }
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

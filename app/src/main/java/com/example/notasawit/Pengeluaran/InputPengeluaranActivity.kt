@@ -25,8 +25,10 @@ import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.DetailPengeluaran.DetailPengeluaranEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.Room.Pengeluaran.PengeluaranEntity
+import com.example.notasawit.Sync.SyncPengeluaranRepository
 import com.example.notasawit.Sync.SyncWorker
 import com.example.notasawit.databinding.ActivityInputPengeluaranBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -292,6 +294,15 @@ class InputPengeluaranActivity : AppCompatActivity() {
         return file.absolutePath
     }
     private fun triggerDataSync() {
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val success = SyncPengeluaranRepository(applicationContext, database).syncPengeluaran()
+                Log.d("SYNC_DIRECT", "Pengeluaran direct sync success: $success")
+            } catch (e: Exception) {
+                Log.e("SYNC_DIRECT", "Pengeluaran direct sync failed, background worker will retry", e)
+            }
+        }
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

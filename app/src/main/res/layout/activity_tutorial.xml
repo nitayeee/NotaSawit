@@ -20,34 +20,58 @@
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="24dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            app:tabBackground="@drawable/dot_selector"
-            app:tabGravity="start"
-            app:tabIndicatorHeight="0dp"
-            app:tabMaxWidth="12dp"
-            app:tabPaddingEnd="8dp"
-            app:tabPaddingStart="8dp" />
-
-        <Button
-            android:id="@+id/btnNext"
+        <!-- Custom Dot Indicators (Centered Horizontally) -->
+        <LinearLayout
+            android:id="@+id/llDots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/dot1"
+                android:layout_width="22dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_dot_active" />
+
+            <View
+                android:id="@+id/dot2"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_dot_inactive" />
+
+            <View
+                android:id="@+id/dot3"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_dot_inactive" />
+
+        </LinearLayout>
+
+        <!-- "Mulai" Button (Only visible on page 3) -->
+        <Button
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
             android:backgroundTint="#1B4D2E"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="Selanjutnya"
-            android:textColor="#FFFFFF" />
+            android:fontFamily="@font/poppins_bold"
+            android:gravity="center"
+            android:text="Mulai"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

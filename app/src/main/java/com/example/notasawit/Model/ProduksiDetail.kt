@@ -1,5 +1,7 @@
 package com.example.notasawit.Model
 
+import com.google.gson.annotations.SerializedName
+
 // ==========================================
 // 1. MODEL PRODUKSI (UTAMA)
 // ==========================================
@@ -24,8 +26,11 @@ data class ProduksiDetail(
 // Model baru untuk menampung item detail_produksi dari API
 data class ItemDetailProduksi(
     val id: Int,
-    val jumlah_tbs_detail: Int?, // Menyesuaikan field dari Laravel
+    @SerializedName("jumlah_tbs", alternate = ["jumlah_tbs_detail", "jumlah_produksi"])
+    val jumlah_tbs_detail: Double?, // Menyesuaikan field dari Laravel
     val harga_tbs_detail: Double?,
+    @SerializedName("subtotal_pendapatan", alternate = ["subtotal"])
+    val subtotal_pendapatan: Double?,
     val lahan: LahanDetail?      // Sekarang Lahan menempel di sini
 )
 

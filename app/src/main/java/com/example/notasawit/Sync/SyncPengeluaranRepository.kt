@@ -72,7 +72,7 @@ class SyncPengeluaranRepository(
                         Log.d("SYNC_PENGELUARAN", "Data Utama Pengeluaran ID ${biaya_operasional.localId} bersih dari lokal Room.")
                     }
                 } else {
-                    Log.e("SYNC_PENGELUARAN", "Gagal ke server untuk Pengeluaran ${biaya_operasional.localId}: ${response.code}")
+                    Log.e("SYNC_PENGELUARAN", "Gagal ke server untuk Pengeluaran ${biaya_operasional.localId}: Code ${response.code} | Response: $body")
                     allSuccess = false
                 }
 
