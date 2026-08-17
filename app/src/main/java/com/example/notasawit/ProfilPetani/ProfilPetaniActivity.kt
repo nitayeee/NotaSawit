@@ -175,7 +175,13 @@ class ProfilPetaniActivity : AppCompatActivity() {
                             if (dataArray != null) {
                                 for (i in 0 until dataArray.length()) {
                                     val lahanObj = dataArray.optJSONObject(i)
-                                    val luas = lahanObj?.optDouble("lahan_luas", 0.0) ?: 0.0
+                                    val luas = if (lahanObj?.has("lahan_luas") == true && !lahanObj.isNull("lahan_luas")) {
+                                        lahanObj.optDouble("lahan_luas", 0.0)
+                                    } else if (lahanObj?.has("luas_lahan") == true && !lahanObj.isNull("luas_lahan")) {
+                                        lahanObj.optDouble("luas_lahan", 0.0)
+                                    } else {
+                                        0.0
+                                    }
                                     totalLuas += luas
 
                                     val areaLahan = lahanObj?.opt("area_lahan")

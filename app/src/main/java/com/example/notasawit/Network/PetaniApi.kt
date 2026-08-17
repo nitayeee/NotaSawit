@@ -288,7 +288,6 @@ object PetaniApi {
 
         detailLahan.forEach { detail ->
             builder.addFormDataPart("lahan_id[]", detail.lahanId.toString())
-            builder.addFormDataPart("jumlah_tbs[]", detail.jumlahProduksi.toString())
             builder.addFormDataPart("jumlah_tbs_detail[]", detail.jumlahProduksi.toString())
             builder.addFormDataPart("jumlah_produksi[]", detail.jumlahProduksi.toString())
             builder.addFormDataPart("subtotal_pendapatan[]", detail.subtotalPendapatan.toString())
@@ -298,16 +297,18 @@ object PetaniApi {
         imageUri?.let { uri ->
             Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
 
-            val bytes = try {
-                context.contentResolver.openInputStream(uri)?.use {
-                    it.readBytes()
-                } ?: if (uri.scheme == "file" && uri.path != null) {
-                    val f = File(uri.path!!)
-                    if (f.exists()) f.readBytes() else null
-                } else null
-            } catch (e: Exception) {
-                Log.e("UPLOAD_IMAGE", "Gagal membaca bytes gambar dari URI: $uri", e)
-                null
+            val bytes = if (uri.scheme == "file" && uri.path != null) {
+                val f = File(uri.path!!)
+                if (f.exists()) f.readBytes() else null
+            } else {
+                try {
+                    context.contentResolver.openInputStream(uri)?.use {
+                        it.readBytes()
+                    }
+                } catch (e: Exception) {
+                    Log.e("UPLOAD_IMAGE", "Gagal membaca bytes dari URI: $uri", e)
+                    null
+                }
             }
 
             Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
@@ -351,6 +352,7 @@ object PetaniApi {
         val request = Request.Builder()
             .url("$BASE_URL/produksi")
             .post(requestBody)
+            .header("Accept", "application/json")
             .build()
 
         // 2. KUNCI UTAMA: Kembalikan objek Call-nya, hapus .enqueue()

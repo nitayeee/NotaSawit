@@ -110,16 +110,23 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
         binding.tvStatus.text =
             "Status : ${data.status_validasi}"
         binding.tvPetani.text =
-            "Petani : ${data.petani?.nama}"
+            "Petani : ${data.petani?.nama ?: "-"}"
 
-        // PERBAIKAN: Mengambil nama-nama lahan dari list detail_produksi
-        val daftarLahan = data.detail_produksi
-            ?.mapNotNull { it.lahan?.nama } // Ambil nama lahan yang tidak null
-            ?.distinct()                     // Hilangkan duplikat jika lahannya sama
-            ?.joinToString(", ")            // Gabungkan dengan koma, contoh: "Lahan A, Lahan B"
+        // Mengambil seluruh nama lahan dari detail_produksi
+        val listDetail = data.detail_produksi
+        val daftarLahanText = if (!listDetail.isNullOrEmpty()) {
+            listDetail.mapNotNull { detail ->
+                val namaLahan = detail.lahan?.nama
+                if (!namaLahan.isNullOrEmpty()) {
+                    val tbs = detail.jumlah_tbs_detail ?: 0.0
+                    "$namaLahan (${tbs} Kg)"
+                } else null
+            }.joinToString(", ")
+        } else {
+            "-"
+        }
 
-        binding.tvLahan.text =
-            "Lahan : ${if (!daftarLahan.isNullOrEmpty()) daftarLahan else "-"}"
+        binding.tvLahan.text = "Lahan : $daftarLahanText"
 
         binding.tvKeterangan.text =
             "Keterangan : ${data.produksi_ket ?: "-"}"

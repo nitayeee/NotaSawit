@@ -147,23 +147,19 @@ class InputPemasukanActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
 
+                val totalProduksiInput = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
+                val hargaTbsInput = binding.etHarga.text.toString().toDoubleOrNull() ?: 0.0
+                val totalPendapatanInput = totalProduksiInput * hargaTbsInput
+
                 val produksi = ProduksiEntity(
-
                     produksi_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
-
-                    jumlah_tbs = binding.etBahan.text.toString().toInt(),
-
-                    harga_tbs = binding.etHarga.text.toString().toDouble(),
-                    total_pendapatan = binding.etBahan.text.toString().toInt() *
-                            binding.etHarga.text.toString().toDouble(),
-
+                    jumlah_tbs = totalProduksiInput.toInt(),
+                    harga_tbs = hargaTbsInput,
+                    total_pendapatan = totalPendapatanInput,
                     petaniId = sp_petaniId,
-
                     produksi_ket = binding.etCatatan.text.toString(),
-
                     imagePath = imageUri?.toString(),
                     isSynced = false
-
                 )
                 val produksiId = database.ProduksiDao().insert(produksi)
 

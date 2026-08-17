@@ -339,11 +339,19 @@ class BerandaFragment : Fragment() {
                                     
                                     val lahanId = lahanObj.optInt("lahan_id", 0)
                                     val lahanNama = lahanObj.optString("lahan_nama", "")
+                                    val lahanLuas = if (lahanObj.has("lahan_luas") && !lahanObj.isNull("lahan_luas")) {
+                                        lahanObj.optDouble("lahan_luas", 0.0)
+                                    } else if (lahanObj.has("luas_lahan") && !lahanObj.isNull("luas_lahan")) {
+                                        lahanObj.optDouble("luas_lahan", 0.0)
+                                    } else {
+                                        0.0
+                                    }
                                     lahanList.add(
                                         com.example.notasawit.Room.Lahan.LahanEntity(
                                             lahan_id = lahanId,
                                             petani_id = petaniId,
-                                            lahan_nama = lahanNama
+                                            lahan_nama = lahanNama,
+                                            lahan_luas = lahanLuas
                                         )
                                     )
                                     

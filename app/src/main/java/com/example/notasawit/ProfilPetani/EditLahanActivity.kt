@@ -118,7 +118,7 @@ class EditLahanActivity : AppCompatActivity() {
                                                 id = obj.optInt("lahan_id", -1),
                                                 nama = obj.optString("lahan_nama", "-"),
                                                 lokasi = obj.optString("lahan_lokasi", "-"),
-                                                luas = obj.optDouble("lahan_luas", 0.0),
+                                                luas = if (obj.has("lahan_luas") && !obj.isNull("lahan_luas")) obj.optDouble("lahan_luas", 0.0) else obj.optDouble("luas_lahan", 0.0),
                                                 tahunTanam = obj.optString("tahun_tanam", ""),
                                                 noSurat = obj.optString("lahan_no_surat", "")
                                             )
