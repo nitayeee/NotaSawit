@@ -100,4 +100,8 @@ class KunjunganQuestionAdapter(
             .filterIsInstance<KunjunganItem.Question>()
             .all { it.answer != null }
     }
+
+    fun getFirstUnansweredPosition(): Int {
+        return items.indexOfFirst { it is KunjunganItem.Question && it.answer == null }
+    }
 }

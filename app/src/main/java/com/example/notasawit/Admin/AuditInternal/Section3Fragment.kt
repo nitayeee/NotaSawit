@@ -61,11 +61,14 @@ class Section3Fragment : Fragment() {
         binding.rvQuestion.adapter = adapter
         binding.btnNext.setOnClickListener {
 
-            if (!adapter.isAllAnswered()) {
+            val unansweredIndex = adapter.getFirstUnansweredPosition()
+            if (unansweredIndex != -1) {
+                (binding.rvQuestion.layoutManager as? LinearLayoutManager)
+                    ?.scrollToPositionWithOffset(unansweredIndex, 0)
 
                 Toast.makeText(
                     requireContext(),
-                    "Semua pertanyaan wajib dijawab!",
+                    "Harap isi pertanyaan yang belum dijawab!",
                     Toast.LENGTH_SHORT
                 ).show()
 

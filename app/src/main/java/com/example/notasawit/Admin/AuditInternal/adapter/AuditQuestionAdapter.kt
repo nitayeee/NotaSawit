@@ -134,4 +134,10 @@ class AuditQuestionAdapter(
 
     }
 
+    fun getFirstUnansweredPosition(): Int {
+
+        return items.indexOfFirst { it is AuditItem.Question && it.answer == null }
+
+    }
+
 }

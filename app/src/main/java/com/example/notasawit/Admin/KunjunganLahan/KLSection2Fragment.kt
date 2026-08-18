@@ -59,8 +59,17 @@ class KLSection2Fragment : Fragment() {
 
         // SELANJUTNYA
         binding.btnSimpan.setOnClickListener {
-            if (!adapter.isAllAnswered()) {
-                Toast.makeText(requireContext(), "Semua pertanyaan wajib dijawab!", Toast.LENGTH_SHORT).show()
+            val unansweredIndex = adapter.getFirstUnansweredPosition()
+            if (unansweredIndex != -1) {
+                (binding.rvQuestion.layoutManager as? LinearLayoutManager)
+                    ?.scrollToPositionWithOffset(unansweredIndex, 0)
+
+                Toast.makeText(
+                    requireContext(),
+                    "Harap isi pertanyaan yang belum dijawab!",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
