@@ -5,6 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".MainActivity">
 
     <!-- White Background (SplashScreen 3 & 4) -->
@@ -22,12 +24,12 @@
         android:background="#1B4D2E" />
 
     <!-- Centered Content Wrapper -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ll_center_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,14 +40,22 @@
             android:id="@+id/ll_logo_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- Frame Layout for overlapping White & Colored logo icons -->
             <FrameLayout
                 android:id="@+id/fl_logo_wrapper"
-                android:layout_width="68dp"
-                android:layout_height="68dp">
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:layout_marginStart="-12dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <!-- White Logo Icon (SplashScreen 2) -->
                 <ImageView
@@ -75,12 +85,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="-6dp"
+                android:layout_marginEnd="8dp"
                 android:alpha="0"
                 android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
                 android:text="SILAUSA"
                 android:textColor="#002617"
-                android:textSize="32sp"
+                android:textSize="38sp"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -88,18 +99,21 @@
         <!-- Subtitle / Tagline (SplashScreen 4) -->
         <TextView
             android:id="@+id/tv_tagline"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="8dp"
             android:alpha="0"
             android:fontFamily="@font/poppins_medium"
             android:gravity="center"
             android:text="sistem informasi lahan, audit, dan keuangan sawit"
             android:textColor="#556B5C"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textSize="13.5sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/ll_logo_container"
+            app:layout_constraintStart_toStartOf="@id/ll_logo_container"
+            app:layout_constraintTop_toBottomOf="@id/ll_logo_container" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,10 @@
     <color name="secondary">#D4AF37</color>
     <color name="tertiary">#002617</color>
     <color name="neutral">#F8F9FA</color>
+    <color name="secondary_light">#FAF3E0</color>
+    <color name="secondary_dark">#B8860B</color>
+    <color name="info_blue">#1565C0</color>
+    <color name="info_blue_light">#EBF3FA</color>
 
     <!-- Base Colors -->
     <color name="black">#FF000000</color>
