@@ -130,22 +130,34 @@ class PetaniAuditAdapter(
             Toast.makeText(context, "Path PDF kosong", Toast.LENGTH_SHORT).show()
             return
         }
-        val file = File(path)
-        if (!file.exists()) {
-            Toast.makeText(context, "File PDF tidak ditemukan di perangkat ini", Toast.LENGTH_SHORT).show()
+        if (path.startsWith("http://") || path.startsWith("https://")) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(path))
+            context.startActivity(intent)
             return
         }
 
-        try {
-            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "application/pdf")
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val file = File(path)
+        if (file.exists()) {
+            try {
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/pdf")
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+                context.startActivity(Intent.createChooser(intent, "Buka PDF dengan"))
+                return
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            context.startActivity(Intent.createChooser(intent, "Buka PDF dengan"))
+        }
+
+        // Fallback jika file lokal tidak ada (e.g. setelah install ulang APK): buka URL server
+        val url = if (!path.startsWith("storage/")) "http://160.187.144.157/storage/$path" else "http://160.187.144.157/$path"
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(context, "Gagal membuka PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "File PDF tidak dapat dibuka", Toast.LENGTH_SHORT).show()
         }
     }
 }

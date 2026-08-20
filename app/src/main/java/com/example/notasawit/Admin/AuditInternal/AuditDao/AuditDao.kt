@@ -34,9 +34,16 @@ interface AuditDao {
     @Query("SELECT * FROM audit_header WHERE namaPetani = :namaPetani AND periode = :periode ORDER BY auditAttempt DESC LIMIT 1")
     suspend fun getLastAuditForPetani(namaPetani: String, periode: String): AuditHeader?
 
+    @Query("SELECT * FROM audit_header WHERE (idPetani = :idPetani OR LOWER(TRIM(namaPetani)) = LOWER(TRIM(:namaPetani))) AND periode = :periode ORDER BY auditAttempt DESC LIMIT 1")
+    suspend fun getLastAuditForPetaniWithId(idPetani: Int, namaPetani: String, periode: String): AuditHeader?
+
     // Ambil SEMUA audit petani pada periode tertentu
-    @Query("SELECT * FROM audit_header WHERE namaPetani = :namaPetani AND periode = :periode ORDER BY auditAttempt ASC")
-    suspend fun getAllAuditsForPetani(namaPetani: String, periode: String): List<AuditHeader>
+    @Query("SELECT * FROM audit_header WHERE (idPetani = :idPetani OR LOWER(TRIM(namaPetani)) = LOWER(TRIM(:namaPetani))) AND periode = :periode ORDER BY auditAttempt ASC")
+    suspend fun getAllAuditsForPetani(idPetani: Int, namaPetani: String, periode: String): List<AuditHeader>
+
+    // Ambil SEMUA audit petani di seluruh periode (fallback)
+    @Query("SELECT * FROM audit_header WHERE (idPetani = :idPetani OR LOWER(TRIM(namaPetani)) = LOWER(TRIM(:namaPetani))) ORDER BY auditAttempt ASC")
+    suspend fun getAllAuditsForPetaniAllPeriods(idPetani: Int, namaPetani: String): List<AuditHeader>
 
     @Query("UPDATE audit_header SET statusAudit = :status, ringkasanTemuan = :keterangan WHERE idAudit = :idAudit")
     suspend fun updateAuditStatus(idAudit: String, status: String, keterangan: String?)

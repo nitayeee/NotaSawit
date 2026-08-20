@@ -46,18 +46,42 @@ class DashboardAuditFragment : Fragment() {
         }
         
         loadData()
+        fetchAuditsFromServer()
     }
     
+    private fun parsePeriode(tanggal: String, periodeFromApi: String?): String {
+        if (!periodeFromApi.isNullOrEmpty() && periodeFromApi.contains("-S")) {
+            return periodeFromApi
+        }
+        if (tanggal.length >= 8) {
+            if (tanggal[4] == '-' || tanggal[4] == '/') {
+                val year = tanggal.substring(0, 4)
+                val month = tanggal.substring(5, 7).toIntOrNull() ?: 1
+                return if (month <= 6) "$year-S1" else "$year-S2"
+            }
+            if (tanggal[2] == '/' || tanggal[2] == '-') {
+                val parts = tanggal.split("/", "-")
+                if (parts.size >= 3) {
+                    val year = parts[2].take(4)
+                    val month = parts[1].toIntOrNull() ?: 1
+                    return if (month <= 6) "$year-S1" else "$year-S2"
+                }
+            }
+        }
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        return "$currentYear-S1"
+    }
+
     private fun fetchAuditsFromServer() {
+        if (_binding == null) return
         binding.swipeRefresh.isRefreshing = true
         val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-        val adminDesaNama = sharedPref.getString("admin_desa", "") // Ensure admin_desa is saved in Login or use null to get all
+        val adminDesaNama = sharedPref.getString("admin_desa", "")
 
         com.example.notasawit.Network.PetaniApi.getAllAuditByDesa(if (adminDesaNama.isNullOrEmpty()) null else adminDesaNama, object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    binding.swipeRefresh.isRefreshing = false
-                    android.widget.Toast.makeText(requireContext(), "Gagal terhubung ke server", android.widget.Toast.LENGTH_SHORT).show()
+                    _binding?.swipeRefresh?.isRefreshing = false
                 }
             }
 
@@ -71,31 +95,72 @@ class DashboardAuditFragment : Fragment() {
 
                                 for (i in 0 until dataArray.length()) {
                                     val item = dataArray.getJSONObject(i)
-                                    val idAudit = item.getString("id_audit")
-                                    
-                                    if (item.isNull("status_audit")) continue
-                                    val status = item.getString("status_audit")
-                                    
-                                    // Mencegah NOT NULL constraint failed dengan pass "" jika null
-                                    val keterangan = if (item.isNull("keterangan")) "" else item.getString("keterangan")
-                                    
-                                    database.auditDao().updateAuditStatus(idAudit, status, keterangan)
+                                    val idAudit = item.optString("id_audit", item.optString("id", ""))
+                                    if (idAudit.isEmpty()) continue
+
+                                    val status = if (item.isNull("status_audit")) "Belum Audit" else item.optString("status_audit", "Belum Audit")
+                                    val keterangan = if (item.isNull("keterangan")) "" else item.optString("keterangan", "")
+                                    val tanggal = item.optString("tanggal", "")
+                                    val desa = item.optString("desa", "")
+
+                                    var namaAuditor = item.optString("nama_auditor", item.optString("auditor_nama", ""))
+                                    if (namaAuditor.isEmpty() && item.has("user") && !item.isNull("user")) {
+                                        namaAuditor = item.optJSONObject("user")?.optString("user_nama", item.optJSONObject("user")?.optString("nama_user", "")) ?: ""
+                                    }
+
+                                    var namaPetani = item.optString("nama_petani", item.optString("petani_nama", ""))
+                                    var petaniId = item.optInt("petani_id", item.optInt("id_petani", 0))
+                                    if (item.has("petani") && !item.isNull("petani")) {
+                                        val pObj = item.optJSONObject("petani")
+                                        if (namaPetani.isEmpty()) {
+                                            namaPetani = pObj?.optString("petani_nama", pObj.optString("nama_petani", "")) ?: ""
+                                        }
+                                        if (petaniId == 0) {
+                                            petaniId = pObj?.optInt("petani_id", pObj.optInt("id_petani", 0)) ?: 0
+                                        }
+                                    }
+
+                                    val auditAttempt = item.optInt("audit_attempt", item.optInt("attempt", 1))
+                                    val pdfPath = item.optString("file_kunjungan", item.optString("pdf_path", ""))
+                                    val periode = item.optString("periode", "")
+
+                                    val calculatedPeriode = parsePeriode(tanggal, periode)
+
+                                    val existingAudit = database.auditDao().getAllAuditHeaders().find { it.idAudit == idAudit }
+
+                                    val resolvedPdfPath: String = if (pdfPath.isNotEmpty()) pdfPath else (existingAudit?.pdfPath ?: "")
+
+                                    val header = com.example.notasawit.Room.AuditEntity.AuditHeader(
+                                        idAudit = idAudit,
+                                        tanggal = if (tanggal.isNotEmpty()) tanggal else (existingAudit?.tanggal ?: ""),
+                                        desa = if (desa.isNotEmpty()) desa else (existingAudit?.desa ?: ""),
+                                        namaAuditor = if (namaAuditor.isNotEmpty()) namaAuditor else (existingAudit?.namaAuditor ?: "Auditor"),
+                                        namaPetani = if (namaPetani.isNotEmpty()) namaPetani else (existingAudit?.namaPetani ?: ""),
+                                        idPetani = if (petaniId != 0) petaniId else existingAudit?.idPetani,
+                                        ringkasanTemuan = keterangan,
+                                        statusAudit = status,
+                                        periode = calculatedPeriode,
+                                        auditAttempt = auditAttempt,
+                                        pdfPath = resolvedPdfPath,
+                                        isSynced = true
+                                    )
+                                    database.auditDao().insertHeader(header)
                                 }
                                 
                                 withContext(Dispatchers.Main) {
-                                    binding.swipeRefresh.isRefreshing = false
+                                    _binding?.swipeRefresh?.isRefreshing = false
                                     loadData()
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                                 withContext(Dispatchers.Main) {
-                                    binding.swipeRefresh.isRefreshing = false
+                                    _binding?.swipeRefresh?.isRefreshing = false
                                 }
                             }
                         }
                 } else {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        binding.swipeRefresh.isRefreshing = false
+                        _binding?.swipeRefresh?.isRefreshing = false
                     }
                 }
             }
@@ -189,7 +254,15 @@ class DashboardAuditFragment : Fragment() {
             val auditDataList = mutableListOf<PetaniAuditData>()
 
             for (petani in petaniList) {
-                val allAudits = database.auditDao().getAllAuditsForPetani(petani.namaPetani, selectedPeriode)
+                var allAudits = database.auditDao().getAllAuditsForPetani(petani.idPetani, petani.namaPetani, selectedPeriode)
+                val hasAuditsInSelectedPeriode = allAudits.isNotEmpty()
+                
+                if (allAudits.isEmpty()) {
+                    val anyAudits = database.auditDao().getAllAuditsForPetaniAllPeriods(petani.idPetani, petani.namaPetani)
+                    if (anyAudits.isNotEmpty()) {
+                        allAudits = anyAudits
+                    }
+                }
                 
                 if (allAudits.isEmpty()) {
                     auditDataList.add(
@@ -205,19 +278,19 @@ class DashboardAuditFragment : Fragment() {
                         )
                     )
                 } else {
-                    // allAudits is sorted by attempt or date (usually we want latest first)
-                    // Wait, let's assume allAudits is ordered. AuditDao usually returns latest last, or we can sort it.
                     val latestAudit = allAudits.maxByOrNull { it.auditAttempt } ?: allAudits.first()
+                    val periodLabel = if (!hasAuditsInSelectedPeriode && latestAudit.periode.isNotEmpty()) " (${latestAudit.periode})" else ""
                     
                     auditDataList.add(
                         PetaniAuditData(
                             idPetani = petani.idPetani,
                             namaPetani = petani.namaPetani,
                             desa = petani.namaDesa ?: "-",
-                            statusAudit = latestAudit.statusAudit ?: "Belum Audit",
-                            tanggalAudit = latestAudit.tanggal ?: "-",
+                            statusAudit = if (latestAudit.statusAudit.isNullOrEmpty()) "Belum Audit" else latestAudit.statusAudit,
+                            tanggalAudit = if (latestAudit.tanggal.isNullOrEmpty()) "-" else latestAudit.tanggal,
                             pdfPath = latestAudit.pdfPath ?: "",
-                            auditAttempt = latestAudit.auditAttempt ?: 0,
+                            auditAttempt = latestAudit.auditAttempt,
+                            auditLabel = periodLabel,
                             history = allAudits.sortedByDescending { it.auditAttempt }
                         )
                     )

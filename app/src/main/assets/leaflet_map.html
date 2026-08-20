@@ -64,14 +64,19 @@
                         }
                     });
 
+                    var lahanNama = "Lahan";
+                    var petaniNama = "-";
+                    if (geoJsonObj.properties) {
+                        if (geoJsonObj.properties.lahan_nama) lahanNama = geoJsonObj.properties.lahan_nama;
+                        if (geoJsonObj.properties.petani_nama) petaniNama = geoJsonObj.properties.petani_nama;
+                    }
+
+                    polygon.bindPopup("<div style='font-family:sans-serif; padding:4px;'><b>" + lahanNama + "</b><br/>Petani: " + petaniNama + "</div>");
+
                     // Tambahkan event click untuk membuka Maps
                     polygon.on('click', function(e) {
                         var bounds = e.sourceTarget.getBounds();
                         var center = bounds.getCenter();
-                        var lahanNama = "Lahan";
-                        if (geoJsonObj.properties && geoJsonObj.properties.lahan_nama) {
-                            lahanNama = geoJsonObj.properties.lahan_nama;
-                        }
                         
                         // Panggil interface Android
                         if (typeof Android !== "undefined") {

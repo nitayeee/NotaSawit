@@ -83,6 +83,10 @@ class BerandaFragment : Fragment() {
         loadQuote()
         database = AppDatabase.getDatabase(requireContext())
 
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshAllDataFromSync()
+        }
+
         // mulai auto refresh quote
         handler.postDelayed(quoteRunnable, 10000)
 
@@ -381,6 +385,160 @@ class BerandaFragment : Fragment() {
                         binding.cardAlertTahunTanam.visibility = android.view.View.GONE
                     }
                 }
+            }
+        })
+    }
+
+    private var pendingSyncCount = 0
+
+    private fun refreshAllDataFromSync() {
+        if (_binding == null) return
+        binding.swipeRefresh.isRefreshing = true
+        pendingSyncCount = 3
+        val petaniId = sharedPref.getInt("petani_id", -1)
+
+        loadQuote()
+        if (petaniId != -1) {
+            loadPetaniSummary(petaniId)
+            checkTahunTanamLahan(petaniId)
+        }
+
+        syncDesaFromApi()
+        syncJenisKegiatanFromApi()
+        syncAdminsAndPetaniFromApi()
+    }
+
+    @Synchronized
+    private fun checkFinishRefreshing() {
+        pendingSyncCount--
+        if (pendingSyncCount <= 0) {
+            activity?.runOnUiThread {
+                _binding?.swipeRefresh?.isRefreshing = false
+            }
+        }
+    }
+
+    private fun syncDesaFromApi() {
+        com.example.notasawit.Network.PetaniApi.getDesa(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                checkFinishRefreshing()
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (response.isSuccessful) {
+                    val json = response.body?.string()
+                    if (!json.isNullOrEmpty()) {
+                        try {
+                            val desaResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.Autentikasi.Daftar.DataDiri.Desa.DesaApiResponse::class.java)
+                            val desaEntity = desaResponse.data.map {
+                                com.example.notasawit.Room.DesaEntity(idDesa = it.desa_id, namaDesa = it.desa_nama)
+                            }
+                            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                database.masterDao().insertDesa(desaEntity)
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishRefreshing()
+            }
+        })
+    }
+
+    private fun syncJenisKegiatanFromApi() {
+        com.example.notasawit.Network.PetaniApi.getJenisKegiatan(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                checkFinishRefreshing()
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (response.isSuccessful) {
+                    val json = response.body?.string()
+                    if (!json.isNullOrEmpty()) {
+                        try {
+                            val jenisResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.InputKegiatan.JenisKegiatan.JenisKegiatanApiResponse::class.java)
+                            val jenisEntity = jenisResponse.data.map {
+                                com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity(id_jenis = it.id_jenis, nama_jenis = it.nama_jenis, ikon = it.ikon)
+                            }
+                            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                database.JenisKegiatanDao().insertJenisKegiatan(jenisEntity)
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishRefreshing()
+            }
+        })
+    }
+
+    private fun syncAdminsAndPetaniFromApi() {
+        com.example.notasawit.Network.PetaniApi.getAdmins(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {}
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listAuditor = mutableListOf<com.example.notasawit.Room.Auditor.AuditorEntity>()
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                listAuditor.add(com.example.notasawit.Room.Auditor.AuditorEntity(
+                                    idAuditor = item.getInt("user_id"),
+                                    namaAuditor = item.getString("user_nama"),
+                                    username = item.getString("user_username")
+                                ))
+                            }
+                            if (listAuditor.isNotEmpty()) {
+                                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                    database.masterDao().insertAuditor(listAuditor)
+                                }
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+            }
+        })
+
+        com.example.notasawit.Network.PetaniApi.getAllPetani(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                checkFinishRefreshing()
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listPetani = mutableListOf<com.example.notasawit.Room.Petani.PetaniEntity>()
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                val desaId = item.optInt("desa_id", 0)
+                                val namaDesa = if (item.has("desa") && !item.isNull("desa")) {
+                                    item.getJSONObject("desa").optString("nama_desa", "-")
+                                } else {
+                                    item.optString("petani_username", "-")
+                                }
+
+                                listPetani.add(com.example.notasawit.Room.Petani.PetaniEntity(
+                                    idPetani = item.optInt("petani_id", 0),
+                                    namaPetani = item.optString("petani_nama", "-"),
+                                    namaDesa = namaDesa,
+                                    desaId = desaId
+                                ))
+                            }
+                            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                database.masterDao().deleteAllPetani()
+                                if (listPetani.isNotEmpty()) {
+                                    database.masterDao().insertPetani(listPetani)
+                                }
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishRefreshing()
             }
         })
     }

@@ -64,17 +64,95 @@ class BerandaAdminFragment : Fragment() {
         fetchDashboardData()
     }
 
+    private var pendingAdminSyncCount = 0
+
     private fun refreshAllData() {
+        if (_binding == null) return
         binding.swipeRefreshBeranda.isRefreshing = true
+        pendingAdminSyncCount = 4
+
         fetchDashboardData()
 
-        PetaniApi.getAllPetani(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                activity?.runOnUiThread {
-                    binding.swipeRefreshBeranda.isRefreshing = false
-                }
-            }
+        val db = com.example.notasawit.Room.AppDatabase.getDatabase(requireContext())
 
+        // 1. Sync Desa
+        PetaniApi.getDesa(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { checkFinishAdminRefresh() }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val json = response.body?.string()
+                    if (!json.isNullOrEmpty()) {
+                        try {
+                            val desaResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.Autentikasi.Daftar.DataDiri.Desa.DesaApiResponse::class.java)
+                            val desaEntity = desaResponse.data.map {
+                                com.example.notasawit.Room.DesaEntity(idDesa = it.desa_id, namaDesa = it.desa_nama)
+                            }
+                            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                db.masterDao().insertDesa(desaEntity)
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishAdminRefresh()
+            }
+        })
+
+        // 2. Sync Jenis Kegiatan
+        PetaniApi.getJenisKegiatan(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { checkFinishAdminRefresh() }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val json = response.body?.string()
+                    if (!json.isNullOrEmpty()) {
+                        try {
+                            val jenisResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.InputKegiatan.JenisKegiatan.JenisKegiatanApiResponse::class.java)
+                            val jenisEntity = jenisResponse.data.map {
+                                com.example.notasawit.Room.JenisKegiatan.JenisKegiatanEntity(id_jenis = it.id_jenis, nama_jenis = it.nama_jenis, ikon = it.ikon)
+                            }
+                            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                db.JenisKegiatanDao().insertJenisKegiatan(jenisEntity)
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishAdminRefresh()
+            }
+        })
+
+        // 3. Sync Admins / Auditors
+        PetaniApi.getAdmins(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { checkFinishAdminRefresh() }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (!body.isNullOrEmpty()) {
+                        try {
+                            val jsonObject = JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val listAuditor = mutableListOf<com.example.notasawit.Room.Auditor.AuditorEntity>()
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                listAuditor.add(com.example.notasawit.Room.Auditor.AuditorEntity(
+                                    idAuditor = item.getInt("user_id"),
+                                    namaAuditor = item.getString("user_nama"),
+                                    username = item.getString("user_username")
+                                ))
+                            }
+                            if (listAuditor.isNotEmpty()) {
+                                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                    db.masterDao().insertAuditor(listAuditor)
+                                }
+                            }
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }
+                }
+                checkFinishAdminRefresh()
+            }
+        })
+
+        // 4. Sync Petani
+        PetaniApi.getAllPetani(object : Callback {
+            override fun onFailure(call: Call, e: IOException) { checkFinishAdminRefresh() }
             override fun onResponse(call: Call, response: Response) {
                 val json = response.body?.string()
                 lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
@@ -98,18 +176,28 @@ class BerandaAdminFragment : Fragment() {
                                     )
                                 )
                             }
-                            com.example.notasawit.Room.AppDatabase.getDatabase(requireContext()).masterDao().insertPetani(listPetani)
+                            db.masterDao().deleteAllPetani()
+                            if (listPetani.isNotEmpty()) {
+                                db.masterDao().insertPetani(listPetani)
+                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
-
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                        binding.swipeRefreshBeranda.isRefreshing = false
-                    }
+                    checkFinishAdminRefresh()
                 }
             }
         })
+    }
+
+    @Synchronized
+    private fun checkFinishAdminRefresh() {
+        pendingAdminSyncCount--
+        if (pendingAdminSyncCount <= 0) {
+            activity?.runOnUiThread {
+                _binding?.swipeRefreshBeranda?.isRefreshing = false
+            }
+        }
     }
 
     private fun fetchDashboardData() {

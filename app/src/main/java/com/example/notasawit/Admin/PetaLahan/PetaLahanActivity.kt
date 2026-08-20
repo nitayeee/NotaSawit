@@ -83,12 +83,14 @@ class PetaLahanActivity : AppCompatActivity() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val sharedPref = getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
                     val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+                    val allPetaniList = AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getAllPetani()
                     val petaniListFromRoom = if (adminDesaId != 0) {
                         AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getPetaniByDesa(adminDesaId)
                     } else {
-                        AppDatabase.getDatabase(this@PetaLahanActivity).masterDao().getAllPetani()
+                        allPetaniList
                     }
                     val petaniMap = petaniListFromRoom.associate { it.idPetani to it.namaPetani }
+                    val allPetaniMap = allPetaniList.associate { it.idPetani to it.namaPetani }
 
                     withContext(Dispatchers.Main) {
                         binding.progressBar.visibility = View.GONE
@@ -128,9 +130,18 @@ class PetaLahanActivity : AppCompatActivity() {
                                             val properties = JSONObject()
                                             properties.put("lahan_nama", item.optString("lahan_nama", "Lahan"))
                                             
-                                            // Ambil ID petani dan cari di Room
-                                            val petaniId = item.optInt("petani_id", -1)
-                                            val petaniNama = petaniMap[petaniId] ?: "Unknown (ID: $petaniId)"
+                                            // Ambil ID petani dan cari di Room / JSON
+                                            val petaniId = if (item.has("petani_id")) item.optInt("petani_id") else item.optInt("id_petani", -1)
+                                            var petaniNama = item.optString("petani_nama", item.optString("nama_petani", ""))
+                                            if (petaniNama.isEmpty() || petaniNama == "null") {
+                                                if (item.has("petani") && !item.isNull("petani")) {
+                                                    val pObj = item.optJSONObject("petani")
+                                                    petaniNama = pObj?.optString("petani_nama", pObj.optString("nama_petani", "")) ?: ""
+                                                }
+                                            }
+                                            if (petaniNama.isEmpty() || petaniNama == "null") {
+                                                petaniNama = petaniMap[petaniId] ?: allPetaniMap[petaniId] ?: "Unknown (ID: $petaniId)"
+                                            }
                                             properties.put("petani_nama", petaniNama)
                                             
                                             polyJson.put("properties", properties)
