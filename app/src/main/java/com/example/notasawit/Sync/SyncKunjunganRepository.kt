@@ -29,6 +29,11 @@ class SyncKunjunganRepository(
                     desaKebun = kunjungan.desaKebun,
                     desaKepengurusan = kunjungan.desaKepengurusan,
                     namaAuditor = kunjungan.namaAuditor,
+                    namaPetani = kunjungan.namaPetani,
+                    statusKunjungan = kunjungan.statusKunjungan,
+                    keterangan = kunjungan.ringkasanTemuan,
+                    periode = kunjungan.periode,
+                    visitAttempt = kunjungan.visitAttempt,
                     pdfPath = kunjungan.pdfPath
                 )
 

@@ -13,6 +13,7 @@ data class KunjunganLahanForm(
     val desaKepengurusan: String = "",
     val namaAuditor: String = "",
     val namaPetani: String = "",
+    val idPetani: Int? = null,
 
     // === SECTION 2: PERTANYAAN ===
     val q1_patokBatas: Boolean? = null,
@@ -36,7 +37,14 @@ data class KunjunganLahanForm(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val waktuBukti: String? = null,
+    val ringkasanTemuan: String = "",
 
     val isSynced: Boolean = false,
-    val pdfPath: String = ""
+    val statusKunjungan: String = "Belum Kunjungan",
+    val pdfPath: String = "",
+
+    // Konfigurasi Pengulangan / Periode
+    val periode: String = "", // cth: "2026-S1"
+    val visitAttempt: Int = 1,
+    val parentKunjunganId: String? = null
 )

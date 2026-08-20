@@ -86,15 +86,34 @@ class KLSection1Fragment : Fragment() {
             if (tanggal.isEmpty() || desaKebun.isEmpty() || desaKepengurusan.isEmpty() || auditor.isEmpty() || petani.isEmpty()) {
                 Toast.makeText(requireContext(), "Semua data wajib diisi/dipilih!", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
-                    tanggal = tanggal,
-                    desaKebun = desaKebun,
-                    desaKepengurusan = desaKepengurusan,
-                    namaAuditor = auditor,
-                    namaPetani = petani
-                )
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val selectedPetaniEntity = listPetaniEntity.find { it.namaPetani == petani }
+                    val idPetani = selectedPetaniEntity?.idPetani
 
-                (requireActivity() as KunjunganLahanActivity).navigateTo(KLSection2Fragment(), 2)
+                    val currentPeriod = if (viewModel.kunjunganLahanForm.periode.isNotEmpty()) viewModel.kunjunganLahanForm.periode else {
+                        val year = if (tanggal.length >= 4) tanggal.substring(0, 4) else Calendar.getInstance().get(Calendar.YEAR).toString()
+                        val month = if (tanggal.length >= 7) (tanggal.substring(5, 7).toIntOrNull() ?: 1) else 1
+                        if (month <= 6) "$year-S1" else "$year-S2"
+                    }
+
+                    val lastKunjungan = database.KunjunganLahanDao().getLastKunjunganForPetani(petani, currentPeriod)
+                    val isFollowUp = viewModel.kunjunganLahanForm.visitAttempt > 1
+
+                    viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
+                        tanggal = tanggal,
+                        desaKebun = desaKebun,
+                        desaKepengurusan = desaKepengurusan,
+                        namaAuditor = auditor,
+                        namaPetani = petani,
+                        idPetani = idPetani,
+                        periode = currentPeriod,
+                        parentKunjunganId = if (isFollowUp && lastKunjungan != null) lastKunjungan.idKunjungan else null
+                    )
+
+                    withContext(Dispatchers.Main) {
+                        (requireActivity() as KunjunganLahanActivity).navigateTo(KLSection2Fragment(), 2)
+                    }
+                }
             }
         }
     }

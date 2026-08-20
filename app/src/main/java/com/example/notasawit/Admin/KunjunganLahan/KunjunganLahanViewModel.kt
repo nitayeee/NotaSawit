@@ -13,4 +13,32 @@ class KunjunganLahanViewModel : ViewModel() {
     
     // Jawaban Section 2
     var section2Answers = mutableListOf<KunjunganItem>()
+
+    // Jawaban sebelumnya untuk pre-fill kunjungan ulang (follow-up)
+    val previousAnswers = mutableMapOf<String, Boolean>()
+    val kunjunganAnswers = mutableMapOf<String, Boolean>()
+
+    fun resetForm() {
+        kunjunganLahanForm = KunjunganLahanForm(
+            idKunjungan = UUID.randomUUID().toString()
+        )
+        section2Answers.clear()
+        previousAnswers.clear()
+        kunjunganAnswers.clear()
+    }
+
+    fun updatePetaniAndAuditor(idPetani: Int, namaPetani: String, namaAuditor: String) {
+        kunjunganLahanForm = kunjunganLahanForm.copy(
+            idPetani = idPetani,
+            namaPetani = namaPetani,
+            namaAuditor = namaAuditor
+        )
+    }
+
+    fun updatePeriodeAndAttempt(periode: String, attempt: Int) {
+        kunjunganLahanForm = kunjunganLahanForm.copy(
+            periode = periode,
+            visitAttempt = attempt
+        )
+    }
 }

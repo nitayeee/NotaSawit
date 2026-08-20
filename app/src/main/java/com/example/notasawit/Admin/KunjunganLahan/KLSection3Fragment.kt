@@ -123,11 +123,16 @@ class KLSection3Fragment : Fragment() {
                 return@setOnClickListener
             }
 
+            val statusKunjungan = if (binding.rbPerluPerbaikan.isChecked) "Perlu Perbaikan" else "Selesai"
+            val temuan = binding.etRingkasanTemuan.text.toString().trim()
+
             viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
                 fotoBuktiPath = currentPhotoPath,
                 latitude = capturedLatitude,
                 longitude = capturedLongitude,
-                waktuBukti = capturedWaktu
+                waktuBukti = capturedWaktu,
+                statusKunjungan = statusKunjungan,
+                ringkasanTemuan = temuan
             )
 
             simpanKeDatabase()

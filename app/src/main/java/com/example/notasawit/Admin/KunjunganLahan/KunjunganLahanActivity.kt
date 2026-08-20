@@ -30,7 +30,7 @@ class KunjunganLahanActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, KLSection1Fragment())
+                .replace(R.id.fragmentContainer, DashboardKunjunganFragment())
                 .commit()
         }
 

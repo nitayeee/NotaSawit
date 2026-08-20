@@ -546,6 +546,11 @@ object PetaniApi {
         desaKebun: String,
         desaKepengurusan: String,
         namaAuditor: String,
+        namaPetani: String = "",
+        statusKunjungan: String = "",
+        keterangan: String = "",
+        periode: String = "",
+        visitAttempt: Int = 1,
         pdfPath: String
     ): okhttp3.Call {
 
@@ -555,6 +560,11 @@ object PetaniApi {
             .addFormDataPart("desa_kebun", desaKebun)
             .addFormDataPart("desa_kepengurusan", desaKepengurusan)
             .addFormDataPart("nama_auditor", namaAuditor)
+            .addFormDataPart("nama_petani", namaPetani)
+            .addFormDataPart("status_kunjungan", statusKunjungan)
+            .addFormDataPart("keterangan", keterangan)
+            .addFormDataPart("periode", periode)
+            .addFormDataPart("visit_attempt", visitAttempt.toString())
 
         if (pdfPath.isNotEmpty()) {
             val file = File(pdfPath)
@@ -724,6 +734,20 @@ object PetaniApi {
             "$BASE_URL/audit-internal/all"
         } else {
             "$BASE_URL/audit-internal/all?desa=$desa"
+        }
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun getAllKunjunganByDesa(desa: String?, callback: Callback) {
+        val url = if (desa.isNullOrEmpty()) {
+            "$BASE_URL/kunjungan-lapangan/all"
+        } else {
+            "$BASE_URL/kunjungan-lapangan/all?desa=$desa"
         }
         val request = Request.Builder()
             .url(url)

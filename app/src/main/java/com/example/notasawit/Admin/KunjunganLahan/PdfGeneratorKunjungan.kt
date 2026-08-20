@@ -107,6 +107,16 @@ object PdfGeneratorKunjungan {
         canvas.drawText(":", colonCol2, yPosition, textPaint)
         canvas.drawText(form.tanggal, valCol2, yPosition, textPaint)
 
+        yPosition += lineSpacing + 5f
+
+        canvas.drawText("Auditor", labelCol1, yPosition, textPaint)
+        canvas.drawText(":", colonCol1, yPosition, textPaint)
+        canvas.drawText(form.namaAuditor, valCol1, yPosition, textPaint)
+
+        canvas.drawText("Status / Periode", labelCol2, yPosition, textPaint)
+        canvas.drawText(":", colonCol2, yPosition, textPaint)
+        canvas.drawText("${form.statusKunjungan} (${form.periode} ke-${form.visitAttempt})", valCol2, yPosition, boldTextPaint)
+
         yPosition += 30f
 
         // QUESTIONS
