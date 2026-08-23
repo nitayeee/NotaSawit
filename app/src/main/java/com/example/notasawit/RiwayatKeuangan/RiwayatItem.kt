@@ -10,6 +10,8 @@ data class RiwayatItem(
 
     // Wajib disamakan dengan key di JSON API Laravel ("lahan_nama")
     @SerializedName("lahan_nama") val lahanNama: String?,
+    @SerializedName("lahan_id") val lahanId: Int? = null,
+    @SerializedName("jumlah_tbs") val jumlahTbs: Double? = null,
 
     // Wajib disamakan dengan key di JSON API Laravel ("source_table")
     @SerializedName("source_table") val sourceTable: String,

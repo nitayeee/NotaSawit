@@ -41,7 +41,12 @@ class RiwayatAdapter(
         val item = list[position]
         val id= item.id
 
-        holder.binding.tvTitle.text = item.judul
+        val titleText = if (!item.lahanNama.isNullOrEmpty()) {
+            "${item.judul} (${item.lahanNama})"
+        } else {
+            item.judul
+        }
+        holder.binding.tvTitle.text = titleText
         holder.binding.tvDate.text = item.tanggal
 
         if (item.isRead == 0) {

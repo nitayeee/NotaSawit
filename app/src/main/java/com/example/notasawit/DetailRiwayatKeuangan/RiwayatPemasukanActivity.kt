@@ -101,37 +101,60 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
     ){
         binding.tvTanggal.text =
             "Tanggal : ${data.produksi_tanggal}"
-        binding.tvJumlahTbs.text =
-            "Jumlah TBS : ${data.jumlah_tbs} Kg"
         binding.tvHargaTbs.text =
-            "Harga TBS : Rp ${data.harga_tbs}"
-        binding.tvTotalPendapatan.text =
-            "Total Pendapatan : Rp ${data.total_pendapatan}"
+            "Harga TBS : Rp ${java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(data.harga_tbs.toLong())}"
         binding.tvStatus.text =
             "Status : ${data.status_validasi}"
         binding.tvPetani.text =
             "Petani : ${data.petani?.nama ?: "-"}"
 
-        // Mengambil seluruh rincian lahan dari detail_produksi secara terjabar
-        val listDetail = data.detail_produksi
-        val rincianLahanText = if (!listDetail.isNullOrEmpty()) {
-            listDetail.mapIndexedNotNull { index, detail ->
-                val namaLahan = detail.lahan?.nama ?: return@mapIndexedNotNull null
-                val tbs = detail.jumlah_tbs_detail?.let {
-                    if (it % 1.0 == 0.0) it.toLong().toString() else it.toString()
-                } ?: "0"
-                val subtotalVal = detail.subtotal_pendapatan
-                val subtotalStr = if (subtotalVal != null && subtotalVal > 0) {
-                    val formatted = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(subtotalVal.toLong())
-                    " (Rp $formatted)"
-                } else ""
-                "${index + 1}. $namaLahan: $tbs Kg$subtotalStr"
-            }.joinToString("\n")
-        } else {
-            "-"
-        }
+        val targetLahanId = intent.getIntExtra("lahan_id", -1).takeIf { it != -1 }
+        val targetLahanNama = intent.getStringExtra("lahan_nama")
+        val nominalSplit = intent.getDoubleExtra("nominal_split", -1.0).takeIf { it != -1.0 }
+        val jumlahSplit = intent.getDoubleExtra("jumlah_split", -1.0).takeIf { it != -1.0 }
 
-        binding.tvLahan.text = "Rincian Lahan:\n$rincianLahanText"
+        val listDetail = data.detail_produksi
+
+        val selectedDetail = if (targetLahanId != null) {
+            listDetail?.find { it.lahan?.id == targetLahanId }
+        } else if (!targetLahanNama.isNullOrEmpty()) {
+            listDetail?.find { it.lahan?.nama.equals(targetLahanNama, ignoreCase = true) }
+        } else null
+
+        if (selectedDetail != null || !targetLahanNama.isNullOrEmpty()) {
+            val namaLahan = selectedDetail?.lahan?.nama ?: targetLahanNama ?: "-"
+            val jumlahTbsLahan = selectedDetail?.jumlah_tbs_detail ?: jumlahSplit ?: 0.0
+            val totalPendapatanLahan = selectedDetail?.subtotal_pendapatan ?: nominalSplit ?: 0.0
+
+            val formattedJumlah = if (jumlahTbsLahan % 1.0 == 0.0) jumlahTbsLahan.toLong().toString() else jumlahTbsLahan.toString()
+            val formattedTotal = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(totalPendapatanLahan.toLong())
+
+            binding.tvJumlahTbs.text = "Jumlah TBS : $formattedJumlah Kg"
+            binding.tvTotalPendapatan.text = "Total Pendapatan : Rp $formattedTotal"
+            binding.tvLahan.text = "Lahan : $namaLahan"
+        } else {
+            val formattedTotal = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(data.total_pendapatan.toLong())
+            binding.tvJumlahTbs.text = "Jumlah TBS : ${data.jumlah_tbs} Kg"
+            binding.tvTotalPendapatan.text = "Total Pendapatan : Rp $formattedTotal"
+
+            val rincianLahanText = if (!listDetail.isNullOrEmpty()) {
+                listDetail.mapIndexedNotNull { index, detail ->
+                    val namaLahan = detail.lahan?.nama ?: return@mapIndexedNotNull null
+                    val tbs = detail.jumlah_tbs_detail?.let {
+                        if (it % 1.0 == 0.0) it.toLong().toString() else it.toString()
+                    } ?: "0"
+                    val subtotalVal = detail.subtotal_pendapatan
+                    val subtotalStr = if (subtotalVal != null && subtotalVal > 0) {
+                        val formatted = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(subtotalVal.toLong())
+                        " (Rp $formatted)"
+                    } else ""
+                    "${index + 1}. $namaLahan: $tbs Kg$subtotalStr"
+                }.joinToString("\n")
+            } else {
+                "-"
+            }
+            binding.tvLahan.text = "Rincian Lahan:\n$rincianLahanText"
+        }
 
         binding.tvKeterangan.text =
             "Keterangan : ${data.produksi_ket ?: "-"}"

@@ -36,7 +36,10 @@ class RiwayatActivity : AppCompatActivity() {
     private val riwayatList  = mutableListOf<RiwayatItem>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
 
-    private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
+    private val sp_petaniId by lazy {
+        val id = sharedPref.getInt("petani_id", 0)
+        if (id != 0) id else sharedPref.getInt("user_id", 0)
+    }
 
     // Filter
     private var selectedTipe = "semua"
@@ -97,35 +100,25 @@ class RiwayatActivity : AppCompatActivity() {
         adapter = RiwayatAdapter(riwayatList.toMutableList())
 
         adapter.onItemClick = { item ->
-
             when(item.sourceTable.lowercase()) {
-
                 "produksi" -> {
-
-                    val intent = Intent(
-                        this,
-                        RiwayatPemasukanActivity::class.java
-                    )
-
-                    intent.putExtra(
-                        "produksi_id",
-                        item.id
-                    )
-
+                    val intent = Intent(this, RiwayatPemasukanActivity::class.java).apply {
+                        putExtra("produksi_id", item.id)
+                        item.lahanId?.let { putExtra("lahan_id", it) }
+                        item.lahanNama?.let { putExtra("lahan_nama", it) }
+                        putExtra("nominal_split", item.nominal)
+                        item.jumlahTbs?.let { putExtra("jumlah_split", it) }
+                    }
                     startActivity(intent)
                 }
                 "biaya" -> {
-
-
-                    val intent = Intent(
-                        this,
-                        RiwayatPengeluaranActivity::class.java
-                    )
-                    intent.putExtra(
-                        "biaya_id",
-                        item.id
-                    )
-
+                    val intent = Intent(this, RiwayatPengeluaranActivity::class.java).apply {
+                        putExtra("biaya_id", item.id)
+                        item.lahanId?.let { putExtra("lahan_id", it) }
+                        item.lahanNama?.let { putExtra("lahan_nama", it) }
+                        putExtra("nominal_split", item.nominal)
+                        item.jumlahTbs?.let { putExtra("jumlah_split", it) }
+                    }
                     startActivity(intent)
                 }
             }
@@ -266,57 +259,97 @@ class RiwayatActivity : AppCompatActivity() {
                     response: Response
                 ) {
 
-                    val jsonString =
-                        response.body?.string()
+                    val jsonString = response.body?.string() ?: return
+                    android.util.Log.d("RIWAYAT_RESPONSE", jsonString)
 
-                    if(jsonString == null) return
+                    try {
+                        val json = JSONObject(jsonString)
+                        if (!json.optBoolean("success", true)) {
+                            val errMsg = json.optString("message", "Gagal memproses data riwayat")
+                            runOnUiThread {
+                                binding.rvTransaksi.visibility = View.GONE
+                                binding.layoutEmptyState.visibility = View.VISIBLE
+                                binding.ivEmptyState.setImageResource(R.drawable.ic_warning)
+                                binding.tvEmptyState.text = errMsg
+                            }
+                            return
+                        }
 
-                    val json =
-                        JSONObject(jsonString)
+                        val data = json.optJSONArray("data") ?: org.json.JSONArray()
+                        val list = mutableListOf<RiwayatItem>()
 
-                    val data =
-                        json.getJSONArray("data")
+                        for (i in 0 until data.length()) {
+                            val item = data.optJSONObject(i) ?: continue
 
-                    val list =
-                        mutableListOf<RiwayatItem>()
+                            val idVal = when {
+                                item.has("produksi_id") && !item.isNull("produksi_id") -> item.optInt("produksi_id")
+                                item.has("biaya_id") && !item.isNull("biaya_id") -> item.optInt("biaya_id")
+                                else -> item.optInt("id", 0)
+                            }
 
-                    for(i in 0 until data.length()) {
+                            val judulVal = item.optString("judul", item.optString("nama", "Transaksi"))
+                            val tanggalVal = item.optString("tanggal", "-")
 
-                        val item =
-                            data.getJSONObject(i)
+                            val nominalVal = try {
+                                if (item.has("nominal") && !item.isNull("nominal")) {
+                                    val strVal = item.optString("nominal")
+                                    strVal.toDoubleOrNull() ?: item.optDouble("nominal", 0.0)
+                                } else 0.0
+                            } catch (e: Exception) { 0.0 }
 
-                        list.add(
+                            val tipeVal = item.optString("tipe", "pemasukan")
+                            val sourceTableVal = item.optString("source_table", "produksi")
+                            val lahanIdVal = if (item.has("lahan_id") && !item.isNull("lahan_id")) item.optInt("lahan_id") else null
+                            val lahanNamaVal = item.optString("lahan_nama").takeIf { it.isNotEmpty() && it != "null" }
 
-                            RiwayatItem(
-                                id = item.getInt("id"),
-                                judul = item.getString("judul"),
-                                tanggal = item.getString("tanggal"),
-                                nominal = item.getDouble("nominal"),
-                                tipe = item.getString("tipe"),
-                                lahanNama =
-                                    item.optString(
-                                        "lahan_nama"
-                                    ),
-                                sourceTable =
-                                    item.getString(
-                                        "source_table"
-                                    ),
-                                isRead = item.optInt("is_read", 1)
+                            val jumlahVal = try {
+                                when {
+                                    item.has("jumlah_tbs") && !item.isNull("jumlah_tbs") -> {
+                                        item.optString("jumlah_tbs").toDoubleOrNull() ?: item.optDouble("jumlah_tbs")
+                                    }
+                                    item.has("jumlah") && !item.isNull("jumlah") -> {
+                                        item.optString("jumlah").toDoubleOrNull() ?: item.optDouble("jumlah")
+                                    }
+                                    else -> null
+                                }
+                            } catch (e: Exception) { null }
+
+                            list.add(
+                                RiwayatItem(
+                                    id = idVal,
+                                    judul = judulVal,
+                                    tanggal = tanggalVal,
+                                    nominal = nominalVal,
+                                    tipe = tipeVal,
+                                    lahanNama = lahanNamaVal,
+                                    lahanId = lahanIdVal,
+                                    jumlahTbs = jumlahVal,
+                                    sourceTable = sourceTableVal,
+                                    isRead = item.optInt("is_read", 1)
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    runOnUiThread {
-                        if (list.isEmpty()) {
+                        runOnUiThread {
+                            if (list.isEmpty()) {
+                                binding.rvTransaksi.visibility = View.GONE
+                                binding.layoutEmptyState.visibility = View.VISIBLE
+                                binding.ivEmptyState.setImageResource(R.drawable.ic_no_data)
+                                binding.tvEmptyState.text = "Tidak ada riwayat"
+                            } else {
+                                binding.rvTransaksi.visibility = View.VISIBLE
+                                binding.layoutEmptyState.visibility = View.GONE
+                            }
+                            adapter.updateData(list)
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("RIWAYAT_ERROR", "Parsing error: ${e.message}", e)
+                        runOnUiThread {
                             binding.rvTransaksi.visibility = View.GONE
                             binding.layoutEmptyState.visibility = View.VISIBLE
-                            binding.ivEmptyState.setImageResource(R.drawable.ic_no_data)
-                            binding.tvEmptyState.text = "Tidak ada riwayat"
-                        } else {
-                            binding.rvTransaksi.visibility = View.VISIBLE
-                            binding.layoutEmptyState.visibility = View.GONE
+                            binding.ivEmptyState.setImageResource(R.drawable.ic_warning)
+                            binding.tvEmptyState.text = "Gagal memproses data riwayat: ${e.message}"
                         }
-                        adapter.updateData(list)
                     }
                 }
             }

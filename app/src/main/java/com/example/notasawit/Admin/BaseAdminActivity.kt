@@ -38,8 +38,12 @@ class BaseAdminActivity : AppCompatActivity() {
         setupBottomNavListener()
     }
 
+    private var isSelectingProgrammatically = false
+
     private fun setupBottomNavListener() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
+            if (isSelectingProgrammatically) return@setOnItemSelectedListener true
+
             when (item.itemId) {
                 R.id.home -> {
                     replaceFragment(BerandaAdminFragment())
@@ -94,9 +98,9 @@ class BaseAdminActivity : AppCompatActivity() {
             else -> R.id.home
         }
         if (binding.bottomNavigation.selectedItemId != expectedItemId) {
-            binding.bottomNavigation.setOnItemSelectedListener(null)
+            isSelectingProgrammatically = true
             binding.bottomNavigation.selectedItemId = expectedItemId
-            setupBottomNavListener()
+            isSelectingProgrammatically = false
         }
     }
 }
