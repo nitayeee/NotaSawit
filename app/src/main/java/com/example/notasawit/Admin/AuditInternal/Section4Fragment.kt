@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Admin.AuditInternal.AuditViewModel.AuditViewModel
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.databinding.FragmentSection4Binding
+import com.example.notasawit.Utils.CustomAlert
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -96,6 +97,23 @@ class Section4Fragment : Fragment() {
                 .into(binding.ivBuktiAudit)
         }
 
+        binding.rgStatusAudit.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == binding.rbStatusLulus.id) {
+                binding.cardTanggalAudit.visibility = View.GONE
+                binding.etTanggalAudit.setText("")
+            } else {
+                binding.cardTanggalAudit.visibility = View.VISIBLE
+            }
+        }
+
+        if (viewModel.auditHeader.statusAudit == "Lulus") {
+            binding.rbStatusLulus.isChecked = true
+            binding.cardTanggalAudit.visibility = View.GONE
+        } else {
+            binding.rbStatusPerbaikan.isChecked = true
+            binding.cardTanggalAudit.visibility = View.VISIBLE
+        }
+
         binding.btnPilihFoto.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -124,14 +142,14 @@ class Section4Fragment : Fragment() {
                 view.findViewById<android.widget.RadioButton>(selectedPerbaikanId).text.toString()
             }
 
-            // Status selalu Menunggu Keputusan agar Admin yang memvalidasi
-            val statusAudit = "Menunggu Keputusan"
+            val statusAudit = if (binding.rbStatusLulus.isChecked) "Lulus" else "Perlu Perbaikan"
+            val rencanaPemeriksaan = if (binding.rbStatusLulus.isChecked) "" else binding.etTanggalAudit.text.toString()
 
             viewModel.auditHeader =
                 viewModel.auditHeader.copy(
                     ringkasanTemuan = temuanValue,
                     rencanaPerbaikan = perbaikanValue,
-                    rencanaPemeriksaan = binding.etTanggalAudit.text.toString(),
+                    rencanaPemeriksaan = rencanaPemeriksaan,
                     statusAudit = statusAudit
                 )
 
@@ -142,7 +160,7 @@ class Section4Fragment : Fragment() {
                     viewModel.auditHeader = viewModel.auditHeader.copy(pdfPath = generatedPdfPath)
                 }
 
-                // Simpan Header
+                // Simpanz Header
                 database.auditDao().insertHeader(viewModel.auditHeader)
                 
                 // Simpan Answers
@@ -157,7 +175,7 @@ class Section4Fragment : Fragment() {
                 
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
                     triggerDataSync()
-                    com.example.notasawit.utils.CustomAlert.showSuccess(
+                    CustomAlert.showSuccess(
                         requireActivity(),
                         "Berhasil",
                         "Audit & PDF disimpan & siap disinkron!"
@@ -249,9 +267,12 @@ class Section4Fragment : Fragment() {
             return false
         }
 
-        if (binding.etTanggalAudit.text.isNullOrBlank()) {
-            binding.etTanggalAudit.error = "Pilih tanggal"
-            return false
+        if (binding.rbStatusPerbaikan.isChecked) {
+            if (binding.etTanggalAudit.text.isNullOrBlank()) {
+                binding.etTanggalAudit.error = "Pilih tanggal"
+                Toast.makeText(requireContext(), "Tanggal perbaikan selanjutnya wajib diisi!", Toast.LENGTH_SHORT).show()
+                return false
+            }
         }
         return true
     }

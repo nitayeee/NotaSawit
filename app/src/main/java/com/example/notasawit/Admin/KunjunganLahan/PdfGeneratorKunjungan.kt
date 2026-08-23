@@ -27,7 +27,7 @@ object PdfGeneratorKunjungan {
     private const val MARGIN_TOP = 50f
     private const val MARGIN_BOTTOM = 50f
 
-    fun generatePdf(context: Context, form: KunjunganLahanForm): String? {
+    fun generatePdf(context: Context, form: KunjunganLahanForm, answers: List<KunjunganItem> = emptyList()): String? {
         val pdfDocument = PdfDocument()
 
         val titlePaint = Paint().apply {
@@ -44,32 +44,31 @@ object PdfGeneratorKunjungan {
         }
         val boldTextPaint = Paint().apply {
             textSize = 10.5f
-            color = Color.BLACK
             isFakeBoldText = true
+            color = Color.BLACK
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
         val answerPaint = Paint().apply {
-            textSize = 11f
+            textSize = 10.5f
             color = Color.BLACK
-            isFakeBoldText = true
         }
         val borderPaint = Paint().apply {
-            color = Color.BLACK
             style = Paint.Style.STROKE
             strokeWidth = 1f
+            color = Color.BLACK
         }
-        val lineSpacing = 16f
 
-        var pageNumber = 1
-        var pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create()
+        var pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
+
         var yPosition = MARGIN_TOP
 
-        fun checkNewPage(force: Boolean = false, requiredSpace: Float = 0f) {
-            if (force || yPosition + requiredSpace > PAGE_HEIGHT - MARGIN_BOTTOM) {
+        fun checkNewPage(requiredSpace: Float = 0f) {
+            if (yPosition + requiredSpace > PAGE_HEIGHT - MARGIN_BOTTOM) {
                 pdfDocument.finishPage(page)
-                pageNumber++
-                pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create()
+                val newPageNumber = pdfDocument.pages.size + 1
+                pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, newPageNumber).create()
                 page = pdfDocument.startPage(pageInfo)
                 canvas = page.canvas
                 yPosition = MARGIN_TOP
@@ -77,21 +76,22 @@ object PdfGeneratorKunjungan {
         }
 
         // TITLE
-        canvas.drawText("HASIL KUNJUNGAN LAPANGAN", PAGE_WIDTH / 2f, yPosition, titlePaint)
-        yPosition += 40f
+        canvas.drawText("FORMULIR KUNJUNGAN LAPANGAN", (PAGE_WIDTH / 2).toFloat(), yPosition, titlePaint)
+        yPosition += 30f
 
-        // HEADER
+        val lineSpacing = 16f
         val labelCol1 = MARGIN_LEFT
-        val colonCol1 = MARGIN_LEFT + 120f
-        val valCol1 = colonCol1 + 10f
+        val colonCol1 = MARGIN_LEFT + 110f
+        val valCol1 = MARGIN_LEFT + 120f
 
-        val labelCol2 = PAGE_WIDTH / 2f - 20f
-        val colonCol2 = labelCol2 + 100f
-        val valCol2 = colonCol2 + 10f
+        val labelCol2 = MARGIN_LEFT + 280f
+        val colonCol2 = MARGIN_LEFT + 370f
+        val valCol2 = MARGIN_LEFT + 380f
 
-        canvas.drawText("Nama", labelCol1, yPosition, textPaint)
+        // HEADER INFO
+        canvas.drawText("Tanggal", labelCol1, yPosition, textPaint)
         canvas.drawText(":", colonCol1, yPosition, textPaint)
-        canvas.drawText(form.namaPetani, valCol1, yPosition, textPaint)
+        canvas.drawText(form.tanggal, valCol1, yPosition, textPaint)
 
         canvas.drawText("Desa Kebun", labelCol2, yPosition, textPaint)
         canvas.drawText(":", colonCol2, yPosition, textPaint)
@@ -99,13 +99,13 @@ object PdfGeneratorKunjungan {
 
         yPosition += lineSpacing + 5f
 
-        canvas.drawText("Desa Kepengurusan", labelCol1, yPosition, textPaint)
+        canvas.drawText("Nama Petani", labelCol1, yPosition, textPaint)
         canvas.drawText(":", colonCol1, yPosition, textPaint)
-        canvas.drawText(form.desaKepengurusan, valCol1, yPosition, textPaint)
+        canvas.drawText(form.namaPetani, valCol1, yPosition, textPaint)
 
-        canvas.drawText("Tanggal Kunjungan", labelCol2, yPosition, textPaint)
+        canvas.drawText("Desa Kepengurusan", labelCol2, yPosition, textPaint)
         canvas.drawText(":", colonCol2, yPosition, textPaint)
-        canvas.drawText(form.tanggal, valCol2, yPosition, textPaint)
+        canvas.drawText(form.desaKepengurusan, valCol2, yPosition, textPaint)
 
         yPosition += lineSpacing + 5f
 
@@ -120,14 +120,14 @@ object PdfGeneratorKunjungan {
         yPosition += 30f
 
         // QUESTIONS
-        val questions = KunjunganQuestionData.getQuestions()
+        val questionsList = if (answers.isNotEmpty()) answers else KunjunganQuestionData.getQuestions()
         
         val leftBoxWidth = 340f
         val rightBoxWidth = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT - leftBoxWidth
         
-        for (item in questions) {
+        for (item in questionsList) {
             if (item is KunjunganItem.Question) {
-                val answerText = getAnswerValue(form, item.key)
+                val answerText = item.textAnswer ?: getAnswerValue(form, item.key)
                 
                 // Calculate required height
                 val standardLines = wrapText(item.standard, boldTextPaint, rightBoxWidth - 10f)
@@ -182,6 +182,79 @@ object PdfGeneratorKunjungan {
         yPosition += 20f
         canvas.drawText("(Auditor)", MARGIN_LEFT + 40f, yPosition + 50f, boldTextPaint)
         canvas.drawText("(Petani)", PAGE_WIDTH - MARGIN_RIGHT - 80f, yPosition + 50f, boldTextPaint)
+
+        pdfDocument.finishPage(page)
+
+        // --- HALAMAN BARU: BUKTI PELAKSANAAN ---
+        val newPageNumber = pdfDocument.pages.size + 1
+        pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, newPageNumber).create()
+        page = pdfDocument.startPage(pageInfo)
+        canvas = page.canvas
+        yPosition = MARGIN_TOP
+
+        // Judul Bukti Pelaksanaan (posisi & font sama seperti "FORMULIR KUNJUNGAN LAPANGAN")
+        canvas.drawText("BUKTI PELAKSANAAN", (PAGE_WIDTH / 2).toFloat(), yPosition, titlePaint)
+        yPosition += 30f
+
+        // Waktu Pelaksanaan & Titik Koordinat
+        canvas.drawText("Waktu Pelaksanaan", labelCol1, yPosition, textPaint)
+        canvas.drawText(":", colonCol1, yPosition, textPaint)
+        canvas.drawText(form.waktuBukti ?: "-", valCol1, yPosition, textPaint)
+
+        yPosition += lineSpacing + 4f
+
+        canvas.drawText("Titik Koordinat", labelCol1, yPosition, textPaint)
+        canvas.drawText(":", colonCol1, yPosition, textPaint)
+        val lat = form.latitude ?: 0.0
+        val lng = form.longitude ?: 0.0
+        val coordStr = if (lat != 0.0 || lng != 0.0) "$lat, $lng" else "-"
+        canvas.drawText(coordStr, valCol1, yPosition, textPaint)
+
+        yPosition += 25f
+
+        // Ringkasan Temuan (jika ada)
+        if (form.ringkasanTemuan.isNotBlank()) {
+            canvas.drawText("Ringkasan Temuan / Catatan", labelCol1, yPosition, boldTextPaint)
+            yPosition += lineSpacing
+            val temuanLines = wrapText(form.ringkasanTemuan, textPaint, PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT)
+            for (tLine in temuanLines) {
+                canvas.drawText(tLine, labelCol1, yPosition, textPaint)
+                yPosition += lineSpacing
+            }
+            yPosition += 15f
+        }
+
+        // Foto Bukti Pelaksanaan
+        if (!form.fotoBuktiPath.isNullOrBlank()) {
+            val imgFile = File(form.fotoBuktiPath)
+            if (imgFile.exists()) {
+                try {
+                    val bitmap = android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath)
+                    if (bitmap != null) {
+                        val maxImgWidth = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT
+                        val scale = maxImgWidth / bitmap.width.toFloat()
+                        var scaledHeight = bitmap.height * scale
+
+                        val maxAllowedHeight = PAGE_HEIGHT - yPosition - MARGIN_BOTTOM - 20f
+                        if (scaledHeight > maxAllowedHeight && maxAllowedHeight > 100f) {
+                            scaledHeight = maxAllowedHeight
+                        }
+
+                        val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(
+                            bitmap,
+                            maxImgWidth.toInt(),
+                            scaledHeight.toInt(),
+                            true
+                        )
+                        canvas.drawBitmap(scaledBitmap, MARGIN_LEFT, yPosition, null)
+                        yPosition += scaledHeight + 15f
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    canvas.drawText("(Gagal memuat foto bukti)", MARGIN_LEFT, yPosition, textPaint)
+                }
+            }
+        }
 
         pdfDocument.finishPage(page)
 

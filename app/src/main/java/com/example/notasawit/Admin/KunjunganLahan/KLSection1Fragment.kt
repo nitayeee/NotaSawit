@@ -63,16 +63,33 @@ class KLSection1Fragment : Fragment() {
             }, year, month, day)
             dpd.show()
         }
-        binding.etDesaKebun.setText(viewModel.kunjunganLahanForm.desaKebun, false)
-        binding.etDesaKepengurusan.setText(viewModel.kunjunganLahanForm.desaKepengurusan, false)
-        binding.acAuditor.setText(viewModel.kunjunganLahanForm.namaAuditor, false)
-        binding.acPetani.setText(viewModel.kunjunganLahanForm.namaPetani, false)
+        binding.etDesaKebun.setText(viewModel.kunjunganLahanForm.desaKebun)
+        binding.etAuditor.setText(viewModel.kunjunganLahanForm.namaAuditor)
+        binding.etPetani.setText(viewModel.kunjunganLahanForm.namaPetani)
 
-        binding.acPetani.setOnItemClickListener { _, _, position, _ ->
-            val selectedPetaniName = binding.acPetani.adapter.getItem(position) as String
-            val selectedPetani = listPetaniEntity.find { it.namaPetani == selectedPetaniName }
-            if (selectedPetani != null) {
-                updateLahanDropdown(selectedPetani.idPetani)
+        val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
+        val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val allDesa = database.masterDao().getAllDesa()
+            val desaFromId = allDesa.find { it.idDesa == adminDesaId }?.namaDesa ?: ""
+            
+            var resolvedDesa = viewModel.kunjunganLahanForm.desaKepengurusan
+            if (resolvedDesa.isEmpty() || resolvedDesa == "-") {
+                resolvedDesa = desaFromId
+            }
+            if (resolvedDesa.isEmpty() || resolvedDesa == "-") {
+                val selectedPetani = database.masterDao().getAllPetani().find { it.namaPetani == viewModel.kunjunganLahanForm.namaPetani }
+                if (selectedPetani != null && selectedPetani.namaDesa.isNotEmpty() && selectedPetani.namaDesa != "-") {
+                    resolvedDesa = selectedPetani.namaDesa
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                if (_binding != null) {
+                    binding.etDesaKepengurusan.setText(resolvedDesa)
+                    viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(desaKepengurusan = resolvedDesa)
+                }
             }
         }
 
@@ -80,15 +97,14 @@ class KLSection1Fragment : Fragment() {
             val tanggal = binding.etTanggal.text.toString()
             val desaKebun = binding.etDesaKebun.text.toString()
             val desaKepengurusan = binding.etDesaKepengurusan.text.toString()
-            val auditor = binding.acAuditor.text.toString()
-            val petani = binding.acPetani.text.toString()
+            val auditor = binding.etAuditor.text.toString()
+            val petani = binding.etPetani.text.toString()
 
             if (tanggal.isEmpty() || desaKebun.isEmpty() || desaKepengurusan.isEmpty() || auditor.isEmpty() || petani.isEmpty()) {
                 Toast.makeText(requireContext(), "Semua data wajib diisi/dipilih!", Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val selectedPetaniEntity = listPetaniEntity.find { it.namaPetani == petani }
-                    val idPetani = selectedPetaniEntity?.idPetani
+                    val idPetani = viewModel.kunjunganLahanForm.idPetani
 
                     val currentPeriod = if (viewModel.kunjunganLahanForm.periode.isNotEmpty()) viewModel.kunjunganLahanForm.periode else {
                         val year = if (tanggal.length >= 4) tanggal.substring(0, 4) else Calendar.getInstance().get(Calendar.YEAR).toString()
@@ -99,6 +115,9 @@ class KLSection1Fragment : Fragment() {
                     val lastKunjungan = database.KunjunganLahanDao().getLastKunjunganForPetani(petani, currentPeriod)
                     val isFollowUp = viewModel.kunjunganLahanForm.visitAttempt > 1
 
+                    val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
+                    val userId = sharedPref.getInt("user_id", sharedPref.getInt("admin_id", 0))
+
                     viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
                         tanggal = tanggal,
                         desaKebun = desaKebun,
@@ -106,6 +125,7 @@ class KLSection1Fragment : Fragment() {
                         namaAuditor = auditor,
                         namaPetani = petani,
                         idPetani = idPetani,
+                        userId = if (userId != 0) userId else viewModel.kunjunganLahanForm.userId,
                         periode = currentPeriod,
                         parentKunjunganId = if (isFollowUp && lastKunjungan != null) lastKunjungan.idKunjungan else null
                     )
@@ -120,8 +140,6 @@ class KLSection1Fragment : Fragment() {
 
     private fun siapkanDanTampilkanDataMaster() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val listAuditor = database.masterDao().getAllAuditor().map { it.namaAuditor }
-            
             val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
             val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
             
@@ -129,105 +147,6 @@ class KLSection1Fragment : Fragment() {
                 database.masterDao().getPetaniByDesa(adminDesaId)
             } else {
                 database.masterDao().getAllPetani()
-            }
-            val listPetaniNames = listPetaniEntity.map { it.namaPetani }
-            val listDesaNames = database.masterDao().getAllDesa().map { it.namaDesa }
-
-            withContext(Dispatchers.Main) {
-                binding.acAuditor.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listAuditor
-                    )
-                )
-
-                binding.acPetani.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listPetaniNames
-                    )
-                )
-
-                binding.etDesaKepengurusan.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listDesaNames
-                    )
-                )
-
-                // Jika sudah ada petani yang dipilih sebelumnya, load lahan-lahannya
-                val savedPetaniName = viewModel.kunjunganLahanForm.namaPetani
-                if (savedPetaniName.isNotEmpty()) {
-                    val selectedPetani = listPetaniEntity.find { it.namaPetani == savedPetaniName }
-                    if (selectedPetani != null) {
-                        updateLahanDropdown(selectedPetani.idPetani, clearText = false)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun updateLahanDropdown(petaniId: Int, clearText: Boolean = true) {
-        com.example.notasawit.Network.PetaniApi.getLahanByPetani(petaniId, object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
-                loadLahanDariRoom(petaniId, clearText)
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                if (response.isSuccessful) {
-                    val json = response.body?.string()
-                    if (json != null) {
-                        try {
-                            val lahanResponse = com.google.gson.Gson().fromJson(json, com.example.notasawit.Model.LahanResponse::class.java)
-                            val lahanEntity = lahanResponse.data.map {
-                                com.example.notasawit.Room.Lahan.LahanEntity(
-                                    lahan_id = it.lahan_id,
-                                    petani_id = petaniId,
-                                    lahan_nama = it.lahan_nama,
-                                    lahan_luas = it.lahan_luas
-                                )
-                            }
-                            
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                database.LahanDao().insertLahan(lahanEntity)
-                                loadLahanDariRoom(petaniId, clearText)
-                            }
-                        } catch (e: Exception) {
-                            loadLahanDariRoom(petaniId, clearText)
-                        }
-                    } else {
-                        loadLahanDariRoom(petaniId, clearText)
-                    }
-                } else {
-                    loadLahanDariRoom(petaniId, clearText)
-                }
-            }
-        })
-    }
-
-    private fun loadLahanDariRoom(petaniId: Int, clearText: Boolean) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val lahanList = database.LahanDao().getAllLahan().filter { it.petani_id == petaniId }
-            val lahanNames = lahanList.map { it.lahan_nama }
-
-            withContext(Dispatchers.Main) {
-                if (lahanNames.isEmpty()) {
-                    Toast.makeText(requireContext(), "Tidak ada lahan untuk petani ini", Toast.LENGTH_SHORT).show()
-                }
-
-                binding.etDesaKebun.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        lahanNames
-                    )
-                )
-                if (clearText) {
-                    binding.etDesaKebun.setText("", false)
-                }
             }
         }
     }

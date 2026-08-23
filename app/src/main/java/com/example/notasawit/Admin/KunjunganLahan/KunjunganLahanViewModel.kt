@@ -27,11 +27,12 @@ class KunjunganLahanViewModel : ViewModel() {
         kunjunganAnswers.clear()
     }
 
-    fun updatePetaniAndAuditor(idPetani: Int, namaPetani: String, namaAuditor: String) {
+    fun updatePetaniAndAuditor(idPetani: Int, namaPetani: String, namaAuditor: String, userId: Int? = null) {
         kunjunganLahanForm = kunjunganLahanForm.copy(
             idPetani = idPetani,
             namaPetani = namaPetani,
-            namaAuditor = namaAuditor
+            namaAuditor = namaAuditor,
+            userId = userId
         )
     }
 

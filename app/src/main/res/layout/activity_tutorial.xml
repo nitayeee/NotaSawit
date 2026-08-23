@@ -5,7 +5,22 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@drawable/bg_onboarding_gradient">
+
+    <!-- Top Navigation / Skip Button -->
+    <TextView
+        android:id="@+id/tvSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:fontFamily="@font/poppins_medium"
+        android:padding="8dp"
+        android:text="Skip"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -14,26 +29,27 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSkip" />
 
-    <LinearLayout
+    <!-- Bottom Layout Row (Dots on Left, Yellow Button on Right) -->
+    <RelativeLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="32dp"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="28dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Custom Dot Indicators (Centered Horizontally) -->
+        <!-- Custom Dot Indicators (Left Aligned) -->
         <LinearLayout
             android:id="@+id/llDots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <View
@@ -58,20 +74,23 @@
 
         </LinearLayout>
 
-        <!-- "Mulai" Button (Only visible on page 3) -->
-        <Button
+        <!-- Yellow Action Button (Right Aligned) -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNext"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#1B4D2E"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:fontFamily="@font/poppins_bold"
             android:gravity="center"
-            android:text="Mulai"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:visibility="gone" />
+            android:padding="0dp"
+            android:text="→"
+            android:textColor="#0D2B18"
+            android:textSize="20sp"
+            app:backgroundTint="#FFC107"
+            app:cornerRadius="28dp"
+            app:elevation="4dp" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

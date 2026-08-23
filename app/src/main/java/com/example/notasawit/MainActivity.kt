@@ -46,12 +46,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun runSplashSequence() {
-        // Initial setup (SplashScreen 1): Dark green background with LARGE white logo
+        // Initial setup: Dark green background with white logo initially invisible
         binding.viewGreenBg.visibility = View.VISIBLE
         binding.ivLogoWhite.apply {
-            alpha = 1f
-            scaleX = 1.5f
-            scaleY = 1.5f
+            alpha = 0f
+            scaleX = 0.85f
+            scaleY = 0.85f
         }
         binding.ivLogoColored.apply {
             alpha = 0f
@@ -62,26 +62,36 @@ class MainActivity : AppCompatActivity() {
             alpha = 0f
             visibility = View.GONE
         }
-        binding.tvTagline.apply {
-            alpha = 0f
-            visibility = View.GONE
+
+        delay(100)
+
+        // 1. Initial State: White logo animates in smoothly (fade in + gentle scale up)
+        val smoothInterpolator = androidx.interpolator.view.animation.FastOutSlowInInterpolator()
+
+        AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(binding.ivLogoWhite, View.ALPHA, 0f, 1f),
+                ObjectAnimator.ofFloat(binding.ivLogoWhite, View.SCALE_X, 0.85f, 1f),
+                ObjectAnimator.ofFloat(binding.ivLogoWhite, View.SCALE_Y, 0.85f, 1f)
+            )
+            duration = 550
+            interpolator = smoothInterpolator
+            start()
         }
 
-        // ==========================================
-        // 1. SplashScreen 1: Display large white logo on dark green bg
-        // Wait 800ms
-        // ==========================================
-        delay(800)
+        delay(750)
 
-        // ==========================================
-        // 2. SplashScreen 1 -> SplashScreen 3
-        // Green background shrinks as a circle into TOP-RIGHT corner (ViewAnimationUtils)
-        // White logo scales down (1.5f -> 1.0f) and cross-fades into Colored logo
-        // ==========================================
+        // 2. Green circular background shrinks towards TOP-RIGHT corner (ultra smooth)
+        // Simultaneously, white logo cross-fades into colored logo at exact center with matching 1.0f scale
         val greenView = binding.viewGreenBg
-        val cx = greenView.width
+        val width = if (greenView.width > 0) greenView.width else resources.displayMetrics.widthPixels
+        val height = if (greenView.height > 0) greenView.height else resources.displayMetrics.heightPixels
+
+        val cx = width
         val cy = 0
-        val initialRadius = hypot(greenView.width.toDouble(), greenView.height.toDouble()).toFloat()
+        val initialRadius = hypot(width.toDouble(), height.toDouble()).toFloat()
+
+        greenView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
         val circularAnim = ViewAnimationUtils.createCircularReveal(
             greenView,
@@ -90,66 +100,51 @@ class MainActivity : AppCompatActivity() {
             initialRadius,
             0f
         ).apply {
-            duration = 600
-            interpolator = DecelerateInterpolator()
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     greenView.visibility = View.GONE
+                    greenView.setLayerType(View.LAYER_TYPE_NONE, null)
                 }
             })
         }
 
         val animLogoWhiteAlpha = ObjectAnimator.ofFloat(binding.ivLogoWhite, View.ALPHA, 1f, 0f)
-        val animLogoWhiteScaleX = ObjectAnimator.ofFloat(binding.ivLogoWhite, View.SCALE_X, 1.5f, 1f)
-        val animLogoWhiteScaleY = ObjectAnimator.ofFloat(binding.ivLogoWhite, View.SCALE_Y, 1.5f, 1f)
         val animLogoColorAlpha = ObjectAnimator.ofFloat(binding.ivLogoColored, View.ALPHA, 0f, 1f)
 
-        circularAnim.start()
         AnimatorSet().apply {
             playTogether(
+                circularAnim,
                 animLogoWhiteAlpha,
-                animLogoWhiteScaleX,
-                animLogoWhiteScaleY,
                 animLogoColorAlpha
             )
-            duration = 600
-            interpolator = DecelerateInterpolator()
+            duration = 650
+            interpolator = smoothInterpolator
             start()
         }
 
-        // ==========================================
-        // 3. SplashScreen 3 -> SplashScreen 4
-        // Result: Colored Logo shifts left + SILAUSA text (Gradient) + Subtitle Tagline fade in
-        // ==========================================
-        delay(800)
+        delay(650)
 
+        // 3. Colored logo shifts left as SILAUSA brand text appears on white background
         applyTextGradient()
 
         TransitionManager.beginDelayedTransition(
             binding.llCenterWrapper,
             AutoTransition().apply {
-                duration = 300
+                duration = 400
                 interpolator = DecelerateInterpolator()
             }
         )
 
         binding.tvBrandName.visibility = View.VISIBLE
-        binding.tvTagline.visibility = View.VISIBLE
 
-        val animBrand = ObjectAnimator.ofFloat(binding.tvBrandName, View.ALPHA, 0f, 1f)
-        val animTagline = ObjectAnimator.ofFloat(binding.tvTagline, View.ALPHA, 0f, 1f)
-
-        AnimatorSet().apply {
-            playTogether(animBrand, animTagline)
-            duration = 350
+        ObjectAnimator.ofFloat(binding.tvBrandName, View.ALPHA, 0f, 1f).apply {
+            duration = 400
             interpolator = DecelerateInterpolator()
             start()
         }
 
-        // ==========================================
-        // 4. SplashScreen 4 -> Hold 2 seconds -> Navigate
-        // ==========================================
-        delay(2000)
+        // 4. Hold & Navigate
+        delay(1800)
 
         navigateToNextScreen()
     }

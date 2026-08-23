@@ -8,5 +8,6 @@ data class PetaniEntity(
     @PrimaryKey val idPetani: Int,
     val namaPetani: String,
     val namaDesa: String,
-    val desaId: Int
+    val desaId: Int,
+    val fotoProfil: String? = null
 )

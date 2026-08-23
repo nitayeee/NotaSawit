@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardHistoryItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:background="@drawable/rounded_bg_gray"
-    android:layout_marginBottom="8dp">
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E2E8F0"
+    app:cardBackgroundColor="#F8FAFC">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
+        android:padding="12dp"
         android:gravity="center_vertical">
+
+        <!-- Status Accent Line Indicator -->
+        <View
+            android:id="@+id/viewAccentIndicator"
+            android:layout_width="4dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="10dp"
+            android:background="#1B4D2E" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -27,30 +37,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Audit ke-1 (2026-07-21)"
-                android:fontFamily="@font/poppins_medium"
-                android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#1B4D2E"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvAuditorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:text="Auditor: Budi Santoso"
-                android:fontFamily="@font/poppins"
-                android:textColor="#757575"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#64748B"
                 android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/tvStatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/rounded_bg_gray"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_status_lulus"
                 android:fontFamily="@font/poppins_medium"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:text="Perlu Perbaikan"
-                android:textColor="@color/black"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:text="Lulus"
+                android:textColor="#1B5E20"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -60,11 +71,15 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#1B4D2E"
             android:fontFamily="@font/poppins_medium"
-            android:text="PDF"
+            android:text="Lihat PDF"
             android:textColor="@color/white"
-            android:textSize="10sp"
+            android:textSize="11sp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingHorizontal="12dp"
             app:cornerRadius="8dp"
-            app:strokeColor="@color/white"
-            app:strokeWidth="1dp" />
+            app:icon="@drawable/ic_audit_header"
+            app:iconSize="14dp"
+            app:iconTint="@color/white" />
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

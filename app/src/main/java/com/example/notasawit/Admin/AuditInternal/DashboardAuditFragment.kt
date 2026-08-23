@@ -27,6 +27,7 @@ class DashboardAuditFragment : Fragment() {
 
     private var selectedPeriode = ""
     private var selectedStatus = "Semua"
+    private var searchQuery = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDashboardAuditBinding.inflate(inflater, container, false)
@@ -41,6 +42,15 @@ class DashboardAuditFragment : Fragment() {
         setupDropdowns()
         setupRecyclerView()
         
+        binding.etSearchPetani.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s?.toString()?.trim() ?: ""
+                loadData()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+
         binding.swipeRefresh.setOnRefreshListener {
             fetchAuditsFromServer()
         }
@@ -121,7 +131,31 @@ class DashboardAuditFragment : Fragment() {
                                     }
 
                                     val auditAttempt = item.optInt("audit_attempt", item.optInt("attempt", 1))
-                                    val pdfPath = item.optString("file_kunjungan", item.optString("pdf_path", ""))
+                                    var pdfPath = ""
+                                    val itemKeys = item.keys()
+                                    while (itemKeys.hasNext()) {
+                                        val k = itemKeys.next()
+                                        val v = item.optString(k, "").trim()
+                                        if (v.contains(".pdf", ignoreCase = true) && v != "null") {
+                                            pdfPath = v
+                                            break
+                                        }
+                                    }
+                                    if (pdfPath.isEmpty()) {
+                                        val possibleKeys = listOf(
+                                            "file_pdf", "file_audit", "pdf_path", "path_pdf", "file_kunjungan",
+                                            "file", "pdf", "url_pdf", "file_url", "pdf_file", "link_pdf", "url", "path", "file_name"
+                                        )
+                                        for (key in possibleKeys) {
+                                            if (item.has(key) && !item.isNull(key)) {
+                                                val valStr = item.optString(key, "").trim()
+                                                if (valStr.isNotEmpty() && valStr != "null") {
+                                                    pdfPath = valStr
+                                                    break
+                                                }
+                                            }
+                                        }
+                                    }
                                     val periode = item.optString("periode", "")
 
                                     val calculatedPeriode = parsePeriode(tanggal, periode)
@@ -205,9 +239,12 @@ class DashboardAuditFragment : Fragment() {
             val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val username = sharedPref.getString("username", "Admin") ?: "Admin"
 
-            // Update ViewModel state
+            val adminDesaNama = sharedPref.getString("admin_desa", "") ?: ""
             viewModel.updatePetaniAndAuditor(data.idPetani, data.namaPetani, username)
             viewModel.updatePeriodeAndAttempt(selectedPeriode, nextAttempt)
+            viewModel.auditHeader = viewModel.auditHeader.copy(
+                desa = if (data.desa.isNotEmpty() && data.desa != "-") data.desa else adminDesaNama
+            )
 
             val previousIdAudit = if (isFollowUp && data.history.isNotEmpty()) {
                 val latestAudit = data.history.maxByOrNull { it.auditAttempt } ?: data.history.first()
@@ -274,6 +311,7 @@ class DashboardAuditFragment : Fragment() {
                             tanggalAudit = "-",
                             pdfPath = "",
                             auditAttempt = 0,
+                            fotoProfil = petani.fotoProfil,
                             history = emptyList()
                         )
                     )
@@ -291,6 +329,7 @@ class DashboardAuditFragment : Fragment() {
                             pdfPath = latestAudit.pdfPath ?: "",
                             auditAttempt = latestAudit.auditAttempt,
                             auditLabel = periodLabel,
+                            fotoProfil = petani.fotoProfil,
                             history = allAudits.sortedByDescending { it.auditAttempt }
                         )
                     )
@@ -298,14 +337,26 @@ class DashboardAuditFragment : Fragment() {
             }
 
             // Apply filter
-            val filteredList = if (selectedStatus == "Semua") {
-                auditDataList
-            } else {
-                auditDataList.filter { it.statusAudit == selectedStatus }
+            var filteredSequence = auditDataList.asSequence()
+            if (selectedStatus != "Semua") {
+                filteredSequence = filteredSequence.filter { it.statusAudit == selectedStatus }
             }
+            if (searchQuery.isNotEmpty()) {
+                filteredSequence = filteredSequence.filter { it.namaPetani.contains(searchQuery, ignoreCase = true) }
+            }
+            val filteredList = filteredSequence.toList()
 
             withContext(Dispatchers.Main) {
-                adapter.updateData(filteredList)
+                if (_binding != null) {
+                    if (filteredList.isEmpty()) {
+                        binding.tvEmptyPetani.visibility = View.VISIBLE
+                        binding.rvPetaniAudit.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyPetani.visibility = View.GONE
+                        binding.rvPetaniAudit.visibility = View.VISIBLE
+                    }
+                    adapter.updateData(filteredList)
+                }
             }
         }
     }

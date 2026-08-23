@@ -1,12 +1,14 @@
 package com.example.notasawit.Admin.KunjunganLahan
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.Room.AppDatabase
@@ -27,6 +29,7 @@ class DashboardKunjunganFragment : Fragment() {
 
     private var selectedPeriode = ""
     private var selectedStatus = "Semua"
+    private var searchQuery = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDashboardAuditBinding.inflate(inflater, container, false)
@@ -40,6 +43,15 @@ class DashboardKunjunganFragment : Fragment() {
 
         setupDropdowns()
         setupRecyclerView()
+
+        binding.etSearchPetani.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s?.toString()?.trim() ?: ""
+                loadData()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
 
         binding.swipeRefresh.setOnRefreshListener {
             fetchKunjunganFromServer()
@@ -104,9 +116,16 @@ class DashboardKunjunganFragment : Fragment() {
                                 val desaKebun = item.optString("desa_kebun", "")
                                 val desaKepengurusan = item.optString("desa_kepengurusan", "")
 
+                                var userId = item.optInt("user_id", item.optInt("id_user", 0))
                                 var namaAuditor = item.optString("nama_auditor", item.optString("auditor_nama", ""))
-                                if (namaAuditor.isEmpty() && item.has("user") && !item.isNull("user")) {
-                                    namaAuditor = item.optJSONObject("user")?.optString("user_nama", item.optJSONObject("user")?.optString("nama_user", "")) ?: ""
+                                if (item.has("user") && !item.isNull("user")) {
+                                    val uObj = item.optJSONObject("user")
+                                    if (namaAuditor.isEmpty()) {
+                                        namaAuditor = uObj?.optString("user_nama", uObj.optString("nama_user", "")) ?: ""
+                                    }
+                                    if (userId == 0) {
+                                        userId = uObj?.optInt("user_id", uObj.optInt("id", 0)) ?: 0
+                                    }
                                 }
 
                                 var namaPetani = item.optString("nama_petani", item.optString("petani_nama", ""))
@@ -122,7 +141,31 @@ class DashboardKunjunganFragment : Fragment() {
                                 }
 
                                 val visitAttempt = item.optInt("visit_attempt", item.optInt("attempt", 1))
-                                val pdfPath = item.optString("file_kunjungan", item.optString("pdf_path", ""))
+                                var pdfPath = ""
+                                val itemKeys = item.keys()
+                                while (itemKeys.hasNext()) {
+                                    val k = itemKeys.next()
+                                    val v = item.optString(k, "").trim()
+                                    if (v.contains(".pdf", ignoreCase = true) && v != "null") {
+                                        pdfPath = v
+                                        break
+                                    }
+                                }
+                                if (pdfPath.isEmpty()) {
+                                    val possibleKeys = listOf(
+                                        "file_kunjungan", "file_pdf", "pdf_path", "path_pdf", "file_audit",
+                                        "file", "pdf", "url_pdf", "file_url", "pdf_file", "link_pdf", "url", "path", "file_name"
+                                    )
+                                    for (key in possibleKeys) {
+                                        if (item.has(key) && !item.isNull(key)) {
+                                            val valStr = item.optString(key, "").trim()
+                                            if (valStr.isNotEmpty() && valStr != "null") {
+                                                pdfPath = valStr
+                                                break
+                                            }
+                                        }
+                                    }
+                                }
                                 val periode = item.optString("periode", "")
 
                                 val calculatedPeriode = parsePeriode(tanggal, periode)
@@ -137,6 +180,7 @@ class DashboardKunjunganFragment : Fragment() {
                                     namaAuditor = if (namaAuditor.isNotEmpty()) namaAuditor else (existing?.namaAuditor ?: "Auditor"),
                                     namaPetani = if (namaPetani.isNotEmpty()) namaPetani else (existing?.namaPetani ?: ""),
                                     idPetani = if (petaniId != 0) petaniId else existing?.idPetani,
+                                    userId = if (userId != 0) userId else existing?.userId,
                                     ringkasanTemuan = keterangan,
                                     statusKunjungan = status,
                                     periode = calculatedPeriode,
@@ -195,19 +239,27 @@ class DashboardKunjunganFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = PetaniKunjunganAdapter(mutableListOf()) { data ->
-            val isFollowUp = data.statusKunjungan == "Perlu Perbaikan"
-            val nextAttempt = if (isFollowUp) data.visitAttempt + 1 else 1
+        adapter = PetaniKunjunganAdapter(mutableListOf()) { data, lahanItem ->
+            val isFollowUp = lahanItem.statusLahan == "Perlu Perbaikan"
+            val nextAttempt = if (isFollowUp) lahanItem.latestAttempt + 1 else 1
 
             val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val username = sharedPref.getString("username", "Admin") ?: "Admin"
+            val userId = sharedPref.getInt("user_id", sharedPref.getInt("admin_id", 0))
 
+            val todayStr = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
             viewModel.resetForm()
-            viewModel.updatePetaniAndAuditor(data.idPetani, data.namaPetani, username)
+            viewModel.updatePetaniAndAuditor(data.idPetani, data.namaPetani, username, userId)
             viewModel.updatePeriodeAndAttempt(selectedPeriode, nextAttempt)
+            val adminDesaNama = sharedPref.getString("admin_desa", "") ?: ""
+            viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
+                tanggal = todayStr,
+                desaKebun = lahanItem.namaLahan,
+                desaKepengurusan = if (data.desa.isNotEmpty() && data.desa != "-") data.desa else adminDesaNama
+            )
 
-            val previousIdKunjungan = if (isFollowUp && data.history.isNotEmpty()) {
-                val latest = data.history.maxByOrNull { it.visitAttempt } ?: data.history.first()
+            val previousIdKunjungan = if (isFollowUp && lahanItem.history.isNotEmpty()) {
+                val latest = lahanItem.history.maxByOrNull { it.visitAttempt } ?: lahanItem.history.first()
                 latest.idKunjungan
             } else null
 
@@ -240,16 +292,20 @@ class DashboardKunjunganFragment : Fragment() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    (activity as? KunjunganLahanActivity)?.navigateTo(KLSection1Fragment(), 1)
+                    (requireActivity() as KunjunganLahanActivity).navigateTo(KLSection1Fragment(), 1)
                 }
             }
         }
+
+        binding.rvPetaniAudit.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPetaniAudit.adapter = adapter
     }
 
     private fun loadData() {
+        if (_binding == null) return
+        val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+
         lifecycleScope.launch(Dispatchers.IO) {
-            val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
 
             val petaniList = if (adminDesaId != 0) {
@@ -258,11 +314,10 @@ class DashboardKunjunganFragment : Fragment() {
                 database.masterDao().getAllPetani()
             }
             val kunjunganDataList = mutableListOf<PetaniKunjunganData>()
+            val allLahanList = database.LahanDao().getAllLahan()
 
             for (petani in petaniList) {
                 var allKunjungan = database.KunjunganLahanDao().getAllKunjunganForPetani(petani.idPetani, petani.namaPetani, selectedPeriode)
-                val hasAuditsInSelectedPeriode = allKunjungan.isNotEmpty()
-
                 if (allKunjungan.isEmpty()) {
                     val anyKunjungan = database.KunjunganLahanDao().getAllKunjunganForPetaniAllPeriods(petani.idPetani, petani.namaPetani)
                     if (anyKunjungan.isNotEmpty()) {
@@ -270,47 +325,106 @@ class DashboardKunjunganFragment : Fragment() {
                     }
                 }
 
-                if (allKunjungan.isEmpty()) {
-                    kunjunganDataList.add(
-                        PetaniKunjunganData(
-                            idPetani = petani.idPetani,
-                            namaPetani = petani.namaPetani,
-                            desa = petani.namaDesa ?: "-",
-                            statusKunjungan = "Belum Kunjungan",
-                            tanggalKunjungan = "-",
-                            pdfPath = "",
-                            visitAttempt = 0,
-                            history = emptyList()
-                        )
-                    )
-                } else {
-                    val latest = allKunjungan.maxByOrNull { it.visitAttempt } ?: allKunjungan.first()
-                    val periodLabel = if (!hasAuditsInSelectedPeriode && latest.periode.isNotEmpty()) " (${latest.periode})" else ""
+                val petaniLahanList = allLahanList.filter { it.petani_id == petani.idPetani }
+                val lahanKunjunganItems = mutableListOf<LahanKunjunganItem>()
 
-                    kunjunganDataList.add(
-                        PetaniKunjunganData(
-                            idPetani = petani.idPetani,
-                            namaPetani = petani.namaPetani,
-                            desa = petani.namaDesa ?: "-",
-                            statusKunjungan = if (latest.statusKunjungan.isNullOrEmpty()) "Belum Kunjungan" else latest.statusKunjungan,
-                            tanggalKunjungan = if (latest.tanggal.isNullOrEmpty()) "-" else latest.tanggal,
-                            pdfPath = latest.pdfPath ?: "",
-                            visitAttempt = latest.visitAttempt,
-                            visitLabel = periodLabel,
-                            history = allKunjungan.sortedByDescending { it.visitAttempt }
+                if (petaniLahanList.isNotEmpty()) {
+                    for (lahan in petaniLahanList) {
+                        val matched = allKunjungan.filter {
+                            it.desaKebun.equals(lahan.lahan_nama, ignoreCase = true) ||
+                            it.desaKebun.contains(lahan.lahan_nama, ignoreCase = true) ||
+                            lahan.lahan_nama.contains(it.desaKebun, ignoreCase = true)
+                        }.sortedByDescending { it.visitAttempt }
+
+                        val status = if (matched.isEmpty()) "Belum Kunjungan" else (matched.first().statusKunjungan ?: "Belum Kunjungan")
+                        val historyList = matched.map { k ->
+                            KunjunganHistoryItem(
+                                idKunjungan = k.idKunjungan,
+                                tanggal = k.tanggal ?: "",
+                                namaAuditor = k.namaAuditor ?: "",
+                                statusKunjungan = k.statusKunjungan ?: "",
+                                pdfPath = k.pdfPath ?: "",
+                                visitAttempt = k.visitAttempt
+                            )
+                        }
+
+                        lahanKunjunganItems.add(
+                            LahanKunjunganItem(
+                                lahanId = lahan.lahan_id,
+                                namaLahan = lahan.lahan_nama,
+                                luasLahan = lahan.lahan_luas,
+                                statusLahan = status,
+                                latestAttempt = matched.firstOrNull()?.visitAttempt ?: 0,
+                                history = historyList
+                            )
+                        )
+                    }
+                } else {
+                    val historyList = allKunjungan.sortedByDescending { it.visitAttempt }.map { k ->
+                        KunjunganHistoryItem(
+                            idKunjungan = k.idKunjungan,
+                            tanggal = k.tanggal ?: "",
+                            namaAuditor = k.namaAuditor ?: "",
+                            statusKunjungan = k.statusKunjungan ?: "",
+                            pdfPath = k.pdfPath ?: "",
+                            visitAttempt = k.visitAttempt
+                        )
+                    }
+                    val latest = allKunjungan.maxByOrNull { it.visitAttempt }
+                    val landName = latest?.desaKebun.takeIf { !it.isNullOrEmpty() } ?: "Lahan Utama"
+                    val status = latest?.statusKunjungan ?: "Belum Kunjungan"
+
+                    lahanKunjunganItems.add(
+                        LahanKunjunganItem(
+                            lahanId = 0,
+                            namaLahan = landName,
+                            luasLahan = 0.0,
+                            statusLahan = status,
+                            latestAttempt = latest?.visitAttempt ?: 0,
+                            history = historyList
                         )
                     )
                 }
+
+                val overallStatus = when {
+                    lahanKunjunganItems.any { it.statusLahan == "Perlu Perbaikan" } -> "Perlu Perbaikan"
+                    lahanKunjunganItems.all { it.statusLahan == "Lulus" || it.statusLahan == "Selesai" } -> "Lulus"
+                    lahanKunjunganItems.any { it.statusLahan == "Lulus" || it.statusLahan == "Selesai" } -> "Lulus Sebagian"
+                    else -> "Belum Kunjungan"
+                }
+
+                kunjunganDataList.add(
+                    PetaniKunjunganData(
+                        idPetani = petani.idPetani,
+                        namaPetani = petani.namaPetani,
+                        desa = petani.namaDesa ?: "-",
+                        statusKunjungan = overallStatus,
+                        fotoProfil = petani.fotoProfil,
+                        lahanList = lahanKunjunganItems
+                    )
+                )
             }
 
-            val filteredList = if (selectedStatus == "Semua") {
-                kunjunganDataList
-            } else {
-                kunjunganDataList.filter { it.statusKunjungan == selectedStatus }
+            var filteredSequence = kunjunganDataList.asSequence()
+            if (selectedStatus != "Semua") {
+                filteredSequence = filteredSequence.filter { it.statusKunjungan == selectedStatus }
             }
+            if (searchQuery.isNotEmpty()) {
+                filteredSequence = filteredSequence.filter { it.namaPetani.contains(searchQuery, ignoreCase = true) }
+            }
+            val filteredList = filteredSequence.toList()
 
             withContext(Dispatchers.Main) {
-                adapter.updateData(filteredList)
+                if (_binding != null) {
+                    if (filteredList.isEmpty()) {
+                        binding.tvEmptyPetani.visibility = View.VISIBLE
+                        binding.rvPetaniAudit.visibility = View.GONE
+                    } else {
+                        binding.tvEmptyPetani.visibility = View.GONE
+                        binding.rvPetaniAudit.visibility = View.VISIBLE
+                    }
+                    adapter.updateData(filteredList)
+                }
             }
         }
     }

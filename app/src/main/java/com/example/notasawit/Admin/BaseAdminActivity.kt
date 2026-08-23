@@ -35,10 +35,12 @@ class BaseAdminActivity : AppCompatActivity() {
         bottomNav.setOnApplyWindowInsetsListener(null)
         bottomNav.setPadding(0, 0, 0, 0)
         replaceFragment(BerandaAdminFragment())
-        binding.bottomNavigation.setOnItemSelectedListener {
+        setupBottomNavListener()
+    }
 
-            when (it.itemId) {
-
+    private fun setupBottomNavListener() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
                 R.id.home -> {
                     replaceFragment(BerandaAdminFragment())
                     true
@@ -47,19 +49,19 @@ class BaseAdminActivity : AppCompatActivity() {
                 R.id.auditInternal -> {
                     val intent = Intent(this@BaseAdminActivity, AuditInternalActivity::class.java)
                     startActivity(intent)
-                    true
+                    false
                 }
 
                 R.id.auditLahan -> {
                     val intent = Intent(this@BaseAdminActivity, KunjunganLahanActivity::class.java)
                     startActivity(intent)
-                    true
+                    false
                 }
 
                 R.id.petaLahan -> {
                     val intent = Intent(this@BaseAdminActivity, com.example.notasawit.Admin.PetaLahan.PetaLahanActivity::class.java)
                     startActivity(intent)
-                    true
+                    false
                 }
 
                 R.id.lainnya -> {
@@ -71,10 +73,30 @@ class BaseAdminActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             //.addToBackStack(null) -> ini kita nonaktifkan agar saat back langsung keluar aplikasi
             .commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        syncBottomNavSelection()
+    }
+
+    private fun syncBottomNavSelection() {
+        val currentFragment = supportFragmentManager.findFragmentById(binding.fragmentContainer.id)
+        val expectedItemId = when (currentFragment) {
+            is BerandaAdminFragment -> R.id.home
+            is SetelanFragment -> R.id.lainnya
+            else -> R.id.home
+        }
+        if (binding.bottomNavigation.selectedItemId != expectedItemId) {
+            binding.bottomNavigation.setOnItemSelectedListener(null)
+            binding.bottomNavigation.selectedItemId = expectedItemId
+            setupBottomNavListener()
+        }
     }
 }

@@ -9,7 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.notasawit.R
 import com.example.notasawit.databinding.ActivityLupaPinBinding
 import com.example.notasawit.Network.PetaniApi
-import com.example.notasawit.utils.CustomAlert
+import com.example.notasawit.Utils.CustomAlert
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response

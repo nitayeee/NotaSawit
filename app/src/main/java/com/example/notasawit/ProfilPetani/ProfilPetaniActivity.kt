@@ -52,7 +52,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
         }
 
         if (petaniId == 0) {
-            com.example.notasawit.utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
+            com.example.notasawit.Utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
         }
 
         // Konfigurasi WebView untuk Leaflet Map
@@ -81,7 +81,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
         PetaniApi.getDetailPetani(id, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    com.example.notasawit.utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Gagal mengambil data: ${e.message}")
+                    com.example.notasawit.Utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Gagal mengambil data: ${e.message}")
                 }
             }
 
@@ -142,7 +142,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
                         } catch (e: Exception) {
                             Log.e("ProfilPetani", "Error parsing JSON: ${e.message}")
                             runOnUiThread {
-                                com.example.notasawit.utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Format response tidak sesuai")
+                                com.example.notasawit.Utils.CustomAlert.showError(this@ProfilPetaniActivity, "Gagal", "Format response tidak sesuai")
                             }
                         }
                     }

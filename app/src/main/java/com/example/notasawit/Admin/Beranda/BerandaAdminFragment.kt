@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.databinding.FragmentBerandaAdminBinding
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -47,11 +49,7 @@ class BerandaAdminFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val username = sharedPref.getString("username", "Admin")
-        binding.username.text = "$username!"
-        if (!username.isNullOrEmpty()) {
-            binding.tvInitial.text = username.substring(0, 1).uppercase()
-        }
+        loadUserProfile()
         
         binding.btnProfileContainer.setOnClickListener {
             startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.ProfilAdmin.ProfilAdminActivity::class.java))
@@ -62,6 +60,69 @@ class BerandaAdminFragment : Fragment() {
         }
 
         fetchDashboardData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() {
+        if (_binding == null) return
+        val username = sharedPref.getString("username", sharedPref.getString("admin_username", "Admin")) ?: "Admin"
+        val namaLengkap = sharedPref.getString("admin_nama", sharedPref.getString("nama", username)) ?: username
+        val fotoProfil = sharedPref.getString("admin_foto", sharedPref.getString("user_profil", sharedPref.getString("foto_profil", "")))
+
+        binding.username.text = "$username!"
+
+        com.example.notasawit.Utils.AvatarHelper.setupAvatar(
+            imageView = binding.imgProfile,
+            textViewInitial = binding.tvInitial,
+            nama = namaLengkap,
+            fotoPathOrUrl = fotoProfil
+        )
+
+        val adminId = sharedPref.getInt("user_id", -1)
+        if (adminId != -1) {
+            PetaniApi.getDetailAdmin(adminId, object : Callback {
+                override fun onFailure(call: Call, e: IOException) {}
+
+                override fun onResponse(call: Call, response: Response) {
+                    val responseData = response.body?.string()
+                    if (response.isSuccessful && responseData != null) {
+                        try {
+                            val jsonObject = JSONObject(responseData)
+                            if (jsonObject.getBoolean("success")) {
+                                val data = jsonObject.getJSONObject("data")
+                                val freshNama = data.optString("user_nama", namaLengkap)
+                                val freshUsername = data.optString("user_username", username)
+                                val freshFoto = data.optString("user_profil", "")
+
+                                sharedPref.edit().apply {
+                                    putString("admin_nama", freshNama)
+                                    putString("admin_username", freshUsername)
+                                    putString("admin_foto", freshFoto)
+                                }.apply()
+
+                                (activity as? android.app.Activity)?.runOnUiThread {
+                                    if (_binding != null) {
+                                        binding.username.text = "$freshUsername!"
+                                        com.example.notasawit.Utils.AvatarHelper.setupAvatar(
+                                            imageView = binding.imgProfile,
+                                            textViewInitial = binding.tvInitial,
+                                            nama = freshNama,
+                                            fotoPathOrUrl = freshFoto
+                                        )
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            })
+        }
     }
 
     private var pendingAdminSyncCount = 0
@@ -166,13 +227,15 @@ class BerandaAdminFragment : Fragment() {
                                 val item = dataArray.getJSONObject(i)
                                 val desaId = item.optInt("desa_id", 0)
                                 val namaDesa = item.optJSONObject("desa")?.optString("desa_nama", "-") ?: "-"
+                                val foto = item.optString("petani_foto", item.optString("user_profil", item.optString("foto", item.optString("profil_petani", ""))))
 
                                 listPetani.add(
                                     com.example.notasawit.Room.Petani.PetaniEntity(
                                         idPetani = item.optInt("petani_id", 0),
                                         namaPetani = item.optString("petani_nama", "-"),
                                         namaDesa = namaDesa,
-                                        desaId = desaId
+                                        desaId = desaId,
+                                        fotoProfil = if (foto.isNullOrEmpty() || foto == "null") null else foto
                                     )
                                 )
                             }
@@ -201,11 +264,14 @@ class BerandaAdminFragment : Fragment() {
     }
 
     private fun fetchDashboardData() {
-        PetaniApi.getDashboardData(object : Callback {
+        val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+
+        PetaniApi.getDashboardData(adminDesaId, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
                     Toast.makeText(requireContext(), "Gagal memuat data: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
+                computeStatusAuditFromRoom(adminDesaId)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -215,10 +281,10 @@ class BerandaAdminFragment : Fragment() {
                         val jsonObject = JSONObject(responseData)
                         if (jsonObject.getBoolean("success")) {
                             val dataObj = jsonObject.getJSONObject("data")
-                            val jumlahPetani = dataObj.getInt("jumlah_petani")
-                            val jumlahLahan = dataObj.getDouble("jumlah_lahan")
-                            val pemasukanArray = dataObj.getJSONArray("pemasukan")
-                            val pengeluaranArray = dataObj.getJSONArray("pengeluaran")
+                            val jumlahPetani = dataObj.optInt("jumlah_petani", 0)
+                            val jumlahLahan = dataObj.optDouble("jumlah_lahan", 0.0)
+                            val pemasukanArray = dataObj.optJSONArray("pemasukan") ?: org.json.JSONArray()
+                            val pengeluaranArray = dataObj.optJSONArray("pengeluaran") ?: org.json.JSONArray()
 
                             val pengingatList = mutableListOf<Pengingat>()
                             if (dataObj.has("pengingat")) {
@@ -244,7 +310,7 @@ class BerandaAdminFragment : Fragment() {
                                 val statusAuditObj = dataObj.getJSONObject("status_audit")
                                 lulusCount = statusAuditObj.optInt("lulus", 0)
                                 perbaikanCount = statusAuditObj.optInt("perlu_perbaikan", 0)
-                                diauditCount = statusAuditObj.optInt("pending", 0)
+                                diauditCount = statusAuditObj.optInt("pending", statusAuditObj.optInt("perlu_audit", 0))
                             }
 
                             activity?.runOnUiThread {
@@ -257,13 +323,68 @@ class BerandaAdminFragment : Fragment() {
                                 setupPieChart(pengeluaranArray)
                                 setupPengingatList(pengingatList)
                             }
+
+                            computeStatusAuditFromRoom(adminDesaId)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
+                        computeStatusAuditFromRoom(adminDesaId)
                     }
+                } else {
+                    computeStatusAuditFromRoom(adminDesaId)
                 }
             }
         })
+    }
+
+    private fun computeStatusAuditFromRoom(adminDesaId: Int) {
+        if (_binding == null) return
+        val db = com.example.notasawit.Room.AppDatabase.getDatabase(requireContext())
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val petaniList = if (adminDesaId != 0) {
+                    db.masterDao().getPetaniByDesa(adminDesaId)
+                } else {
+                    db.masterDao().getAllPetani()
+                }
+
+                if (petaniList.isNotEmpty()) {
+                    var lulus = 0
+                    var perbaikan = 0
+                    var pending = 0
+
+                    val allAudits = db.auditDao().getAllAuditHeaders()
+
+                    for (petani in petaniList) {
+                        val farmerAudits = allAudits.filter { 
+                            it.idPetani == petani.idPetani || it.namaPetani.equals(petani.namaPetani, ignoreCase = true)
+                        }.sortedByDescending { it.auditAttempt }
+
+                        val lastAudit = farmerAudits.firstOrNull()
+                        if (lastAudit != null) {
+                            when {
+                                lastAudit.statusAudit.equals("Lulus", ignoreCase = true) -> lulus++
+                                lastAudit.statusAudit.equals("Perlu Perbaikan", ignoreCase = true) -> perbaikan++
+                                else -> pending++
+                            }
+                        } else {
+                            pending++
+                        }
+                    }
+
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        _binding?.let { b ->
+                            b.tvJumlahPetani.text = petaniList.size.toString()
+                            b.tvLulusCount.text = lulus.toString()
+                            b.tvPerbaikanCount.text = perbaikan.toString()
+                            b.tvDiauditCount.text = pending.toString()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun setupLineChart(pemasukanArray: org.json.JSONArray) {
@@ -275,15 +396,19 @@ class BerandaAdminFragment : Fragment() {
         val dataSet = LineDataSet(entries, "Pemasukan")
         val primaryColor = Color.parseColor("#1B4D2E")
         val secondaryColor = Color.parseColor("#D4AF37")
+
         dataSet.color = primaryColor
-        dataSet.valueTextSize = 10f
         dataSet.lineWidth = 2.5f
         dataSet.circleRadius = 4f
         dataSet.setCircleColor(secondaryColor)
         dataSet.circleHoleColor = Color.WHITE
+        dataSet.setDrawValues(false) // Disable messy overlapping numbers on top of nodes
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER // Smooth curved line
+        dataSet.setDrawFilled(true)
+        dataSet.fillColor = primaryColor
+        dataSet.fillAlpha = 20
 
         val data = LineData(dataSet)
-
         val months = arrayOf("Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des")
 
         binding.lineChartPemasukan.apply {
@@ -296,11 +421,19 @@ class BerandaAdminFragment : Fragment() {
                 setDrawGridLines(false)
                 granularity = 1f
                 isGranularityEnabled = true
+                textColor = Color.parseColor("#718096")
             }
 
-            axisLeft.axisMinimum = 0f
-            axisRight.isEnabled = false
+            axisLeft.apply {
+                axisMinimum = 0f
+                spaceTop = 20f // Give margin at top so line/values don't clip
+                textColor = Color.parseColor("#718096")
+                setDrawGridLines(true)
+                gridColor = Color.parseColor("#EDF2F7")
+            }
 
+            axisRight.isEnabled = false
+            legend.isEnabled = false
             animateX(1000)
             invalidate()
         }
@@ -308,30 +441,63 @@ class BerandaAdminFragment : Fragment() {
 
     private fun setupPieChart(pengeluaranArray: org.json.JSONArray) {
         val entries = ArrayList<PieEntry>()
+        var totalAmount = 0f
+
         for (i in 0 until pengeluaranArray.length()) {
             val item = pengeluaranArray.getJSONObject(i)
-            entries.add(PieEntry(item.getInt("total").toFloat(), item.getString("jenis")))
+            val valFloat = item.getInt("total").toFloat()
+            totalAmount += valFloat
+            entries.add(PieEntry(valFloat, item.getString("jenis")))
         }
 
         val dataSet = PieDataSet(entries, "")
         val pieColors = listOf(
-            Color.parseColor("#1B4D2E"), // Primary
-            Color.parseColor("#D4AF37"), // Secondary
-            Color.parseColor("#002617"), // Tertiary
-            Color.parseColor("#638965"), // Medium Green
-            Color.parseColor("#EED57B")  // Light Gold
+            Color.parseColor("#1B4D2E"), // Primary Green
+            Color.parseColor("#D4AF37"), // Secondary Gold
+            Color.parseColor("#2C6E49"), // Forest Green
+            Color.parseColor("#4C956C"), // Sage Green
+            Color.parseColor("#EED57B"), // Soft Gold
+            Color.parseColor("#A4C3B2")  // Muted Teal
         )
         dataSet.colors = pieColors
-        dataSet.valueTextSize = 12f
+        dataSet.valueTextSize = 11f
         dataSet.valueTextColor = Color.WHITE
+        dataSet.valueTypeface = android.graphics.Typeface.DEFAULT_BOLD
+        dataSet.valueFormatter = PercentFormatter(binding.pieChartPengeluaran)
+        dataSet.sliceSpace = 2f
 
         val data = PieData(dataSet)
 
         binding.pieChartPengeluaran.apply {
             this.data = data
             description.isEnabled = false
+            setUsePercentValues(true)
+            setDrawEntryLabels(false) // Disable overlapping category text on pie slices!
+            
+            holeRadius = 55f
+            transparentCircleRadius = 60f
+            setHoleColor(Color.WHITE)
+
             centerText = "Pengeluaran"
-            setEntryLabelColor(Color.BLACK)
+            setCenterTextSize(13f)
+            setCenterTextColor(Color.parseColor("#1B4D2E"))
+            setCenterTextTypeface(android.graphics.Typeface.DEFAULT_BOLD)
+
+            legend.apply {
+                isEnabled = true
+                verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+                horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+                orientation = Legend.LegendOrientation.HORIZONTAL
+                setDrawInside(false)
+                isWordWrapEnabled = true
+                textSize = 11f
+                form = Legend.LegendForm.CIRCLE
+                formSize = 8f
+                xEntrySpace = 12f
+                yEntrySpace = 6f
+                textColor = Color.parseColor("#4A5568")
+            }
+
             animateY(1000)
             invalidate()
         }

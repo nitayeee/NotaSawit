@@ -132,7 +132,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                         runOnUiThread {
                             binding.btnSimpan.isEnabled = true
                             binding.btnSimpan.text = "Simpan Perubahan"
-                            com.example.notasawit.utils.CustomAlert.showError(
+                            com.example.notasawit.Utils.CustomAlert.showError(
                                 this@EditProfilPetaniActivity,
                                 "Gagal",
                                 "Gagal menyimpan data: ${e.message}"
@@ -178,7 +178,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                             binding.btnSimpan.isEnabled = true
                             binding.btnSimpan.text = "Simpan Perubahan"
                             if (response.isSuccessful) {
-                                com.example.notasawit.utils.CustomAlert.showSuccess(
+                                com.example.notasawit.Utils.CustomAlert.showSuccess(
                                     this@EditProfilPetaniActivity,
                                     "Berhasil",
                                     message
@@ -187,7 +187,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                     finish()
                                 }, 1500)
                             } else {
-                                com.example.notasawit.utils.CustomAlert.showError(
+                                com.example.notasawit.Utils.CustomAlert.showError(
                                     this@EditProfilPetaniActivity,
                                     "Gagal",
                                     message
@@ -205,7 +205,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         if (petaniId != 0) {
             loadDesa()
         } else {
-            com.example.notasawit.utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
+            com.example.notasawit.Utils.CustomAlert.showError(this, "Gagal", "Petani ID tidak ditemukan")
         }
     }
 
@@ -213,7 +213,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         PetaniApi.getDesa(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    com.example.notasawit.utils.CustomAlert.showError(this@EditProfilPetaniActivity, "Gagal", "Gagal memuat desa")
+                    com.example.notasawit.Utils.CustomAlert.showError(this@EditProfilPetaniActivity, "Gagal", "Gagal memuat desa")
                     fetchDataProfil(petaniId)
                 }
             }

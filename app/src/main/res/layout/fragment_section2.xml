@@ -1,42 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F9FA"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvQuestion"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp"/>
+        android:fillViewport="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- CARD PANDUAN AUDIT RSPO -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#CBD5E1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Header Hijau Zaitun (Sesuai Gambar) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#9EB558"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="AUDIT ASPEK PENGETAHUAN DAN PELATIHAN STANDAR PEKEBUN SWADAYA RSPO 2019"
+                            android:textColor="#000000"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- Body Konten Panduan -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:background="#FFFFFF">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Bagian ini bertujuan untuk menilai aspek pengetahuan pekebun terkait dengan Standar Pekebun Swadaya RSPO 2019 yang sudah diadopsi dalam kebijakan maupun prosedur masing-masing asosiasi. Bagian ini juga bertujuan untuk melakukan validasi terhadap dampak pekebun yang sudah menerima pelatihan."
+                            android:textColor="#2D3748"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:lineSpacingExtra="3dp"
+                            android:layout_marginBottom="12dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Panduan Pengisian :"
+                            android:textColor="#1A202C"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Untuk setiap pilihan terdapat alternatif jawaban &quot;Ya&quot; dan &quot;Tidak&quot;."
+                            android:textColor="#2D3748"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:layout_marginBottom="10dp" />
+
+                        <!-- Poin 1 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp"
+                            android:paddingStart="8dp">
+
+                            <TextView
+                                android:layout_width="20dp"
+                                android:layout_height="wrap_content"
+                                android:text="1."
+                                android:textColor="#2D3748"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/poppins_regular" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&quot;Ya&quot; apabila pekebun dapat menunjukkan pemahaman maupun pengetahuannya terkait dengan aspek yang ditanyakan melalui verifikasi wawancara langsung"
+                                android:textColor="#2D3748"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:lineSpacingExtra="2dp" />
+                        </LinearLayout>
+
+                        <!-- Poin 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp">
+
+                            <TextView
+                                android:layout_width="20dp"
+                                android:layout_height="wrap_content"
+                                android:text="2."
+                                android:textColor="#2D3748"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/poppins_regular" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="&quot;Tidak&quot; apabila pekebun belum dapat atau tidak mampu menunjukkan pemahaman maupun pengetahuannya terkait dengan aspek yang ditanyakan melalui verifikasi wawancara langsung."
+                                android:textColor="#2D3748"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:lineSpacingExtra="2dp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- RecyclerView Pertanyaan -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="16dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Tombol Navigasi Bawah -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
 
         <Button
-            app:backgroundTint="@color/secondary"
             android:id="@+id/btnBack"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="Kembali"/>
+            android:text="Kembali"
+            android:fontFamily="@font/poppins_semibold"
+            app:backgroundTint="@color/secondary" />
 
         <Space
             android:layout_width="12dp"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp" />
 
         <Button
-            app:backgroundTint="@color/secondary"
             android:id="@+id/btnNext"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="Selanjutnya"/>
+            android:text="Selanjutnya"
+            android:fontFamily="@font/poppins_semibold"
+            app:backgroundTint="@color/secondary" />
 
     </LinearLayout>
 

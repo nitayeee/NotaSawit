@@ -14,6 +14,7 @@ data class KunjunganLahanForm(
     val namaAuditor: String = "",
     val namaPetani: String = "",
     val idPetani: Int? = null,
+    val userId: Int? = null,
 
     // === SECTION 2: PERTANYAAN ===
     val q1_patokBatas: Boolean? = null,

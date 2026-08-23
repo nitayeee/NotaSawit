@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="8dp"
+    android:layout_marginHorizontal="2dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="14dp"
     app:cardElevation="2dp"
     app:strokeWidth="1dp"
-    app:strokeColor="#E0E0E0"
+    app:strokeColor="#E2E8F0"
     app:cardBackgroundColor="@color/white">
 
     <LinearLayout
@@ -25,16 +27,29 @@
             android:gravity="center_vertical"
             android:background="?attr/selectableItemBackground">
 
-            <ImageView
-                android:id="@+id/ivProfil"
+            <FrameLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_profile"
-                android:background="@drawable/bg_avatar_circle"
-                android:padding="8dp"
-                android:scaleType="centerInside"
-                app:tint="@color/white" />
+                android:layout_marginEnd="12dp">
+
+                <TextView
+                    android:id="@+id/tvInitial"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:background="@drawable/bg_circle_avatar_initial"
+                    android:text="P" />
+
+                <ImageView
+                    android:id="@+id/ivProfil"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -47,9 +62,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nama Petani"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1A202C"
                     android:maxLines="1"
                     android:ellipsize="end" />
 
@@ -59,11 +74,11 @@
                     android:layout_height="wrap_content"
                     android:text="Belum Audit"
                     android:paddingHorizontal="10dp"
-                    android:paddingVertical="2dp"
+                    android:paddingVertical="3dp"
                     android:layout_marginTop="4dp"
                     android:background="@drawable/rounded_bg_gray"
                     android:textSize="10sp"
-                    android:fontFamily="@font/poppins_bold"
+                    android:fontFamily="@font/poppins_medium"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -73,14 +88,16 @@
                     android:layout_marginTop="4dp"
                     android:text="Desa"
                     android:textSize="12sp"
-                    android:textColor="#757575" />
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="#718096" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/ivExpand"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_drop_down" />
+                android:src="@drawable/ic_arrow_drop_down"
+                app:tint="#4A5568" />
         </LinearLayout>
 
         <!-- Detail (Accordion, default GONE) -->
@@ -90,7 +107,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp"
-            android:background="#F9F9F9"
+            android:background="#F8FAFC"
             android:visibility="gone">
 
             <TextView
@@ -99,8 +116,8 @@
                 android:layout_height="wrap_content"
                 android:text="Belum ada riwayat audit di periode ini."
                 android:textSize="13sp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="#4A5568"
                 android:layout_marginBottom="12dp"
                 android:visibility="gone" />
 
@@ -123,7 +140,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lakukan Audit"
+                    android:fontFamily="@font/poppins_semibold"
                     android:textColor="@color/white"
+                    app:cornerRadius="8dp"
                     app:backgroundTint="@color/agri_green_dark" />
             </LinearLayout>
 

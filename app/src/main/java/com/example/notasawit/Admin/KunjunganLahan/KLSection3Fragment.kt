@@ -27,7 +27,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.databinding.FragmentKlSection3Binding
-import com.example.notasawit.utils.CustomAlert
+import com.example.notasawit.Utils.CustomAlert
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
@@ -95,6 +95,38 @@ class KLSection3Fragment : Fragment() {
 
         requestPermissions()
 
+        binding.etTanggalPerbaikan.setOnClickListener {
+            val calendar = java.util.Calendar.getInstance()
+            android.app.DatePickerDialog(
+                requireContext(),
+                { _, year, month, day ->
+                    calendar.set(year, month, day)
+                    val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                    binding.etTanggalPerbaikan.setText(format.format(calendar.time))
+                },
+                calendar.get(java.util.Calendar.YEAR),
+                calendar.get(java.util.Calendar.MONTH),
+                calendar.get(java.util.Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+        binding.rgStatus.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == binding.rbSelesai.id) {
+                binding.layoutTanggalPerbaikan.visibility = View.GONE
+                binding.etTanggalPerbaikan.setText("")
+            } else {
+                binding.layoutTanggalPerbaikan.visibility = View.VISIBLE
+            }
+        }
+
+        if (viewModel.kunjunganLahanForm.statusKunjungan == "Lulus" || viewModel.kunjunganLahanForm.statusKunjungan == "Selesai") {
+            binding.rbSelesai.isChecked = true
+            binding.layoutTanggalPerbaikan.visibility = View.GONE
+        } else {
+            binding.rbPerluPerbaikan.isChecked = true
+            binding.layoutTanggalPerbaikan.visibility = View.VISIBLE
+        }
+
         binding.btnAmbilFoto.setOnClickListener {
             if (hasCameraPermission()) {
                 dispatchTakePictureIntent()
@@ -123,8 +155,21 @@ class KLSection3Fragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val statusKunjungan = if (binding.rbPerluPerbaikan.isChecked) "Perlu Perbaikan" else "Selesai"
-            val temuan = binding.etRingkasanTemuan.text.toString().trim()
+            val statusKunjungan = if (binding.rbPerluPerbaikan.isChecked) "Perlu Perbaikan" else "Lulus"
+
+            if (binding.rbPerluPerbaikan.isChecked && binding.etTanggalPerbaikan.text.isNullOrBlank()) {
+                binding.etTanggalPerbaikan.error = "Pilih tanggal"
+                Toast.makeText(requireContext(), "Tanggal perbaikan selanjutnya wajib diisi!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            var temuan = binding.etRingkasanTemuan.text.toString().trim()
+            if (binding.rbPerluPerbaikan.isChecked && !binding.etTanggalPerbaikan.text.isNullOrBlank()) {
+                val tglPerbaikan = binding.etTanggalPerbaikan.text.toString().trim()
+                if (!temuan.contains("Rencana Perbaikan:")) {
+                    temuan = if (temuan.isEmpty()) "Rencana Perbaikan: $tglPerbaikan" else "$temuan\nRencana Perbaikan: $tglPerbaikan"
+                }
+            }
 
             viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(
                 fotoBuktiPath = currentPhotoPath,
@@ -195,20 +240,49 @@ class KLSection3Fragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun fetchLocationAndTime() {
         Toast.makeText(requireContext(), "Mengambil lokasi...", Toast.LENGTH_SHORT).show()
+        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+        val currentDateAndTime = sdf.format(Date())
+
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-            val currentDateAndTime = sdf.format(Date())
-            
             if (location != null) {
                 capturedLatitude = location.latitude
                 capturedLongitude = location.longitude
                 capturedWaktu = currentDateAndTime
-                
+
                 binding.tvLokasi.text = "Lokasi: ${location.latitude}, ${location.longitude}"
                 binding.tvWaktu.text = "Waktu: $currentDateAndTime"
             } else {
-                // If last location is null, still capture time but fallback on location
-                Toast.makeText(requireContext(), "Gagal mendapatkan lokasi GPS. Pastikan GPS aktif.", Toast.LENGTH_LONG).show()
+                // Jika lastLocation null (cache kosong), minta lokasi terbaru langsung dari GPS
+                val cancellationTokenSource = com.google.android.gms.tasks.CancellationTokenSource()
+                fusedLocationClient.getCurrentLocation(
+                    com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+                    cancellationTokenSource.token
+                ).addOnSuccessListener { freshLocation: Location? ->
+                    if (freshLocation != null) {
+                        capturedLatitude = freshLocation.latitude
+                        capturedLongitude = freshLocation.longitude
+                        capturedWaktu = currentDateAndTime
+
+                        binding.tvLokasi.text = "Lokasi: ${freshLocation.latitude}, ${freshLocation.longitude}"
+                        binding.tvWaktu.text = "Waktu: $currentDateAndTime"
+                    } else {
+                        // Fallback jika belum mendapat sinyal satelit GPS (misal di emulator/dalam ruangan)
+                        capturedLatitude = 0.0
+                        capturedLongitude = 0.0
+                        capturedWaktu = currentDateAndTime
+
+                        binding.tvLokasi.text = "Lokasi: 0.0, 0.0 (GPS belum terdeteksi)"
+                        binding.tvWaktu.text = "Waktu: $currentDateAndTime"
+                        Toast.makeText(requireContext(), "Waktu berhasil dicatat. Pastikan GPS HP aktif.", Toast.LENGTH_LONG).show()
+                    }
+                }.addOnFailureListener {
+                    capturedLatitude = 0.0
+                    capturedLongitude = 0.0
+                    capturedWaktu = currentDateAndTime
+
+                    binding.tvLokasi.text = "Lokasi: 0.0, 0.0"
+                    binding.tvWaktu.text = "Waktu: $currentDateAndTime"
+                }
             }
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Error mengambil lokasi", Toast.LENGTH_SHORT).show()
@@ -218,7 +292,7 @@ class KLSection3Fragment : Fragment() {
     private fun simpanKeDatabase() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Generate PDF
-            val generatedPdfPath = PdfGeneratorKunjungan.generatePdf(requireContext(), viewModel.kunjunganLahanForm)
+            val generatedPdfPath = PdfGeneratorKunjungan.generatePdf(requireContext(), viewModel.kunjunganLahanForm, viewModel.section2Answers)
             if (generatedPdfPath != null) {
                 viewModel.kunjunganLahanForm = viewModel.kunjunganLahanForm.copy(pdfPath = generatedPdfPath)
             }

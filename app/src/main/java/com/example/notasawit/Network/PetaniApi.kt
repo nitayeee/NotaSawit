@@ -672,9 +672,10 @@ object PetaniApi {
         ApiClient.client.newCall(request).enqueue(callback)
     }
 
-    fun getDashboardData(callback: Callback) {
+    fun getDashboardData(desaId: Int = 0, callback: Callback) {
+        val url = if (desaId > 0) "$BASE_URL/dashboard?desa_id=$desaId" else "$BASE_URL/dashboard"
         val request = Request.Builder()
-            .url("$BASE_URL/dashboard")
+            .url(url)
             .get()
             .header("Accept", "application/json")
             .build()

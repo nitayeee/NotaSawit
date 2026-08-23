@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FFFFFF">
+    android:background="#F8F9FA">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,86 +19,127 @@
             android:textColor="#002617"
             android:textSize="18sp"
             android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="24dp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
+        <!-- 1. TANGGAL KUNJUNGAN -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Tanggal Kunjungan (DD/MM/YYYY)">
+            android:text="Tanggal Kunjungan"
+            android:textColor="#4A5568"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="6dp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTanggal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:textColor="#002617"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <EditText
+            android:id="@+id/etTanggal"
             android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_soft"
+            android:paddingHorizontal="16dp"
+            android:hint="DD/MM/YYYY"
+            android:inputType="date"
+            android:textColor="#1A202C"
+            android:textColorHint="#A0AEC0"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="18dp" />
+
+        <!-- 2. DESA KEPENGURUSAN -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Desa Kepengurusan">
+            android:text="Desa Kepengurusan"
+            android:textColor="#4A5568"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="6dp" />
 
-            <AutoCompleteTextView
-                android:id="@+id/etDesaKepengurusan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:textColor="#002617"
-                android:completionThreshold="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <EditText
+            android:id="@+id/etDesaKepengurusan"
             android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_soft"
+            android:paddingHorizontal="16dp"
+            android:hint="Desa kepengurusan"
+            android:enabled="false"
+            android:textColor="#1A202C"
+            android:textColorHint="#A0AEC0"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="18dp" />
+
+        <!-- 3. NAMA AUDITOR -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Pilih / Cari Auditor">
+            android:text="Nama Auditor"
+            android:textColor="#4A5568"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="6dp" />
 
-            <AutoCompleteTextView
-                android:id="@+id/acAuditor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="#002617"
-                android:completionThreshold="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <EditText
+            android:id="@+id/etAuditor"
             android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_soft"
+            android:paddingHorizontal="16dp"
+            android:hint="Nama auditor"
+            android:enabled="false"
+            android:textColor="#1A202C"
+            android:textColorHint="#A0AEC0"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="18dp" />
+
+        <!-- 4. NAMA PETANI -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Pilih / Cari Petani">
+            android:text="Nama Petani"
+            android:textColor="#4A5568"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="6dp" />
 
-            <AutoCompleteTextView
-                android:id="@+id/acPetani"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="#002617"
-                android:completionThreshold="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <EditText
+            android:id="@+id/etPetani"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:hint="Desa Kebun / Lahan">
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_soft"
+            android:paddingHorizontal="16dp"
+            android:hint="Nama petani"
+            android:enabled="false"
+            android:textColor="#1A202C"
+            android:textColorHint="#A0AEC0"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="18dp" />
 
-            <AutoCompleteTextView
-                android:id="@+id/etDesaKebun"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:textColor="#002617"
-                android:completionThreshold="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+        <!-- 5. LAHAN KUNJUNGAN -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lahan Kunjungan"
+            android:textColor="#4A5568"
+            android:textSize="13.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/etDesaKebun"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input_soft"
+            android:paddingHorizontal="16dp"
+            android:hint="Nama / lokasi lahan"
+            android:enabled="false"
+            android:textColor="#1A202C"
+            android:textColorHint="#A0AEC0"
+            android:fontFamily="@font/poppins_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp" />
 
         <Button
             android:id="@+id/btnLanjut"

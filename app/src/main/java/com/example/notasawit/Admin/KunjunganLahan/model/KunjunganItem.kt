@@ -1,5 +1,10 @@
 package com.example.notasawit.Admin.KunjunganLahan.model
 
+enum class KunjunganQuestionType {
+    RADIO_ADA_TIDAK,
+    ESSAY
+}
+
 sealed class KunjunganItem {
 
     data class Header(
@@ -10,7 +15,9 @@ sealed class KunjunganItem {
         val key: String,
         val question: String,
         val standard: String,
-        var answer: Boolean? = null
+        val type: KunjunganQuestionType = KunjunganQuestionType.RADIO_ADA_TIDAK,
+        var answer: Boolean? = null,
+        var textAnswer: String? = null
     ) : KunjunganItem()
 
 }

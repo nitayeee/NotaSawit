@@ -33,10 +33,12 @@ class BaseActivity : AppCompatActivity() {
         bottomNav.setPadding(0, 0, 0, 0)
 
         replaceFragment(BerandaFragment())
-        binding.bottomNavigation.setOnItemSelectedListener {
+        setupBottomNavListener()
+    }
 
-            when (it.itemId) {
-
+    private fun setupBottomNavListener() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
                 R.id.home -> {
                     replaceFragment(BerandaFragment())
                     true
@@ -50,7 +52,7 @@ class BaseActivity : AppCompatActivity() {
                 R.id.riwayat -> {
                     val intent = Intent(this@BaseActivity, RiwayatActivity::class.java)
                     startActivity(intent)
-                    true
+                    false
                 }
 
                 R.id.pengaturan -> {
@@ -72,7 +74,23 @@ class BaseActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        syncBottomNavSelection()
         checkUnreadNotifications()
+    }
+
+    private fun syncBottomNavSelection() {
+        val currentFragment = supportFragmentManager.findFragmentById(binding.fragmentContainer.id)
+        val expectedItemId = when (currentFragment) {
+            is BerandaFragment -> R.id.home
+            is com.example.notasawit.Notifikasi.NotificationFragment -> R.id.notification
+            is com.example.notasawit.ProfilPetani.SetelanFragment -> R.id.pengaturan
+            else -> R.id.home
+        }
+        if (binding.bottomNavigation.selectedItemId != expectedItemId) {
+            binding.bottomNavigation.setOnItemSelectedListener(null)
+            binding.bottomNavigation.selectedItemId = expectedItemId
+            setupBottomNavListener()
+        }
     }
 
     fun checkUnreadNotifications() {

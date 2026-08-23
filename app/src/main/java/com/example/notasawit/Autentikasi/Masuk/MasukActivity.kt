@@ -2,6 +2,7 @@ package com.example.notasawit.Autentikasi.Masuk
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -162,7 +163,7 @@ getJenisKegiatan()
 
                                 runOnUiThread {
                                     val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
-                                    com.example.notasawit.utils.CustomAlert.showSuccess(
+                                    com.example.notasawit.Utils.CustomAlert.showSuccess(
                                         this@MasukActivity,
                                         "Berhasil",
                                         "Selamat datang, $nama"
@@ -179,7 +180,7 @@ getJenisKegiatan()
                                 }
                             } else {
                                 runOnUiThread {
-                                    com.example.notasawit.utils.CustomAlert.showError(
+                                    com.example.notasawit.Utils.CustomAlert.showError(
                                         this@MasukActivity,
                                         "Gagal",
                                         loginResponse.message ?: "Email atau password salah"
@@ -192,7 +193,7 @@ getJenisKegiatan()
                             Log.e("LOGIN_ERROR", e.toString())
 
                             runOnUiThread {
-                                com.example.notasawit.utils.CustomAlert.showError(
+                                com.example.notasawit.Utils.CustomAlert.showError(
                                     this@MasukActivity,
                                     "Error",
                                     "Format response tidak sesuai"
@@ -265,13 +266,30 @@ getJenisKegiatan()
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Login Cepat")
-            .setSubtitle("Gunakan sidik jari untuk masuk ke NOTASAWIT")
+            .setSubtitle("Gunakan sidik jari untuk masuk ke SILAUSA")
             .setNegativeButtonText("Gunakan PIN")
             .build()
 
         biometricPrompt.authenticate(promptInfo)
     }
+    private fun setGoogleLoadingState(isLoading: Boolean) {
+        runOnUiThread {
+            if (isLoading) {
+                binding.pbGoogleLoading.visibility = View.VISIBLE
+                binding.ivGoogleIcon.visibility = View.GONE
+                binding.tvGoogleText.visibility = View.GONE
+                binding.btnGoogleSignIn.isEnabled = false
+            } else {
+                binding.pbGoogleLoading.visibility = View.GONE
+                binding.ivGoogleIcon.visibility = View.VISIBLE
+                binding.tvGoogleText.visibility = View.VISIBLE
+                binding.btnGoogleSignIn.isEnabled = true
+            }
+        }
+    }
+
     private fun signInWithGoogle() {
+        setGoogleLoadingState(true)
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(
@@ -297,6 +315,7 @@ getJenisKegiatan()
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                setGoogleLoadingState(false)
 
                 Toast.makeText(
                     this@MasukActivity,
@@ -335,6 +354,8 @@ getJenisKegiatan()
                 nama ?: "",
                 email
             )
+        } else {
+            setGoogleLoadingState(false)
         }
     }
     private fun sendTokenToServer(
@@ -344,6 +365,7 @@ getJenisKegiatan()
     ) {
         PetaniApi.getAllPetani(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                setGoogleLoadingState(false)
                 runOnUiThread {
                     Toast.makeText(this@MasukActivity, "Gagal mengecek email: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -369,6 +391,8 @@ getJenisKegiatan()
                         }
                     }
                 }
+
+                setGoogleLoadingState(false)
 
                 runOnUiThread {
                     if (emailExists) {
@@ -568,6 +592,7 @@ getJenisKegiatan()
                             for (i in 0 until dataArray.length()) {
                                 val item = dataArray.getJSONObject(i)
                                 val desaId = item.optInt("desa_id", 0)
+                                val foto = item.optString("petani_foto", item.optString("user_profil", item.optString("foto", item.optString("profil_petani", ""))))
                                 
                                 val namaDesa = if (item.has("desa") && !item.isNull("desa")) {
                                     item.getJSONObject("desa").optString("nama_desa", "-")
@@ -579,7 +604,8 @@ getJenisKegiatan()
                                     idPetani = item.optInt("petani_id", 0),
                                     namaPetani = item.optString("petani_nama", "-"),
                                     namaDesa = namaDesa,
-                                    desaId = desaId
+                                    desaId = desaId,
+                                    fotoProfil = if (foto.isNullOrEmpty() || foto == "null") null else foto
                                 ))
                             }
                             

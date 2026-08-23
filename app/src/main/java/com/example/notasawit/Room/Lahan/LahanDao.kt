@@ -14,4 +14,7 @@ interface LahanDao {
     @Query("SELECT * FROM lahan")
     suspend fun getAllLahan(): List<LahanEntity>
 
+    @Query("SELECT * FROM lahan WHERE petani_id = :petaniId")
+    suspend fun getLahanByPetani(petaniId: Int): List<LahanEntity>
+
 }

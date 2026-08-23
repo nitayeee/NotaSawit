@@ -115,19 +115,57 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
         binding.tvPetani.text =
             "Petani : ${data.petani?.nama}"
 
-        // PERBAIKAN: Mengambil semua nama lahan dari dalam list detail_biaya
-        val daftarLahan = data.detail_biaya
-            ?.mapNotNull { it.lahan?.nama } // Map data hanya untuk mengambil nama lahannya saja
-            ?.distinct()                     // Mencegah nama lahan yang sama ditulis dobel
-            ?.joinToString(", ")            // Gabungkan hasilnya menggunakan koma
+        // Mengambil seluruh rincian lahan dari detail_biaya secara terjabar
+        val listDetail = data.detail_biaya
+        val rincianLahanText = if (!listDetail.isNullOrEmpty()) {
+            listDetail.mapIndexedNotNull { index, detail ->
+                val namaLahan = detail.lahan?.nama ?: return@mapIndexedNotNull null
+                val itemNama = detail.nama_detail.takeIf { !it.isNullOrEmpty() }
+                val subtotalVal = detail.subtotal
+                val subtotalStr = if (subtotalVal != null && subtotalVal > 0) {
+                    val formatted = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(subtotalVal.toLong())
+                    "Rp $formatted"
+                } else ""
 
-        binding.tvLahan.text =
-            "Lahan : ${if (!daftarLahan.isNullOrEmpty()) daftarLahan else "-"}"
+                val detailStr = when {
+                    itemNama != null && subtotalStr.isNotEmpty() -> " : $itemNama ($subtotalStr)"
+                    subtotalStr.isNotEmpty() -> " : $subtotalStr"
+                    itemNama != null -> " : $itemNama"
+                    else -> ""
+                }
+                "${index + 1}. $namaLahan$detailStr"
+            }.joinToString("\n")
+        } else {
+            "-"
+        }
+
+        binding.tvLahan.text = "Rincian Lahan:\n$rincianLahanText"
 
         binding.tvKeterangan.text =
             "Keterangan : ${data.biaya_ket ?: "-"}"
-        Glide.with(this)
-            .load(data.biaya_bukti_url)
-            .into(binding.imgBuktiBiaya)
+
+        val rawUrl = (data.biaya_bukti_url ?: data.biaya_bukti ?: "").trim()
+        val fotoUrl = when {
+            rawUrl.startsWith("http") -> rawUrl
+            rawUrl.startsWith("storage/") -> "http://notasawit.pocari.id/$rawUrl"
+            rawUrl.startsWith("biaya/") -> "http://notasawit.pocari.id/storage/$rawUrl"
+            rawUrl.startsWith("/") -> "http://notasawit.pocari.id/storage$rawUrl"
+            rawUrl.isNotEmpty() && rawUrl != "null" -> "http://notasawit.pocari.id/storage/biaya/$rawUrl"
+            else -> ""
+        }
+
+        if (fotoUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(fotoUrl)
+                .placeholder(R.drawable.ic_camera)
+                .error(R.drawable.ic_camera)
+                .into(binding.imgBuktiBiaya)
+
+            binding.imgBuktiBiaya.setOnClickListener {
+                com.example.notasawit.Utils.CustomAlert.showImagePreview(this, fotoUrl)
+            }
+        } else {
+            binding.imgBuktiBiaya.setImageResource(R.drawable.ic_camera)
+        }
     }
 }

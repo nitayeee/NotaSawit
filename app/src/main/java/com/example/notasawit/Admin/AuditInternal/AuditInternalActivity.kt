@@ -35,6 +35,17 @@ class AuditInternalActivity : AppCompatActivity() {
                 .commit()
         }
 
+        binding.progressBarAudit.visibility = android.view.View.GONE
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            if (currentFragment is DashboardAuditFragment || supportFragmentManager.backStackEntryCount == 0) {
+                binding.progressBarAudit.visibility = android.view.View.GONE
+            } else {
+                binding.progressBarAudit.visibility = android.view.View.VISIBLE
+            }
+        }
+
         // 3. Atur tombol Back di Toolbar
         binding.btnBack.setOnClickListener {
             // Jika ada fragment di dalam tumpukan (backstack), kembali ke fragment sebelumnya
@@ -47,21 +58,19 @@ class AuditInternalActivity : AppCompatActivity() {
         // 4. Atur tombol Riwayat di Toolbar
         binding.btnRiwayat.setOnClickListener {
             Toast.makeText(this, "Membuka Riwayat Audit...", Toast.LENGTH_SHORT).show()
-            // Nanti di sini bisa pindah ke Activity/Fragment Riwayat
         }
     }
     // Fungsi bantuan untuk mengubah progress bar dari Fragment
     fun updateProgress(currentStep: Int) {
         binding.progressBarAudit.progress = currentStep
     }
-//    fun replaceFragment(fragment: androidx.fragment.app.Fragment) {
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.fragmentContainer, fragment)
-//            .addToBackStack(null)
-//            .commit()
-//    }
-    fun navigateTo(fragment: Fragment, progress: Int) {
 
+    fun navigateTo(fragment: Fragment, progress: Int) {
+        if (fragment is DashboardAuditFragment) {
+            binding.progressBarAudit.visibility = android.view.View.GONE
+        } else {
+            binding.progressBarAudit.visibility = android.view.View.VISIBLE
+        }
         updateProgress(progress)
 
         supportFragmentManager.beginTransaction()
@@ -70,10 +79,7 @@ class AuditInternalActivity : AppCompatActivity() {
             .commit()
     }
     fun navigateBack(progress: Int) {
-
         updateProgress(progress)
-
         supportFragmentManager.popBackStack()
-
     }
 }

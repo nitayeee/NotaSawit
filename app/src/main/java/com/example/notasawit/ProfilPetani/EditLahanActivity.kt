@@ -18,7 +18,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
-import com.example.notasawit.utils.CustomAlert
+import com.example.notasawit.Utils.CustomAlert
 
 class EditLahanActivity : AppCompatActivity() {
 

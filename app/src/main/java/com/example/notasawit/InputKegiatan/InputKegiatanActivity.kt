@@ -34,7 +34,10 @@ class InputKegiatanActivity : AppCompatActivity() {
     private val listLahan = mutableListOf<LahanEntity>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
 
-    private val sp_petaniId by lazy { sharedPref.getInt("petani_id", 0) }
+    private val sp_petaniId by lazy {
+        val id = sharedPref.getInt("petani_id", 0)
+        if (id != 0) id else sharedPref.getInt("user_id", 0)
+    }
     private val selectedLahanIds = mutableListOf<Int>()
     private val selectedLahanNames = mutableListOf<String>()
     private var selectedJKId: Int? = null
@@ -189,14 +192,18 @@ class InputKegiatanActivity : AppCompatActivity() {
     }
 
     private fun loadLahan() {
-
         lifecycleScope.launch {
+            val currentPetaniId = sp_petaniId
+            val allLahan = database.LahanDao().getAllLahan()
+            val filteredLahan = if (currentPetaniId != 0) {
+                val list = allLahan.filter { it.petani_id == currentPetaniId }
+                if (list.isNotEmpty()) list else allLahan
+            } else {
+                allLahan
+            }
 
             listLahan.clear()
-            listLahan.addAll(
-                database.LahanDao().getAllLahan()
-            )
-
+            listLahan.addAll(filteredLahan)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.notasawit.utils
+package com.example.notasawit.Utils
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.notasawit.R
@@ -97,5 +98,66 @@ object CustomAlert {
                 animatorOut.start()
             }
         }, 3000)
+    }
+
+    fun showImagePreview(context: android.content.Context, imageUrl: String?) {
+        if (imageUrl.isNullOrEmpty()) return
+        val dialog = android.app.Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+
+        val layout = FrameLayout(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(android.graphics.Color.parseColor("#E6000000"))
+        }
+
+        val imageView = ImageView(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            ).apply {
+                gravity = android.view.Gravity.CENTER
+            }
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            val density = context.resources.displayMetrics.density
+            val pad = (24 * density).toInt()
+            setPadding(pad, pad * 2, pad, pad * 2)
+        }
+
+        com.bumptech.glide.Glide.with(context)
+            .load(imageUrl)
+            .into(imageView)
+
+        val closeBtn = ImageView(context).apply {
+            val density = context.resources.displayMetrics.density
+            val size = (44 * density).toInt()
+            val margin = (24 * density).toInt()
+            layoutParams = FrameLayout.LayoutParams(size, size).apply {
+                gravity = android.view.Gravity.TOP or android.view.Gravity.END
+                topMargin = margin
+                marginEnd = margin
+            }
+            setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+            setColorFilter(android.graphics.Color.WHITE)
+            setBackgroundResource(R.drawable.bg_toolbar_btn)
+            val pad = (10 * density).toInt()
+            setPadding(pad, pad, pad, pad)
+            elevation = 10f
+            setOnClickListener {
+                dialog.dismiss()
+            }
+        }
+
+        layout.addView(imageView)
+        layout.addView(closeBtn)
+
+        layout.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(layout)
+        dialog.show()
     }
 }

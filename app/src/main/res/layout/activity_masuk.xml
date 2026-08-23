@@ -28,7 +28,7 @@
         android:gravity="center"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Notasawit"
+        android:text="SILAUSA"
         android:textColor="@color/agri_green_dark"
         android:textSize="22dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/poppins_regular"
-            android:text="Masuk ke akun Notasawit Anda"
+            android:text="Masuk ke akun SILAUSA Anda"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
@@ -248,16 +248,27 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/iv_google_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/google" /> <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:text="Sign in with Google"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
+                android:src="@drawable/google" />
+
+            <TextView
+                android:id="@+id/tv_google_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Sign in with Google"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <ProgressBar
+                android:id="@+id/pb_google_loading"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/agri_green_dark" />
         </LinearLayout>
 
 

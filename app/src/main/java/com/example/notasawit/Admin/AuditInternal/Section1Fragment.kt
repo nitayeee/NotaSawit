@@ -48,8 +48,6 @@ class Section1Fragment : Fragment() {
         val activity = requireActivity() as AuditInternalActivity
         database = activity.database
 
-        // 2. Isi data dummy ke Room & tampilkan ke Dropdown Pencarian
-        siapkanDanTampilkanDataMaster()
         // Tampilkan data yang sudah pernah disimpan
         binding.etTanggal.setText(viewModel.auditHeader.tanggal)
 
@@ -70,14 +68,39 @@ class Section1Fragment : Fragment() {
             }, year, month, day)
             dpd.show()
         }
-        binding.acDesa.setText(viewModel.auditHeader.desa, false)
         binding.etAuditor.setText(viewModel.auditHeader.namaAuditor)
         binding.etPetani.setText(viewModel.auditHeader.namaPetani)
+
+        val sharedPref = requireContext().getSharedPreferences("NOTASAWIT_PREF", android.content.Context.MODE_PRIVATE)
+        val adminDesaId = sharedPref.getInt("admin_desa_id", 0)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val allDesa = database.masterDao().getAllDesa()
+            val desaFromId = allDesa.find { it.idDesa == adminDesaId }?.namaDesa ?: ""
+            
+            var resolvedDesa = viewModel.auditHeader.desa
+            if (resolvedDesa.isEmpty() || resolvedDesa == "-") {
+                resolvedDesa = desaFromId
+            }
+            if (resolvedDesa.isEmpty() || resolvedDesa == "-") {
+                val selectedPetani = database.masterDao().getAllPetani().find { it.namaPetani == viewModel.auditHeader.namaPetani }
+                if (selectedPetani != null && selectedPetani.namaDesa.isNotEmpty() && selectedPetani.namaDesa != "-") {
+                    resolvedDesa = selectedPetani.namaDesa
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                if (_binding != null) {
+                    binding.etDesa.setText(resolvedDesa)
+                    viewModel.auditHeader = viewModel.auditHeader.copy(desa = resolvedDesa)
+                }
+            }
+        }
 
         // 3. Logika tombol Lanjut ke Section 2
         binding.btnLanjut.setOnClickListener {
             val tanggal = binding.etTanggal.text.toString()
-            val desa = binding.acDesa.text.toString()
+            val desa = binding.etDesa.text.toString()
             val auditor = binding.etAuditor.text.toString()
             val petani = binding.etPetani.text.toString()
 
@@ -117,27 +140,6 @@ class Section1Fragment : Fragment() {
         val month = calendar.get(Calendar.MONTH) + 1 // 1-12
         val semester = if (month <= 6) "S1" else "S2"
         return "$year-$semester"
-    }
-
-    private fun siapkanDanTampilkanDataMaster() {
-        lifecycleScope.launch(Dispatchers.IO) {
-
-            // Ambil data dari Room
-            val listDesa = database.masterDao()
-                .getAllDesa()
-                .map { it.namaDesa }
-
-            withContext(Dispatchers.Main) {
-
-                binding.acDesa.setAdapter(
-                    ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_dropdown_item_1line,
-                        listDesa
-                    )
-                )
-            }
-        }
     }
 
     override fun onDestroyView() {

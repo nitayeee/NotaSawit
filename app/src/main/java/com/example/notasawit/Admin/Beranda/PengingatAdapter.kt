@@ -48,8 +48,8 @@ class PengingatAdapter(private val list: List<Pengingat>) : RecyclerView.Adapter
         } else {
             holder.tvStatusBadge.visibility = View.VISIBLE
             holder.tvStatusBadge.text = "Pending"
-            holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_perbaikan)
-            holder.tvStatusBadge.setTextColor(Color.parseColor("#D4AF37"))
+            holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_diaudit)
+            holder.tvStatusBadge.setTextColor(Color.parseColor("#0D47A1"))
             holder.viewStatus.setBackgroundColor(Color.parseColor("#1B4D2E")) // Hijau
         }
     }

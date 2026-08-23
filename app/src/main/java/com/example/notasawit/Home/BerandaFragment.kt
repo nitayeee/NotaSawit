@@ -516,6 +516,8 @@ class BerandaFragment : Fragment() {
                             for (i in 0 until dataArray.length()) {
                                 val item = dataArray.getJSONObject(i)
                                 val desaId = item.optInt("desa_id", 0)
+                                val foto = item.optString("petani_foto", item.optString("user_profil", item.optString("foto", item.optString("profil_petani", ""))))
+
                                 val namaDesa = if (item.has("desa") && !item.isNull("desa")) {
                                     item.getJSONObject("desa").optString("nama_desa", "-")
                                 } else {
@@ -526,7 +528,8 @@ class BerandaFragment : Fragment() {
                                     idPetani = item.optInt("petani_id", 0),
                                     namaPetani = item.optString("petani_nama", "-"),
                                     namaDesa = namaDesa,
-                                    desaId = desaId
+                                    desaId = desaId,
+                                    fotoProfil = if (foto.isNullOrEmpty() || foto == "null") null else foto
                                 ))
                             }
                             lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {

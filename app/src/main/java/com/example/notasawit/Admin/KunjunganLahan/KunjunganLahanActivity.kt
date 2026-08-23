@@ -34,6 +34,17 @@ class KunjunganLahanActivity : AppCompatActivity() {
                 .commit()
         }
 
+        binding.progressBarKL.visibility = android.view.View.GONE
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+            if (currentFragment is DashboardKunjunganFragment || supportFragmentManager.backStackEntryCount == 0) {
+                binding.progressBarKL.visibility = android.view.View.GONE
+            } else {
+                binding.progressBarKL.visibility = android.view.View.VISIBLE
+            }
+        }
+
         binding.btnBack.setOnClickListener {
             if (supportFragmentManager.backStackEntryCount > 0) {
                 supportFragmentManager.popBackStack()
@@ -52,6 +63,11 @@ class KunjunganLahanActivity : AppCompatActivity() {
     }
 
     fun navigateTo(fragment: Fragment, progress: Int) {
+        if (fragment is DashboardKunjunganFragment) {
+            binding.progressBarKL.visibility = android.view.View.GONE
+        } else {
+            binding.progressBarKL.visibility = android.view.View.VISIBLE
+        }
         updateProgress(progress)
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)

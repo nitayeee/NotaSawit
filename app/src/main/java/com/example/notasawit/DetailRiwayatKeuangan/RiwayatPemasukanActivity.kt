@@ -112,27 +112,52 @@ class RiwayatPemasukanActivity : AppCompatActivity() {
         binding.tvPetani.text =
             "Petani : ${data.petani?.nama ?: "-"}"
 
-        // Mengambil seluruh nama lahan dari detail_produksi
+        // Mengambil seluruh rincian lahan dari detail_produksi secara terjabar
         val listDetail = data.detail_produksi
-        val daftarLahanText = if (!listDetail.isNullOrEmpty()) {
-            listDetail.mapNotNull { detail ->
-                val namaLahan = detail.lahan?.nama
-                if (!namaLahan.isNullOrEmpty()) {
-                    val tbs = detail.jumlah_tbs_detail ?: 0.0
-                    "$namaLahan (${tbs} Kg)"
-                } else null
-            }.joinToString(", ")
+        val rincianLahanText = if (!listDetail.isNullOrEmpty()) {
+            listDetail.mapIndexedNotNull { index, detail ->
+                val namaLahan = detail.lahan?.nama ?: return@mapIndexedNotNull null
+                val tbs = detail.jumlah_tbs_detail?.let {
+                    if (it % 1.0 == 0.0) it.toLong().toString() else it.toString()
+                } ?: "0"
+                val subtotalVal = detail.subtotal_pendapatan
+                val subtotalStr = if (subtotalVal != null && subtotalVal > 0) {
+                    val formatted = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(subtotalVal.toLong())
+                    " (Rp $formatted)"
+                } else ""
+                "${index + 1}. $namaLahan: $tbs Kg$subtotalStr"
+            }.joinToString("\n")
         } else {
             "-"
         }
 
-        binding.tvLahan.text = "Lahan : $daftarLahanText"
+        binding.tvLahan.text = "Rincian Lahan:\n$rincianLahanText"
 
         binding.tvKeterangan.text =
             "Keterangan : ${data.produksi_ket ?: "-"}"
 
-        Glide.with(this)
-            .load(data.produksi_bukti_url)
-            .into(binding.imgBuktiProduksi)
+        val rawUrl = (data.produksi_bukti_url ?: data.produksi_bukti ?: "").trim()
+        val fotoUrl = when {
+            rawUrl.startsWith("http") -> rawUrl
+            rawUrl.startsWith("storage/") -> "http://notasawit.pocari.id/$rawUrl"
+            rawUrl.startsWith("produksi/") -> "http://notasawit.pocari.id/storage/$rawUrl"
+            rawUrl.startsWith("/") -> "http://notasawit.pocari.id/storage$rawUrl"
+            rawUrl.isNotEmpty() && rawUrl != "null" -> "http://notasawit.pocari.id/storage/produksi/$rawUrl"
+            else -> ""
+        }
+
+        if (fotoUrl.isNotEmpty()) {
+            Glide.with(this)
+                .load(fotoUrl)
+                .placeholder(R.drawable.ic_camera)
+                .error(R.drawable.ic_camera)
+                .into(binding.imgBuktiProduksi)
+
+            binding.imgBuktiProduksi.setOnClickListener {
+                com.example.notasawit.Utils.CustomAlert.showImagePreview(this, fotoUrl)
+            }
+        } else {
+            binding.imgBuktiProduksi.setImageResource(R.drawable.ic_camera)
+        }
     }
 }
