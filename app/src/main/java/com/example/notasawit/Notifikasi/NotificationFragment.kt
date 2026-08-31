@@ -214,6 +214,9 @@ class NotificationFragment : Fragment() {
                     allNotifications.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl))
                 }
                 
+                // Urutkan berdasarkan tanggal terbaru, dan jika tanggal sama, urutkan berdasarkan ID terbaru di atas
+                allNotifications.sortWith(compareByDescending<NotificationItem> { it.tanggal }.thenByDescending { it.id })
+
                 requireActivity().runOnUiThread {
                     applyFilter()
                 }

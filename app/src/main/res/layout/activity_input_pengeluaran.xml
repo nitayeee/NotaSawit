@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F4F6F3"
     tools:context=".Pengeluaran.InputPengeluaranActivity">
 
     <!-- ===================== TOPBAR ===================== -->
@@ -106,130 +107,78 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ===== BARIS TANGGAL & WAKTU ===== -->
+            <!-- ===== TANGGAL ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false"
-                android:layout_marginBottom="6dp">
+                android:orientation="vertical"
+                android:layout_marginBottom="14dp">
 
-
-                <!-- TANGGAL -->
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
+                    android:text="Tanggal"
+                    android:textColor="#5A6B7C"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginBottom="6dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TANGGAL"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.06"
-                        android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="#E2E8F0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxBackgroundColor="#F7F9FA"
+                    app:startIconDrawable="@drawable/ic_calendar_month"
+                    app:startIconTint="#5A6B7C">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTanggal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
-                        app:startIconDrawable="@drawable/ic_calendar_month"
-                        app:startIconTint="#1B4D2E">
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:inputType="none"
+                        android:hint="18 Jan 2026"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="#1E293B" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etTanggal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:clickable="true"
-                            android:cursorVisible="false"
-                            android:inputType="none"
-                            android:hint="18 Jan 2026"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <!-- WAKTU -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="14dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="WAKTU"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
-                        android:layout_marginBottom="6dp" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
-                        app:startIconDrawable="@drawable/ic_clock"
-                        app:startIconTint="#1B4D2E">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etWaktu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:gravity="center"
-                            android:hint="10:50"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
 
 
-            <!-- ===== KATEOGRI PENGELUARAN ===== -->
+            <!-- ===== KATEGORI PENGELUARAN ===== -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="KATEGORI PENGELUARAN"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:letterSpacing="0.06"
-                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
+                android:text="Kategori Pengeluaran"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_shovel"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <AutoCompleteTextView
                     android:id="@+id/spinnerKategori"
@@ -237,41 +186,43 @@
                     android:layout_height="wrap_content"
                     android:hint="Pilih kategori pengeluaran"
                     android:inputType="none"
-                    android:textColor="#002617"
-                    android:textSize="13sp" />
+                    android:textColor="#1E293B"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ===== NAMA ITEM ===== -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NAMA ITEM"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:letterSpacing="0.06"
-                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
+                android:text="Nama Item"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_shovel"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:hint="18 Jan 2026"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:hint="Masukkan nama item"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -296,11 +247,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="JUMLAH"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
+                        android:text="Jumlah"
+                        android:textColor="#5A6B7C"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/poppins_medium"
                         android:layout_marginTop="14dp"
                         android:layout_marginBottom="6dp" />
 
@@ -308,14 +258,15 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxBackgroundColor="#F7F9FA"
                         app:startIconDrawable="@drawable/ic_package"
-                        app:startIconTint="#1B4D2E">
+                        app:startIconTint="#5A6B7C">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_jumlah"
@@ -323,8 +274,9 @@
                             android:layout_height="wrap_content"
                             android:hint="1"
                             android:inputType="numberDecimal"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -339,11 +291,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UNTUK"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
+                        android:text="Untuk Lahan"
+                        android:textColor="#5A6B7C"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/poppins_medium"
                         android:layout_marginTop="14dp"
                         android:layout_marginBottom="6dp" />
 
@@ -351,14 +302,15 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxBackgroundColor="#F7F9FA"
                         app:startIconDrawable="@drawable/ic_map_pin"
-                        app:startIconTint="#1B4D2E">
+                        app:startIconTint="#5A6B7C">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPilihLahan"
@@ -370,8 +322,9 @@
                             android:cursorVisible="false"
                             android:inputType="none"
                             android:hint="Pilih Lahan"
-                            android:textSize="13sp"
-                            android:textColor="#002617"/>
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.chip.ChipGroup
@@ -388,56 +341,59 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TOTAL"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:letterSpacing="0.06"
-                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
+                android:text="Total Nominal (Rp)"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_shovel"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etTotal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:hint="Rp 350000"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:hint="Rp 350.000"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ===== Catatan Tambahan ===== -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CATATAN TAMBAHAN"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:letterSpacing="0.06"
-                android:layout_marginBottom="6dp"  android:fontFamily="@font/poppins_bold" />
+                android:text="Catatan Tambahan"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
+                android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
-                app:startIconTint="#1B4D2E">
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
+                app:startIconTint="#5A6B7C">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCatatan"
@@ -447,8 +403,9 @@
                     android:inputType="textMultiLine"
                     android:minLines="3"
                     android:gravity="top"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ===== BUKTI NOTA ===== -->

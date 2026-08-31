@@ -106,8 +106,9 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
 
         binding.tvTanggal.text =
             "Tanggal : ${data.biaya_tanggal}"
+        val jenisBiayaText = if (!data.biaya_jenis.isNullOrEmpty()) data.biaya_jenis else data.biaya_nama
         binding.tvNamaBiaya.text =
-            "Nama Biaya : ${data.biaya_nama}"
+            "Jenis Biaya : $jenisBiayaText"
         binding.tvJumlahBiaya.text =
             "Jumlah (Quantity) : ${data.biaya_jumlah}"
         binding.tvPetani.text =

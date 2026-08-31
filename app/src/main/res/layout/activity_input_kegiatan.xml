@@ -111,102 +111,50 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ===== BARIS TANGGAL & WAKTU ===== -->
+            <!-- ===== TANGGAL ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                android:orientation="vertical">
 
-                <!-- TANGGAL -->
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
+                    android:text="Tanggal"
+                    android:textColor="#5A6B7C"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginBottom="6dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TANGGAL"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
-                        android:layout_marginBottom="6dp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="#E2E8F0"
+                    app:boxStrokeWidth="1dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxBackgroundColor="#F7F9FA"
+                    app:startIconDrawable="@drawable/ic_calendar_month"
+                    app:startIconTint="#5A6B7C">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTanggal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
-                        app:startIconDrawable="@drawable/ic_calendar_month"
-                        app:startIconTint="#1B4D2E">
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:inputType="none"
+                        android:hint="18 Jan 2026"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="#1E293B" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etTanggal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:clickable="true"
-                            android:cursorVisible="false"
-                            android:inputType="none"
-                            android:hint="18 Jan 2026"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <!-- WAKTU -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="WAKTU"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
-                        android:layout_marginBottom="6dp" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
-                        app:startIconDrawable="@drawable/ic_clock"
-                        app:startIconTint="#1B4D2E">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etWaktu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:gravity="center"
-                            android:hint="10:50"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <!-- ===== DIVIDER: DETAIL KEGIATAN ===== -->
@@ -228,10 +176,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="  DETAIL KEGIATAN  "
-                    android:textColor="#1B4D2E"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:letterSpacing="0.08" />
+                    android:textColor="#5A6B7C"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:letterSpacing="0.05" />
 
                 <View
                     android:layout_width="0dp"
@@ -244,25 +192,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JENIS KEGIATAN"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.06"
+                android:text="Jenis Kegiatan"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
                 android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_shovel"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <AutoCompleteTextView
                     android:id="@+id/spinnerKegiatan"
@@ -270,19 +218,19 @@
                     android:layout_height="wrap_content"
                     android:hint="Pilih Kegiatan (Mupuk / Panen / Semprot)"
                     android:inputType="none"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ===== BAHAN / HASIL KERJA ===== -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BAHAN / HASIL KERJA"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.06"
+                android:text="Bahan / Hasil Kerja"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
                 android:layout_marginTop="14dp"
                 android:layout_marginBottom="6dp" />
 
@@ -290,22 +238,24 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_package"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etBahan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Contoh: Pupuk NPK Mahkota / Egrek"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ===== BARIS DOSIS & LAHAN ===== -->
@@ -327,27 +277,27 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DOSIS / JUMLAH"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
+                        android:text="Dosis / Jumlah"
+                        android:textColor="#5A6B7C"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/poppins_medium"
                         android:layout_marginBottom="6dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxBackgroundColor="#F7F9FA"
                         app:startIconDrawable="@drawable/ic_calculator"
-                        app:startIconTint="#1B4D2E"
+                        app:startIconTint="#5A6B7C"
                         app:suffixText="kg"
-                        app:suffixTextColor="#1B4D2E">
+                        app:suffixTextColor="#5A6B7C">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDosis"
@@ -355,8 +305,9 @@
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
                             android:hint="1"
-                            android:textSize="13sp"
-                            android:textColor="#002617" />
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -369,25 +320,25 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LAHAN"
-                        android:textColor="#1B4D2E"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:letterSpacing="0.06"
+                        android:text="Lahan"
+                        android:textColor="#5A6B7C"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/poppins_medium"
                         android:layout_marginBottom="6dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#1B4D2E"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxBackgroundColor="#FFFFFF"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxBackgroundColor="#F7F9FA"
                         app:startIconDrawable="@drawable/ic_map_pin"
-                        app:startIconTint="#1B4D2E">
+                        app:startIconTint="#5A6B7C">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPilihLahan"
@@ -399,8 +350,9 @@
                             android:cursorVisible="false"
                             android:inputType="none"
                             android:hint="Pilih Lahan"
-                            android:textSize="13sp"
-                            android:textColor="#002617"/>
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.chip.ChipGroup
@@ -435,10 +387,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="  TENAGA &amp; BIAYA  "
-                    android:textColor="#1B4D2E"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:letterSpacing="0.08" />
+                    android:textColor="#5A6B7C"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:letterSpacing="0.05" />
 
                 <View
                     android:layout_width="0dp"
@@ -451,33 +403,34 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TENAGA KERJA"
-                android:textColor="#1B4D2E"
-                android:textSize="11sp"
-                android:fontFamily="@font/poppins_bold"
-                android:letterSpacing="0.06"
+                android:text="Tenaga Kerja"
+                android:textColor="#5A6B7C"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppins_medium"
                 android:layout_marginBottom="6dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxStrokeColor="#1B4D2E"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundColor="#FFFFFF"
+                app:boxStrokeColor="#E2E8F0"
+                app:boxStrokeWidth="1dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxBackgroundColor="#F7F9FA"
                 app:startIconDrawable="@drawable/ic_users"
-                app:startIconTint="#1B4D2E">
+                app:startIconTint="#5A6B7C">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etTenagaKerja"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Upah Harian / Borongan"
-                    android:textSize="13sp"
-                    android:textColor="#002617" />
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#1E293B" />
             </com.google.android.material.textfield.TextInputLayout>
 
 

@@ -43,8 +43,9 @@ class RiwayatActivity : AppCompatActivity() {
 
     // Filter
     private var selectedTipe = "semua"
-    private var selectedBulan: Int? = null
-    private var selectedTahun: Int? = null
+    private val calendar = java.util.Calendar.getInstance()
+    private var selectedBulan: Int? = calendar.get(java.util.Calendar.MONTH) + 1
+    private var selectedTahun: Int? = calendar.get(java.util.Calendar.YEAR)
     private val lahanList = mutableListOf<Lahan>()
     private var selectedLahanId: Int? = null
 
@@ -70,6 +71,7 @@ class RiwayatActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener { finish() }
+        updatePeriodeText()
         loadLahan()
         loadRiwayat()
         binding.spinnerLahan.onItemSelectedListener =
@@ -341,6 +343,13 @@ class RiwayatActivity : AppCompatActivity() {
                                 binding.layoutEmptyState.visibility = View.GONE
                             }
                             adapter.updateData(list)
+
+                            val totalPemasukan = list.filter { it.tipe.equals("pemasukan", ignoreCase = true) }.sumOf { it.nominal }
+                            val totalPengeluaran = list.filter { it.tipe.equals("pengeluaran", ignoreCase = true) }.sumOf { it.nominal }
+
+                            val numberFormat = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID"))
+                            binding.tvKeuntungan.text = "Rp ${numberFormat.format(totalPemasukan.toLong())}"
+                            binding.tvTotalPengeluaran.text = "Rp ${numberFormat.format(totalPengeluaran.toLong())}"
                         }
                     } catch (e: Exception) {
                         android.util.Log.e("RIWAYAT_ERROR", "Parsing error: ${e.message}", e)
@@ -419,6 +428,15 @@ class RiwayatActivity : AppCompatActivity() {
                 android.R.layout.simple_spinner_dropdown_item,
                 tahunList
             )
+
+        // Pre-select current selectedBulan & selectedTahun in spinners
+        selectedBulan?.let {
+            if (it in 1..12) spinnerBulan.setSelection(it)
+        }
+        selectedTahun?.let { year ->
+            val pos = tahunList.indexOf(year.toString())
+            if (pos >= 0) spinnerTahun.setSelection(pos)
+        }
         val namaLahan =
             mutableListOf("Semua Lahan")
 

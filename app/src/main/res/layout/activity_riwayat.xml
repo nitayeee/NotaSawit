@@ -262,7 +262,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Keuntungan"
+                            android:text="Pemasukan"
                             android:textColor="#777777"/>
 
                         <TextView

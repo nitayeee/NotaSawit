@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#002617"
                 android:textSize="15sp"
-                android:fontFamily="@font/poppins_bold"
+                android:fontFamily="@font/poppins_medium"
                 tools:text="Penjualan TBS" />
 
             <TextView
