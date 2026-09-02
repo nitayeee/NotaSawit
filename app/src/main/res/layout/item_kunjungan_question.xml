@@ -4,15 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    android:layout_marginBottom="14dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E2E8F0"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="#FFFFFF"
         android:orientation="vertical">
 
         <TextView
@@ -20,20 +22,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Pertanyaan"
-            android:textColor="#002617"
-            android:textSize="15sp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/poppins_semibold" />
+            android:textColor="#0D2617"
+            android:textSize="14.5sp"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_marginBottom="4dp" />
             
         <TextView
             android:id="@+id/tvStandard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Standar: ..."
-            android:textColor="#555555"
-            android:textSize="13sp"
-            android:layout_marginBottom="12dp"
-            android:fontFamily="@font/poppins_medium" />
+            android:textColor="#64748B"
+            android:textSize="12.5sp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginBottom="12dp" />
 
         <!-- LAYOUT UNTUK RADIO BUTTON (Ada, Tidak Ada, Other) -->
         <LinearLayout
@@ -55,6 +57,7 @@
                     android:layout_weight="1"
                     android:text="Ada"
                     android:textSize="14sp"
+                    android:textColor="#1E293B"
                     android:fontFamily="@font/poppins_medium"/>
 
                 <RadioButton
@@ -64,6 +67,7 @@
                     android:layout_weight="1"
                     android:text="Tidak Ada"
                     android:textSize="14sp"
+                    android:textColor="#1E293B"
                     android:fontFamily="@font/poppins_medium"/>
 
                 <RadioButton
@@ -73,6 +77,7 @@
                     android:layout_weight="1"
                     android:text="Other"
                     android:textSize="14sp"
+                    android:textColor="#1E293B"
                     android:fontFamily="@font/poppins_medium"/>
 
             </RadioGroup>
@@ -83,12 +88,12 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input_soft"
-                android:paddingHorizontal="12dp"
+                android:paddingHorizontal="14dp"
                 android:hint="Tuliskan keterangan..."
                 android:visibility="gone"
-                android:textColor="#1A202C"
-                android:textColorHint="#A0AEC0"
-                android:textSize="14sp"
+                android:textColor="#1E293B"
+                android:textColorHint="#94A3B8"
+                android:textSize="13.5sp"
                 android:fontFamily="@font/poppins_regular"/>
 
         </LinearLayout>
@@ -104,16 +109,14 @@
             <EditText
                 android:id="@+id/etEssayText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="50dp"
+                android:layout_height="90dp"
+                android:gravity="top|start"
                 android:background="@drawable/bg_input_soft"
                 android:padding="12dp"
-                android:hint="Tuliskan jawaban..."
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:textColor="#1A202C"
-                android:textColorHint="#A0AEC0"
-                android:textSize="14sp"
+                android:hint="Tuliskan jawaban lengkap..."
+                android:textColor="#1E293B"
+                android:textColorHint="#94A3B8"
+                android:textSize="13.5sp"
                 android:fontFamily="@font/poppins_regular"/>
 
         </LinearLayout>

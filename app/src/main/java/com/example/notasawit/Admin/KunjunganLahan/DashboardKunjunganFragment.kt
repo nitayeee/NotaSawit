@@ -54,11 +54,62 @@ class DashboardKunjunganFragment : Fragment() {
         })
 
         binding.swipeRefresh.setOnRefreshListener {
-            fetchKunjunganFromServer()
+            fetchLahanFromServer { fetchKunjunganFromServer() }
         }
 
         loadData()
-        fetchKunjunganFromServer()
+        fetchLahanFromServer { fetchKunjunganFromServer() }
+    }
+
+    private fun fetchLahanFromServer(onComplete: () -> Unit = {}) {
+        com.example.notasawit.Network.PetaniApi.getAllLahan(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    onComplete()
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                val body = response.body?.string()
+                if (response.isSuccessful && body != null) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            val lahanList = mutableListOf<com.example.notasawit.Room.Lahan.LahanEntity>()
+
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                val lahanId = item.optInt("lahan_id", item.optInt("id", 0))
+                                if (lahanId == 0) continue
+
+                                lahanList.add(
+                                    com.example.notasawit.Room.Lahan.LahanEntity(
+                                        lahan_id = lahanId,
+                                        petani_id = item.optInt("petani_id", item.optInt("id_petani", 0)),
+                                        lahan_nama = item.optString("lahan_nama", item.optString("nama_lahan", "")),
+                                        lahan_luas = item.optDouble("lahan_luas", item.optDouble("luas_lahan", 0.0))
+                                    )
+                                )
+                            }
+                            if (lahanList.isNotEmpty()) {
+                                database.LahanDao().insertLahan(lahanList)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        } finally {
+                            withContext(Dispatchers.Main) {
+                                onComplete()
+                            }
+                        }
+                    }
+                } else {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        onComplete()
+                    }
+                }
+            }
+        })
     }
 
     private fun parsePeriode(tanggal: String, periodeFromApi: String?): String {
@@ -227,6 +278,14 @@ class DashboardKunjunganFragment : Fragment() {
         binding.acStatus.setAdapter(statusAdapter)
         binding.acStatus.setText(selectedStatus, false)
 
+        binding.acPeriode.setOnClickListener {
+            binding.acPeriode.showDropDown()
+        }
+
+        binding.acStatus.setOnClickListener {
+            binding.acStatus.showDropDown()
+        }
+
         binding.acPeriode.setOnItemClickListener { _, _, position, _ ->
             selectedPeriode = periodeList[position]
             loadData()
@@ -359,7 +418,7 @@ class DashboardKunjunganFragment : Fragment() {
                             )
                         )
                     }
-                } else {
+                } else if (allKunjungan.isNotEmpty()) {
                     val historyList = allKunjungan.sortedByDescending { it.visitAttempt }.map { k ->
                         KunjunganHistoryItem(
                             idKunjungan = k.idKunjungan,
@@ -387,6 +446,7 @@ class DashboardKunjunganFragment : Fragment() {
                 }
 
                 val overallStatus = when {
+                    lahanKunjunganItems.isEmpty() -> "Belum Kunjungan"
                     lahanKunjunganItems.any { it.statusLahan == "Perlu Perbaikan" } -> "Perlu Perbaikan"
                     lahanKunjunganItems.all { it.statusLahan == "Lulus" || it.statusLahan == "Selesai" } -> "Lulus"
                     lahanKunjunganItems.any { it.statusLahan == "Lulus" || it.statusLahan == "Selesai" } -> "Lulus Sebagian"

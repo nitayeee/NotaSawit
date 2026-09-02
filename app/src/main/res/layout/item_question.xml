@@ -1,14 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="14dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E2E8F0"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="@drawable/bg_card_question"
         android:orientation="vertical">
 
         <TextView
@@ -16,34 +22,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1. Apakah Bapak/Ibu tahu Prosedur Keanggotaan?"
-            android:textColor="#002617"
-            android:textSize="15sp"
-            android:layout_marginBottom="12dp" android:fontFamily="@font/poppins_semibold" />
+            android:textColor="#0D2617"
+            android:textSize="14.5sp"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_marginBottom="12dp" />
 
         <RadioGroup
             android:id="@+id/rgAnswer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/rbYa"
                 android:layout_width="0dp"
-                android:textSize="15dp"
-                android:fontFamily="@font/poppins_medium"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Ya"/>
+                android:text="Ya"
+                android:textSize="14sp"
+                android:textColor="#1E293B"
+                android:fontFamily="@font/poppins_medium" />
 
             <RadioButton
                 android:id="@+id/rbTidak"
                 android:layout_width="0dp"
-                android:textSize="15dp"
-                android:fontFamily="@font/poppins_medium"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tidak"/>
+                android:text="Tidak"
+                android:textSize="14sp"
+                android:textColor="#1E293B"
+                android:fontFamily="@font/poppins_medium" />
 
         </RadioGroup>
 

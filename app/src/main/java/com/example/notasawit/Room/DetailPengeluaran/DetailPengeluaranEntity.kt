@@ -11,6 +11,8 @@ data class DetailPengeluaranEntity(
 
     val biaya_operasional_id: Int,
 
-    val lahanId: Int
+    val lahanId: Int,
+
+    val subtotal: Double = 0.0
 
 )

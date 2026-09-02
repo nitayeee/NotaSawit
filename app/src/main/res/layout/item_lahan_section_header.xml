@@ -1,81 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/app-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginBottom="16dp"
-    android:padding="12dp"
-    android:background="@drawable/bg_input_soft">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E2E8F0"
+    app:cardBackgroundColor="#FFFFFF">
 
-    <!-- Header Lahan -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="8dp">
-
-        <TextView
-            android:id="@+id/tvNamaLahan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="🌾 Lahan 1: Kebun Sawit (2.5 Ha)"
-            android:textColor="#002617"
-            android:textSize="14sp"
-            android:fontFamily="@font/poppins_semibold" />
-
-        <TextView
-            android:id="@+id/tvStatusLahan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Belum Kunjungan"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
-            android:background="@drawable/rounded_bg_gray"
-            android:textSize="10sp"
-            android:fontFamily="@font/poppins_medium"
-            android:textColor="@color/black" />
-    </LinearLayout>
-
-    <!-- Empty history notice for this land -->
-    <TextView
-        android:id="@+id/tvBelumAdaLahanHistory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Belum ada riwayat kunjungan pada lahan ini."
-        android:textSize="12sp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="#718096"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
-
-    <!-- Container History Cards per Lahan -->
-    <LinearLayout
-        android:id="@+id/llLahanHistoryContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="8dp" />
+        android:padding="14dp">
 
-    <!-- Action Button per Lahan -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end">
+        <!-- Header Lahan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnKunjunganLahan"
+            <TextView
+                android:id="@+id/tvNamaLahan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🌾 Lahan 1: Kebun Sawit (2.5 Ha)"
+                android:textColor="#0D2617"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <TextView
+                android:id="@+id/tvStatusLahan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum Kunjungan"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:background="@drawable/rounded_bg_gray"
+                android:textSize="10.5sp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Empty history notice for this land -->
+        <TextView
+            android:id="@+id/tvBelumAdaLahanHistory"
             android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:text="Lakukan Kunjungan"
-            android:textSize="12sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:textColor="@color/white"
-            app:cornerRadius="6dp"
-            app:backgroundTint="@color/agri_green_dark" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="Belum ada riwayat kunjungan pada lahan ini."
+            android:textSize="12.5sp"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="#64748B"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
 
-</LinearLayout>
+        <!-- Container History Cards per Lahan -->
+        <LinearLayout
+            android:id="@+id/llLahanHistoryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Action Button per Lahan -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnKunjunganLahan"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Lakukan Kunjungan"
+                android:textSize="12.5sp"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/white"
+                app:cornerRadius="8dp"
+                app:backgroundTint="@color/primary" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

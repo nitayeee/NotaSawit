@@ -16,27 +16,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
 
-        <Button
-            app:backgroundTint="@color/secondary"
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBack"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="Kembali"/>
+            android:text="Kembali"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@color/primary"
+            app:strokeColor="@color/primary"
+            app:strokeWidth="1.5dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#FFFFFF" />
 
         <Space
             android:layout_width="12dp"
             android:layout_height="1dp"/>
 
-        <Button
-            app:backgroundTint="@color/secondary"
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSimpan"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="Selanjutnya"/>
+            android:text="Selanjutnya"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/primary" />
 
     </LinearLayout>
 

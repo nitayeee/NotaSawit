@@ -37,9 +37,7 @@ class SyncPengeluaranRepository(
                 // 2. Ambil data lahan yang terhubung dengan pengeluaran ini
                 val detailLahan = database.DetailPengeluaranDao().getByPengeluaran(biaya_operasional.localId)
 
-                val lahanIds = detailLahan.map { it.lahanId }
-
-                if (lahanIds.isEmpty()) {
+                if (detailLahan.isEmpty()) {
                     database.PengeluaranDao().deleteById(biaya_operasional.localId)
                     return@forEach
                 }
@@ -53,13 +51,13 @@ class SyncPengeluaranRepository(
                     val call = PetaniApi.postPengeluaran(
                         context = context,
                         biayaTanggal = biaya_operasional.biaya_tanggal,
-                        biayaJumlah = biaya_operasional.biaya_jumlah,
                         biayaJenis = biaya_operasional.biaya_jenis,
-                        biayaTotal = biaya_operasional.biaya_total,
+                        biayaJumlah = biaya_operasional.biaya_jumlah,
                         biayaNama = biaya_operasional.biaya_nama,
-                        petaniId = biaya_operasional.petani_id,
-                        lahanIds = lahanIds,
                         biayaKet = biaya_operasional.biaya_ket ?: "",
+                        petaniId = biaya_operasional.petani_id,
+                        biayaTotal = biaya_operasional.biaya_total,
+                        detailLahan = detailLahan,
                         imageUri = imageUri
                     )
 

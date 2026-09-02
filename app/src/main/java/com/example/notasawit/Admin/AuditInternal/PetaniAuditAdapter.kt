@@ -26,7 +26,8 @@ data class PetaniAuditData(
     val auditAttempt: Int = 0,
     val auditLabel: String = "",
     val fotoProfil: String? = null,
-    val history: List<AuditHeader> = emptyList()
+    val history: List<AuditHeader> = emptyList(),
+    val hasLahan: Boolean = true
 )
 
 class PetaniAuditAdapter(
@@ -70,87 +71,104 @@ class PetaniAuditAdapter(
                 }
             }
 
-            binding.tvBelumAda.visibility = if (item.statusAudit == "Belum Audit") View.VISIBLE else View.GONE
             binding.llHistoryContainer.removeAllViews()
 
-            if (item.statusAudit != "Belum Audit" && item.history.isNotEmpty()) {
-                for (historyItem in item.history) {
-                    val historyView = LayoutInflater.from(binding.root.context).inflate(com.example.notasawit.R.layout.item_history_audit, binding.llHistoryContainer, false)
-                    
-                    val cardHistoryItem = historyView.findViewById<com.google.android.material.card.MaterialCardView>(com.example.notasawit.R.id.cardHistoryItem)
-                    val viewAccentIndicator = historyView.findViewById<View>(com.example.notasawit.R.id.viewAccentIndicator)
-                    val tvAttemptTitle = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAttemptTitle)
-                    val tvAuditorName = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAuditorName)
-                    val tvStatusBadge = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvStatusBadge)
-                    val btnBukaPdfHistory = historyView.findViewById<com.google.android.material.button.MaterialButton>(com.example.notasawit.R.id.btnBukaPdfHistory)
+            if (!item.hasLahan) {
+                binding.tvBelumAda.text = "Anda belum punya lahan."
+                binding.tvBelumAda.visibility = View.VISIBLE
+                binding.btnAudit.visibility = View.GONE
+            } else {
+                if (item.statusAudit == "Belum Audit" || item.history.isEmpty()) {
+                    binding.tvBelumAda.text = "Belum ada riwayat audit di periode ini."
+                    binding.tvBelumAda.visibility = View.VISIBLE
+                } else {
+                    binding.tvBelumAda.visibility = View.GONE
+                }
 
-                    tvAttemptTitle.text = "Audit ke-${historyItem.auditAttempt} (${historyItem.tanggal})"
-                    tvAuditorName.text = "Auditor: ${historyItem.namaAuditor}"
-                    tvStatusBadge.text = historyItem.statusAudit
+                if (item.history.isNotEmpty()) {
+                    for (historyItem in item.history) {
+                        val historyView = LayoutInflater.from(binding.root.context).inflate(com.example.notasawit.R.layout.item_history_audit, binding.llHistoryContainer, false)
+                        
+                        val cardHistoryItem = historyView.findViewById<com.google.android.material.card.MaterialCardView>(com.example.notasawit.R.id.cardHistoryItem)
+                        val viewAccentIndicator = historyView.findViewById<View>(com.example.notasawit.R.id.viewAccentIndicator)
+                        val tvAttemptTitle = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAttemptTitle)
+                        val tvAuditorName = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvAuditorName)
+                        val tvStatusBadge = historyView.findViewById<android.widget.TextView>(com.example.notasawit.R.id.tvStatusBadge)
+                        val btnBukaPdfHistory = historyView.findViewById<com.google.android.material.button.MaterialButton>(com.example.notasawit.R.id.btnBukaPdfHistory)
+
+                        tvAttemptTitle.text = "Audit ke-${historyItem.auditAttempt} (${historyItem.tanggal})"
+                        tvAuditorName.text = "Auditor: ${historyItem.namaAuditor}"
+                        tvStatusBadge.text = historyItem.statusAudit
+
+                        when {
+                            historyItem.statusAudit.equals("Lulus", ignoreCase = true) -> {
+                                tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_lulus)
+                                tvStatusBadge.setTextColor(Color.parseColor("#1B5E20"))
+                                cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#F0FDF4"))
+                                cardHistoryItem?.strokeColor = Color.parseColor("#C8E6C9")
+                                viewAccentIndicator?.setBackgroundColor(Color.parseColor("#1B5E20"))
+                                tvAttemptTitle.setTextColor(Color.parseColor("#1B5E20"))
+                                btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#1B4D2E"))
+                            }
+                            historyItem.statusAudit.equals("Perlu Perbaikan", ignoreCase = true) -> {
+                                tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_perbaikan)
+                                tvStatusBadge.setTextColor(Color.parseColor("#B71C1C"))
+                                cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#FEF2F2"))
+                                cardHistoryItem?.strokeColor = Color.parseColor("#FFCCC7")
+                                viewAccentIndicator?.setBackgroundColor(Color.parseColor("#B71C1C"))
+                                tvAttemptTitle.setTextColor(Color.parseColor("#B71C1C"))
+                                btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#B71C1C"))
+                            }
+                            historyItem.statusAudit.contains("Menunggu", ignoreCase = true) || historyItem.statusAudit.equals("Pending", ignoreCase = true) -> {
+                                tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_diaudit)
+                                tvStatusBadge.setTextColor(Color.parseColor("#0D47A1"))
+                                cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#EFF6FF"))
+                                cardHistoryItem?.strokeColor = Color.parseColor("#BBDEFB")
+                                viewAccentIndicator?.setBackgroundColor(Color.parseColor("#0D47A1"))
+                                tvAttemptTitle.setTextColor(Color.parseColor("#0D47A1"))
+                                btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#0D47A1"))
+                            }
+                            else -> {
+                                tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
+                                tvStatusBadge.setTextColor(Color.parseColor("#616161"))
+                                cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#F8FAFC"))
+                                cardHistoryItem?.strokeColor = Color.parseColor("#E2E8F0")
+                                viewAccentIndicator?.setBackgroundColor(Color.parseColor("#64748B"))
+                                tvAttemptTitle.setTextColor(Color.parseColor("#1E293B"))
+                                btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#1B4D2E"))
+                            }
+                        }
+
+                        btnBukaPdfHistory.setOnClickListener {
+                            openPdf(binding.root.context, historyItem.pdfPath, historyItem.idAudit)
+                        }
+
+                        binding.llHistoryContainer.addView(historyView)
+                    }
 
                     when {
-                        historyItem.statusAudit.equals("Lulus", ignoreCase = true) -> {
-                            tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_lulus)
-                            tvStatusBadge.setTextColor(Color.parseColor("#1B5E20"))
-                            cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#F0FDF4"))
-                            cardHistoryItem?.strokeColor = Color.parseColor("#C8E6C9")
-                            viewAccentIndicator?.setBackgroundColor(Color.parseColor("#1B5E20"))
-                            tvAttemptTitle.setTextColor(Color.parseColor("#1B5E20"))
-                            btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#1B4D2E"))
+                        item.statusAudit.equals("Lulus", ignoreCase = true) -> {
+                            binding.btnAudit.visibility = View.GONE
                         }
-                        historyItem.statusAudit.equals("Perlu Perbaikan", ignoreCase = true) -> {
-                            tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_perbaikan)
-                            tvStatusBadge.setTextColor(Color.parseColor("#B71C1C"))
-                            cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#FEF2F2"))
-                            cardHistoryItem?.strokeColor = Color.parseColor("#FFCCC7")
-                            viewAccentIndicator?.setBackgroundColor(Color.parseColor("#B71C1C"))
-                            tvAttemptTitle.setTextColor(Color.parseColor("#B71C1C"))
-                            btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#B71C1C"))
+                        item.statusAudit.equals("Perlu Perbaikan", ignoreCase = true) -> {
+                            binding.btnAudit.text = "Audit Ulang"
+                            binding.btnAudit.isEnabled = true
+                            binding.btnAudit.visibility = View.VISIBLE
                         }
-                        historyItem.statusAudit.contains("Menunggu", ignoreCase = true) || historyItem.statusAudit.equals("Pending", ignoreCase = true) -> {
-                            tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_diaudit)
-                            tvStatusBadge.setTextColor(Color.parseColor("#0D47A1"))
-                            cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#EFF6FF"))
-                            cardHistoryItem?.strokeColor = Color.parseColor("#BBDEFB")
-                            viewAccentIndicator?.setBackgroundColor(Color.parseColor("#0D47A1"))
-                            tvAttemptTitle.setTextColor(Color.parseColor("#0D47A1"))
-                            btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#0D47A1"))
+                        item.statusAudit.contains("Menunggu", ignoreCase = true) || item.statusAudit.equals("Pending", ignoreCase = true) -> {
+                            binding.btnAudit.text = "Menunggu Hasil"
+                            binding.btnAudit.isEnabled = false
+                            binding.btnAudit.visibility = View.VISIBLE
                         }
                         else -> {
-                            tvStatusBadge.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
-                            tvStatusBadge.setTextColor(Color.parseColor("#616161"))
-                            cardHistoryItem?.setCardBackgroundColor(Color.parseColor("#F8FAFC"))
-                            cardHistoryItem?.strokeColor = Color.parseColor("#E2E8F0")
-                            viewAccentIndicator?.setBackgroundColor(Color.parseColor("#64748B"))
-                            tvAttemptTitle.setTextColor(Color.parseColor("#1E293B"))
-                            btnBukaPdfHistory?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#1B4D2E"))
+                            binding.btnAudit.visibility = View.GONE
                         }
                     }
-
-                    btnBukaPdfHistory.setOnClickListener {
-                        openPdf(binding.root.context, historyItem.pdfPath, historyItem.idAudit)
-                    }
-
-                    binding.llHistoryContainer.addView(historyView)
-                }
-
-                if (item.statusAudit == "Perlu Perbaikan") {
-                    binding.btnAudit.text = "Audit Ulang"
-                    binding.btnAudit.isEnabled = true
-                    binding.btnAudit.visibility = View.VISIBLE
-                } else if (item.statusAudit == "Menunggu Keputusan") {
-                    binding.btnAudit.text = "Menunggu Hasil"
-                    binding.btnAudit.isEnabled = false
-                    binding.btnAudit.visibility = View.VISIBLE
                 } else {
-                    binding.btnAudit.text = "+ Audit Lahan Lain"
+                    binding.btnAudit.text = "Lakukan Audit"
                     binding.btnAudit.isEnabled = true
                     binding.btnAudit.visibility = View.VISIBLE
                 }
-            } else {
-                binding.btnAudit.text = "Lakukan Audit"
-                binding.btnAudit.isEnabled = true
-                binding.btnAudit.visibility = View.VISIBLE
             }
 
             binding.layoutDetail.visibility = if (item.isExpanded) View.VISIBLE else View.GONE

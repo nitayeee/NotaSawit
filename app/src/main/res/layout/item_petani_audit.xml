@@ -6,8 +6,8 @@
     android:layout_marginHorizontal="2dp"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
     app:strokeWidth="1dp"
     app:strokeColor="#E2E8F0"
     app:cardBackgroundColor="@color/white">
@@ -30,7 +30,7 @@
             <FrameLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="12dp">
+                android:layout_marginEnd="14dp">
 
                 <TextView
                     android:id="@+id/tvInitial"
@@ -62,34 +62,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nama Petani"
-                    android:textSize="15sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="#1A202C"
+                    android:textSize="15.5sp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="#0D2617"
                     android:maxLines="1"
                     android:ellipsize="end" />
 
-                <TextView
-                    android:id="@+id/tvStatus"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Belum Audit"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="3dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/rounded_bg_gray"
-                    android:textSize="10sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/black" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp">
 
-                <TextView
-                    android:id="@+id/tvDesa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Desa"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:textColor="#718096" />
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Belum Audit"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:background="@drawable/rounded_bg_gray"
+                        android:textSize="10.5sp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/tvDesa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Desa"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textColor="#64748B" />
+                </LinearLayout>
             </LinearLayout>
 
             <ImageView
@@ -97,7 +104,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_drop_down"
-                app:tint="#4A5568" />
+                app:tint="#64748B" />
         </LinearLayout>
 
         <!-- Detail (Accordion, default GONE) -->
@@ -117,7 +124,7 @@
                 android:text="Belum ada riwayat audit di periode ini."
                 android:textSize="13sp"
                 android:fontFamily="@font/poppins_regular"
-                android:textColor="#4A5568"
+                android:textColor="#64748B"
                 android:layout_marginBottom="12dp"
                 android:visibility="gone" />
 
@@ -138,12 +145,13 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAudit"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:text="Lakukan Audit"
-                    android:fontFamily="@font/poppins_semibold"
+                    android:fontFamily="@font/poppins_bold"
                     android:textColor="@color/white"
-                    app:cornerRadius="8dp"
-                    app:backgroundTint="@color/agri_green_dark" />
+                    android:textSize="13sp"
+                    app:cornerRadius="10dp"
+                    app:backgroundTint="@color/primary" />
             </LinearLayout>
 
         </LinearLayout>

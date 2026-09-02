@@ -10,146 +10,249 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
-        <TextView
+        <!-- Banner Header Section 1 Kunjungan Lahan -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Section 1: Data Kunjungan Lahan"
-            android:textColor="#002617"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E2E8F0"
+            app:cardBackgroundColor="#FFFFFF">
 
-        <!-- 1. TANGGAL KUNJUNGAN -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tanggal Kunjungan"
-            android:textColor="#4A5568"
-            android:textSize="13.5sp"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_marginBottom="6dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/etTanggal"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#F4F7F4">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_calendar_month"
+                        app:tint="@color/primary"
+                        android:contentDescription="Icon Section" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SECTION 1"
+                        android:textColor="@color/secondary"
+                        android:textSize="11sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:letterSpacing="0.08" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data Kunjungan Lahan"
+                        android:textColor="@color/tertiary"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:layout_marginTop="1dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lengkapi informasi umum kunjungan lapangan"
+                        android:textColor="#64748B"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/poppins_regular" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Form Card Container -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_soft"
-            android:paddingHorizontal="16dp"
-            android:hint="DD/MM/YYYY"
-            android:inputType="date"
-            android:textColor="#1A202C"
-            android:textColorHint="#A0AEC0"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="18dp" />
-
-        <!-- 2. DESA KEPENGURUSAN -->
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Desa Kepengurusan"
-            android:textColor="#4A5568"
-            android:textSize="13.5sp"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_marginBottom="6dp" />
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E2E8F0"
+            app:cardBackgroundColor="#FFFFFF">
 
-        <EditText
-            android:id="@+id/etDesaKepengurusan"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_soft"
-            android:paddingHorizontal="16dp"
-            android:hint="Desa kepengurusan"
-            android:enabled="false"
-            android:textColor="#1A202C"
-            android:textColorHint="#A0AEC0"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="18dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <!-- 3. NAMA AUDITOR -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Auditor"
-            android:textColor="#4A5568"
-            android:textSize="13.5sp"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_marginBottom="6dp" />
+                <!-- 1. TANGGAL KUNJUNGAN -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
 
-        <EditText
-            android:id="@+id/etAuditor"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_soft"
-            android:paddingHorizontal="16dp"
-            android:hint="Nama auditor"
-            android:enabled="false"
-            android:textColor="#1A202C"
-            android:textColorHint="#A0AEC0"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="18dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tanggal Kunjungan"
+                        android:textColor="@color/tertiary"
+                        android:textSize="13.5sp"
+                        android:fontFamily="@font/poppins_semibold" />
 
-        <!-- 4. NAMA PETANI -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nama Petani"
-            android:textColor="#4A5568"
-            android:textSize="13.5sp"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="*Wajib"
+                        android:textColor="@color/secondary"
+                        android:textSize="11sp"
+                        android:fontFamily="@font/poppins_medium" />
+                </LinearLayout>
 
-        <EditText
-            android:id="@+id/etPetani"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_soft"
-            android:paddingHorizontal="16dp"
-            android:hint="Nama petani"
-            android:enabled="false"
-            android:textColor="#1A202C"
-            android:textColorHint="#A0AEC0"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="18dp" />
+                <EditText
+                    android:id="@+id/etTanggal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_soft"
+                    android:paddingHorizontal="16dp"
+                    android:hint="DD/MM/YYYY"
+                    android:inputType="date"
+                    android:textColor="#1E293B"
+                    android:textColorHint="#94A3B8"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textSize="14sp"
+                    android:drawableEnd="@drawable/ic_calendar_month"
+                    android:drawableTint="@color/primary"
+                    android:layout_marginBottom="18dp" />
 
-        <!-- 5. LAHAN KUNJUNGAN -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lahan Kunjungan"
-            android:textColor="#4A5568"
-            android:textSize="13.5sp"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_marginBottom="6dp" />
+                <!-- 2. DESA KEPENGURUSAN -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Desa Kepengurusan"
+                    android:textColor="@color/tertiary"
+                    android:textSize="13.5sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginBottom="6dp" />
 
-        <EditText
-            android:id="@+id/etDesaKebun"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_input_soft"
-            android:paddingHorizontal="16dp"
-            android:hint="Nama / lokasi lahan"
-            android:enabled="false"
-            android:textColor="#1A202C"
-            android:textColorHint="#A0AEC0"
-            android:fontFamily="@font/poppins_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="32dp" />
+                <EditText
+                    android:id="@+id/etDesaKepengurusan"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_soft"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Desa kepengurusan"
+                    android:enabled="false"
+                    android:textColor="#334155"
+                    android:textColorHint="#94A3B8"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="18dp" />
 
-        <Button
+                <!-- 3. NAMA AUDITOR -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Auditor"
+                    android:textColor="@color/tertiary"
+                    android:textSize="13.5sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/etAuditor"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_soft"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Nama auditor"
+                    android:enabled="false"
+                    android:textColor="#334155"
+                    android:textColorHint="#94A3B8"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="18dp" />
+
+                <!-- 4. NAMA PETANI -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Petani"
+                    android:textColor="@color/tertiary"
+                    android:textSize="13.5sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/etPetani"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_soft"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Nama petani"
+                    android:enabled="false"
+                    android:textColor="#334155"
+                    android:textColorHint="#94A3B8"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="18dp" />
+
+                <!-- 5. LAHAN KUNJUNGAN -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lahan Kunjungan"
+                    android:textColor="@color/tertiary"
+                    android:textSize="13.5sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/etDesaKebun"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_soft"
+                    android:paddingHorizontal="16dp"
+                    android:hint="Nama / lokasi lahan"
+                    android:enabled="false"
+                    android:textColor="#334155"
+                    android:textColorHint="#94A3B8"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Button Lanjut -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLanjut"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="54dp"
             android:text="LANJUT KE SECTION 2"
-            android:textSize="15sp"
+            android:textSize="14.5sp"
             android:fontFamily="@font/poppins_bold"
-            app:backgroundTint="@color/secondary"
-            android:textColor="@color/tertiary"/>
+            android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/primary"
+            app:elevation="2dp" />
 
     </LinearLayout>
 </ScrollView>

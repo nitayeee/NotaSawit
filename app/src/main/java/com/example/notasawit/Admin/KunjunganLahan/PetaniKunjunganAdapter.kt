@@ -74,11 +74,16 @@ class PetaniKunjunganAdapter(
                 else -> binding.tvStatus.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
             }
 
-            binding.tvBelumAda.visibility = View.GONE
-            binding.btnAudit.visibility = View.GONE
             binding.llHistoryContainer.removeAllViews()
 
-            if (item.lahanList.isNotEmpty()) {
+            if (item.lahanList.isEmpty()) {
+                binding.tvBelumAda.text = "Anda belum punya lahan."
+                binding.tvBelumAda.visibility = View.VISIBLE
+                binding.btnAudit.visibility = View.GONE
+            } else {
+                binding.tvBelumAda.visibility = View.GONE
+                binding.btnAudit.visibility = View.GONE
+
                 for (lahanItem in item.lahanList) {
                     val lahanBinding = ItemLahanSectionHeaderBinding.inflate(
                         LayoutInflater.from(binding.root.context),

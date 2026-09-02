@@ -226,6 +226,18 @@ object PetaniApi {
         ApiClient.client.newCall(request)
             .enqueue(callback)
     }
+
+    fun getAllLahan(
+        callback: Callback
+    ) {
+        val request = Request.Builder()
+            .url("$BASE_URL/lahan")
+            .get()
+            .build()
+
+        ApiClient.client.newCall(request)
+            .enqueue(callback)
+    }
     fun getRiwayatKeuangan(
         petaniId: Int,
         bulan: Int?,
@@ -367,9 +379,9 @@ object PetaniApi {
         biayaKet: String,
         petaniId: Int,
         biayaTotal: Double,
-        lahanIds: List<Int>, // 🔄 Diubah menjadi List<Int> agar sama dengan format pemasukan/kegiatan
+        detailLahan: List<com.example.notasawit.Room.DetailPengeluaran.DetailPengeluaranEntity>,
         imageUri: Uri?
-    ): okhttp3.Call { // 🔄 Diubah agar mengembalikan objek Call (tanpa callback & enqueue langsung)
+    ): okhttp3.Call {
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("biaya_tanggal", biayaTanggal)
@@ -380,12 +392,10 @@ object PetaniApi {
             .addFormDataPart("biaya_total", biayaTotal.toString())
             .addFormDataPart("petani_id", petaniId.toString())
 
-        // 🔄 Mengirim semua lahan menggunakan array parameter format Laravel `lahan_id[]`
-        lahanIds.forEach { id ->
-            builder.addFormDataPart(
-                "lahan_id[]",
-                id.toString()
-            )
+        detailLahan.forEach { detail ->
+            builder.addFormDataPart("lahan_id[]", detail.lahanId.toString())
+            builder.addFormDataPart("subtotal_detail[]", detail.subtotal.toString())
+            builder.addFormDataPart("subtotal[]", detail.subtotal.toString())
         }
 
         imageUri?.let { uri ->

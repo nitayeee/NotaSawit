@@ -29,17 +29,17 @@
             attribution: 'Tiles &copy; Esri'
         });
 
-        // Inisialisasi peta dengan layer OSM sebagai default
+        // Inisialisasi peta dengan layer Satelit sebagai default
         var map = L.map('map', {
             center: [0.5, 101.5],
             zoom: 13,
-            layers: [osm]
+            layers: [satellite]
         });
 
         // Tambahkan kontrol layer di pojok kanan atas
         var baseMaps = {
-            "OSM Standar": osm,
-            "Satelit": satellite
+            "Satelit": satellite,
+            "OSM Standar": osm
         };
         L.control.layers(baseMaps).addTo(map);
 
@@ -56,10 +56,10 @@
                     var polygon = L.geoJSON(geoJsonObj, {
                         style: function (feature) {
                             return {
-                                color: "#10B981",
+                                color: "#FACC15",
                                 weight: 3,
                                 fillColor: "#10B981",
-                                fillOpacity: 0.4
+                                fillOpacity: 0.45
                             };
                         }
                     });

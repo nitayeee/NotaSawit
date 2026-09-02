@@ -151,18 +151,39 @@ class InputPengeluaranActivity : AppCompatActivity() {
                 )
                 val biaya_operasional_id = database.PengeluaranDao().insert(biaya_operasional)
 
-                // Simpan semua lahan yang dipilih
-                selectedLahanIds.forEach { lahanId ->
+                // Hitung pengeluaran proporsional per-lahan (sama seperti Pemasukan)
+                val lahanTerpilih = listLahan.filter { selectedLahanIds.contains(it.lahan_id) }
+                val totalLuasLahan = lahanTerpilih.sumOf { it.lahan_luas }
+                val countLahan = lahanTerpilih.size
+                val totalPengeluaran = biaya_operasional.biaya_total
+
+                val pengeluaranPerHektar = if (totalLuasLahan > 0) totalPengeluaran / totalLuasLahan else 0.0
+                val pengeluaranRata = if (countLahan > 0) totalPengeluaran / countLahan else 0.0
+
+                var totalPengeluaranDihitung = 0.0
+
+                lahanTerpilih.forEachIndexed { index, lahan ->
+                    val subtotalLahan: Double
+
+                    if (index == lahanTerpilih.lastIndex) {
+                        subtotalLahan = totalPengeluaran - totalPengeluaranDihitung
+                    } else {
+                        if (totalLuasLahan > 0) {
+                            subtotalLahan = lahan.lahan_luas * pengeluaranPerHektar
+                        } else {
+                            subtotalLahan = pengeluaranRata
+                        }
+                    }
+
+                    totalPengeluaranDihitung += subtotalLahan
 
                     database.DetailPengeluaranDao().insert(
-
                         DetailPengeluaranEntity(
                             biaya_operasional_id = biaya_operasional_id.toInt(),
-                            lahanId  = lahanId
+                            lahanId  = lahan.lahan_id,
+                            subtotal = subtotalLahan
                         )
-
                     )
-
                 }
                 triggerDataSync()
 
