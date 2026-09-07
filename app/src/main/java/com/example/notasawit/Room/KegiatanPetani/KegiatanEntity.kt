@@ -15,10 +15,19 @@ data class KegiatanEntity(
 
     val kegiatan_satuan: String,
 
-    val kegiatan_jenis: Int,
+    val kegiatan_jenis: Int = 0,
+
+    val nama_kegiatan: String = "",
 
     val petani_id: Int,
 
-    val kegiatan_ket: String,
+    val kegiatan_ket: String = "",
+
+    val nama_bahan: String = "",
+
+    val jenis_limbah: String = "",
+
+    val status_limbah: String = "Belum Disetor",
+
     val isSynced: Boolean = false
 )

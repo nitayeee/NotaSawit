@@ -8,5 +8,6 @@ data class NotificationItem(
     val tanggal: String,
     var is_read: Int,
     val data_url: String?,
-    var isSelected: Boolean = false
+    var isSelected: Boolean = false,
+    val createdAt: String? = null
 )

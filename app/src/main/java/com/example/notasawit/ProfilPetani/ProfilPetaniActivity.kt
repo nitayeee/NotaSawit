@@ -200,8 +200,6 @@ class ProfilPetaniActivity : AppCompatActivity() {
                             runOnUiThread {
                                 binding.tvJumlahLahan.text = "$jumlahLahan"
                                 binding.tvTotalLuas.text = if (totalLuas > 0) String.format("%.2f", totalLuas) else "-"
-                                binding.tvInfoJumlahLahan.text = "$jumlahLahan Lahan"
-                                binding.tvInfoTotalLuas.text = if (totalLuas > 0) String.format("%.2f Hektar", totalLuas) else "- Hektar"
 
                                 if (geoJsonList.length() > 0) {
                                     val jsCommand = "renderPolygons(${geoJsonList.toString()});"

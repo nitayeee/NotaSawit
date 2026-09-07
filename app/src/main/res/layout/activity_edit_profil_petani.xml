@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,154 +8,268 @@
     android:background="#F8F9FA"
     tools:context=".ProfilPetani.EditProfilPetaniActivity">
 
-    <!-- Top App Bar -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topBar"
+    <!-- TOP TOOLBAR BANNER -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar_gradient"
+        app:elevation="4dp">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_arrow_left"
-            app:tint="@color/agri_green_dark"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="Back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit Profil"
-            android:textColor="@color/agri_green_dark"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" android:fontFamily="@font/poppins_bold" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-    <ScrollView
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Kembali"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:text="Edit Profil"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="38dp"
+                    android:layout_height="38dp" />
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- MAIN SCROLL CONTENT -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="16dp"
+            android:paddingBottom="40dp">
 
-            <!-- Profile Image Section -->
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="8dp">
-                
-                <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="50dp"
-                    app:cardBackgroundColor="@color/agri_green_dark"
-                    app:cardElevation="4dp">
-                    
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="94dp"
-                        android:layout_height="94dp"
-                        app:cardCornerRadius="47dp"
-                        android:layout_gravity="center"
-                        app:cardBackgroundColor="#E2E8F0"
-                        app:cardElevation="0dp">
-                        
-                        <ImageView
-                            android:id="@+id/imgFotoProfil"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_profile" />
-
-                        <TextView
-                            android:id="@+id/tvInitials"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:textColor="@color/agri_green_dark"
-                            android:textSize="36sp"
-                            android:fontFamily="@font/poppins_bold"
-                            android:visibility="gone" />
-                    </androidx.cardview.widget.CardView>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/btnUbahFotoProfilIkon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardBackgroundColor="@color/agri_green_dark"
-                    app:cardElevation="6dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:clickable="true"
-                    android:focusable="true">
-                    
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_camera"
-                        app:tint="#FFFFFF" />
-                </androidx.cardview.widget.CardView>
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/btnUbahFotoProfilText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ubah Foto Profil"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="@color/agri_green_dark"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tvErrorFoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#EF4444"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/poppins_medium"
-                android:visibility="gone"
-                android:text="Error" />
-
-            <!-- Form Card -->
-            <androidx.cardview.widget.CardView
+            <!-- AUDIT INTERNAL STYLE HEADER BANNER CARD -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardBackgroundColor="#F4F7F4"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Icon Edit"
+                            android:src="@drawable/ic_profile"
+                            app:tint="@color/primary" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.08"
+                            android:text="EDIT PROFIL PETANI"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="Perbarui Informasi Akun"
+                            android:textColor="@color/tertiary"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="Pastikan data pribadi dan kontak yang diisi valid"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- PROFILE PHOTO SECTION CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            app:cardBackgroundColor="#F4F7F4"
+                            app:cardCornerRadius="50dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#1B4D2E"
+                            app:strokeWidth="2dp">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    android:id="@+id/tvInitials"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:gravity="center"
+                                    android:textColor="#1B4D2E"
+                                    android:textSize="32sp"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgFotoProfil"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/ic_profile" />
+
+                            </FrameLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/btnUbahFotoProfilIkon"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="bottom|end"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardBackgroundColor="#1B4D2E"
+                            app:cardCornerRadius="17dp"
+                            app:cardElevation="4dp"
+                            app:strokeWidth="0dp">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Ubah Foto"
+                                android:src="@drawable/ic_camera"
+                                app:tint="@color/white" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btnUbahFotoProfilText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Ubah Foto Profil"
+                        android:textColor="#1B4D2E"
+                        android:textSize="13.5sp" />
+
+                    <TextView
+                        android:id="@+id/tvErrorFoto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Error"
+                        android:textColor="#EF4444"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- FORM INPUTS CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -163,154 +277,228 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Nama -->
+                    <!-- Nama Lengkap -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nama Lengkap"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Nama Lengkap *"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textSize="12.5sp" />
+
                     <EditText
                         android:id="@+id/etNama"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
                         android:hint="Masukkan nama lengkap"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="16dp" />
+                        android:inputType="textPersonName"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
 
                     <!-- Username -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Username"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Username *"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textSize="12.5sp" />
+
                     <EditText
                         android:id="@+id/etUsername"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
                         android:hint="Masukkan username"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="16dp" />
+                        android:inputType="text"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
 
                     <!-- Email -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
                         android:text="Email"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textSize="12.5sp" />
+
                     <EditText
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="16dp"
-                        android:hint="Masukkan alamat email"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="Masukkan email (opsional)"
                         android:inputType="textEmailAddress"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="16dp" />
-                        
+                        android:paddingHorizontal="16dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
+
                     <!-- No HP -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nomor HP"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="No. HP / WhatsApp *"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textSize="12.5sp" />
+
                     <EditText
                         android:id="@+id/etNoHp"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="16dp"
-                        android:hint="Masukkan nomor HP"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="Contoh: 08123456789"
                         android:inputType="phone"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:layout_marginBottom="16dp" />
+                        android:paddingHorizontal="16dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
 
-                    <!-- Desa -->
+                    <!-- Jenis Kelamin -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Kelurahan / Desa"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Jenis Kelamin *"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
-                    <AutoCompleteTextView
-                        android:id="@+id/spinnerDesa"
+                        android:textSize="12.5sp" />
+
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="16dp"
-                        android:hint="Pilih Desa"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
-                        android:inputType="none"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="#F8FAFC"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E2E8F0"
+                        app:strokeWidth="1dp">
+
+                        <Spinner
+                            android:id="@+id/spinnerJenisKelamin"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="12dp" />
+
+                    </com.google.android.material.card.MaterialCardView>
 
                     <!-- Alamat -->
                     <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Alamat Lengkap"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Alamat *"
                         android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textSize="12.5sp" />
+
                     <EditText
                         android:id="@+id/etAlamat"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="100dp"
-                        android:background="@drawable/bg_input_field"
-                        android:padding="16dp"
+                        android:layout_height="80dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="top|start"
-                        android:hint="Masukkan alamat lengkap"
-                        android:textColor="#1E293B"
-                        android:textSize="14sp"
+                        android:hint="Masukkan alamat domisili"
                         android:inputType="textMultiLine"
-                        android:minLines="3" />
+                        android:padding="14dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
+
+                    <!-- Desa -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Pilih Desa *"
+                        android:textColor="#64748B"
+                        android:textSize="12.5sp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="#F8FAFC"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E2E8F0"
+                        app:strokeWidth="1dp">
+
+                        <Spinner
+                            android:id="@+id/spinnerDesa"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="12dp" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- PIN (Opsional) -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="PIN Baru (Kosongkan jika tidak diubah)"
+                        android:textColor="#64748B"
+                        android:textSize="12.5sp" />
+
+                    <EditText
+                        android:id="@+id/etPin"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="24dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:fontFamily="@font/poppins_regular"
+                        android:hint="6 digit angka PIN"
+                        android:inputType="numberPassword"
+                        android:maxLength="6"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="#0D2617"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="13.5sp" />
+
+                    <!-- SIMPAN BUTTON -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimpan"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:backgroundTint="#1B4D2E"
+                        android:fontFamily="@font/poppins_bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Simpan Perubahan"
+                        android:textColor="@color/white"
+                        android:textSize="14.5sp"
+                        app:cornerRadius="12dp"
+                        app:elevation="2dp" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-            <!-- Save Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimpan"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:text="Simpan Perubahan"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/agri_green_dark"
-                android:fontFamily="@font/poppins_bold" />
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

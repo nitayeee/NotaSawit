@@ -67,6 +67,7 @@ class NotificationFragment : Fragment() {
 
         setupFilterListeners()
         setupSelectionListeners()
+        updateFilterUI()
         fetchNotifications()
 
         return view
@@ -161,19 +162,39 @@ class NotificationFragment : Fragment() {
     }
 
     private fun updateFilterUI() {
-        val activeBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1B4D2E"))
-        val inactiveBg = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E8ECE9"))
+        val activeBg = R.drawable.bg_chip_active
+        val inactiveBg = R.drawable.bg_chip_inactive
         val activeText = android.graphics.Color.parseColor("#FFFFFF")
         val inactiveText = android.graphics.Color.parseColor("#1B4D2E")
 
-        filterSemua.backgroundTintList = if (currentFilter == "semua") activeBg else inactiveBg
-        filterSemua.setTextColor(if (currentFilter == "semua") activeText else inactiveText)
+        // Clear any leftover background tint list
+        filterSemua.backgroundTintList = null
+        filterBelum.backgroundTintList = null
+        filterSudah.backgroundTintList = null
 
-        filterBelum.backgroundTintList = if (currentFilter == "belum") activeBg else inactiveBg
-        filterBelum.setTextColor(if (currentFilter == "belum") activeText else inactiveText)
+        if (currentFilter == "semua") {
+            filterSemua.setBackgroundResource(activeBg)
+            filterSemua.setTextColor(activeText)
+        } else {
+            filterSemua.setBackgroundResource(inactiveBg)
+            filterSemua.setTextColor(inactiveText)
+        }
 
-        filterSudah.backgroundTintList = if (currentFilter == "sudah") activeBg else inactiveBg
-        filterSudah.setTextColor(if (currentFilter == "sudah") activeText else inactiveText)
+        if (currentFilter == "belum") {
+            filterBelum.setBackgroundResource(activeBg)
+            filterBelum.setTextColor(activeText)
+        } else {
+            filterBelum.setBackgroundResource(inactiveBg)
+            filterBelum.setTextColor(inactiveText)
+        }
+
+        if (currentFilter == "sudah") {
+            filterSudah.setBackgroundResource(activeBg)
+            filterSudah.setTextColor(activeText)
+        } else {
+            filterSudah.setBackgroundResource(inactiveBg)
+            filterSudah.setTextColor(inactiveText)
+        }
     }
 
     private fun applyFilter() {
@@ -204,18 +225,24 @@ class NotificationFragment : Fragment() {
                         Log.e("NotificationFragment", "ID kosong atau null pada JSON: $obj")
                         continue
                     }
-                    val type = obj.getString("type")
-                    val title = obj.getString("title")
-                    val message = obj.getString("message")
-                    val tanggal = obj.getString("tanggal")
+                    val type = obj.optString("type", "")
+                    val title = obj.optString("title", "")
+                    val message = obj.optString("message", "")
+                    val tanggal = obj.optString("tanggal", "")
                     val isRead = if (obj.optBoolean("is_read", false) || obj.optInt("is_read", 0) == 1) 1 else 0
                     val dataUrl = obj.optString("data_url", "")
+                    val createdAt = obj.optString("created_at", "").ifEmpty { tanggal }
                     
-                    allNotifications.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl))
+                    allNotifications.add(NotificationItem(id, type, title, message, tanggal, isRead, dataUrl, false, createdAt))
                 }
                 
-                // Urutkan berdasarkan tanggal terbaru, dan jika tanggal sama, urutkan berdasarkan ID terbaru di atas
-                allNotifications.sortWith(compareByDescending<NotificationItem> { it.tanggal }.thenByDescending { it.id })
+                // Urutkan berdasarkan timestamp created_at terbaru di posisi PALING ATAS
+                allNotifications.sortWith(Comparator { a, b ->
+                    val timeA = if (!a.createdAt.isNullOrEmpty()) a.createdAt!! else a.tanggal
+                    val timeB = if (!b.createdAt.isNullOrEmpty()) b.createdAt!! else b.tanggal
+                    val cmp = timeB.compareTo(timeA)
+                    if (cmp != 0) cmp else b.id.compareTo(a.id)
+                })
 
                 requireActivity().runOnUiThread {
                     applyFilter()

@@ -1,79 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
     android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardElevation="3dp"
+    app:strokeColor="#E2E8F0"
+    app:strokeWidth="1dp"
+    app:useCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <!-- Icon -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:cardCornerRadius="12dp"
+        <!-- ICON CONTAINER -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            app:cardBackgroundColor="#F4F7F4"
+            app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#E6F2EA">
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_edukasi"
-                app:tint="@color/agri_green_dark" />
-        </androidx.cardview.widget.CardView>
+            app:strokeWidth="0dp">
 
-        <!-- Content -->
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:contentDescription="Icon Modul"
+                android:src="@drawable/ic_edukasi"
+                app:tint="@color/primary" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TEXT & PROGRESS -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvModulTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Modul 1: Asosiasi"
-                android:textColor="#1E293B"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins_bold" />
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins_bold"
+                android:maxLines="1"
+                android:textColor="@color/tertiary"
+                android:textSize="14.5sp"
+                tools:text="Modul 1: Asosiasi" />
 
             <TextView
                 android:id="@+id/tvModulDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Profil Asosiasi Pekebun Swadaya"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins_regular"
+                android:maxLines="1"
                 android:textColor="#64748B"
                 android:textSize="12sp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginTop="2dp"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+                tools:text="Profil Asosiasi Pekebun Swadaya" />
 
-            <!-- Progress Bar -->
+            <!-- PROGRESS CONTAINER -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:layout_marginTop="8dp">
+                android:orientation="horizontal">
 
                 <ProgressBar
                     android:id="@+id/pbModulProgress"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dp"
+                    android:layout_height="6dp"
                     android:layout_weight="1"
-                    android:layout_height="8dp"
                     android:max="100"
                     android:progress="0"
                     android:progressDrawable="@drawable/custom_progress_bar" />
@@ -82,21 +90,34 @@
                     android:id="@+id/tvProgressPercent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0%"
-                    android:textColor="@color/agri_green_dark"
-                    android:textSize="12sp"
+                    android:layout_marginStart="10dp"
                     android:fontFamily="@font/poppins_bold"
-                    android:layout_marginStart="8dp" />
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    tools:text="0%" />
             </LinearLayout>
+
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_media_play"
-            app:tint="#CBD5E1"
-            android:layout_marginStart="8dp" />
+        <!-- CHEVRON ACTION ICON -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="10dp"
+            app:cardBackgroundColor="#F4F7F4"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:contentDescription="Buka Modul"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/primary" />
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

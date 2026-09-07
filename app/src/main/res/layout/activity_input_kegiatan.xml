@@ -6,10 +6,10 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F3"
+    android:background="#F8F9FA"
     tools:context=".InputKegiatan.InputKegiatanActivity">
 
-    <!-- ===================== TOOLBAR ===================== -->
+    <!-- ===================== TOOLBAR (PERSIS SEPERTI AUDIT INTERNAL) ===================== -->
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -17,7 +17,6 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Top Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="64dp"
@@ -45,7 +44,7 @@
                     android:contentDescription="Kembali" />
             </LinearLayout>
 
-            <!-- Title + Subtitle (tengah) -->
+            <!-- Title + Subtitle -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -58,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Input Kegiatan"
+                    android:text="Input Kegiatan Kebun"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:fontFamily="@font/poppins_bold"
@@ -67,37 +66,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kebun Sawit · Blok A3"
+                    android:text="Pencatatan Racun, Pemupukan &amp; Limbah"
                     android:textColor="#99FFFFFF"
                     android:textSize="11sp"
                     android:layout_marginTop="1dp" />
             </LinearLayout>
 
-            <!-- Tombol Riwayat -->
-            <LinearLayout
-                android:id="@+id/btnRiwayat"
+            <!-- Spacer Kanan -->
+            <View
                 android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:gravity="center"
-                android:background="@drawable/bg_toolbar_btn"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_history"
-                    app:tint="#FFFFFF"
-                    android:contentDescription="Riwayat" />
-            </LinearLayout>
+                android:layout_height="36dp" />
 
         </LinearLayout>
 
-
-
     </LinearLayout>
 
-    <!-- ===================== SCROLLVIEW FORM ===================== -->
+    <!-- ===================== SCROLLVIEW FORM (STYLE AUDIT INTERNAL) ===================== -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -111,249 +95,182 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- ===== TANGGAL ===== -->
-            <LinearLayout
+            <!-- Banner Header Section (Persis Audit Internal) -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="#FFFFFF">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tanggal"
-                    android:textColor="#5A6B7C"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:layout_marginBottom="6dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:boxStrokeColor="#E2E8F0"
-                    app:boxStrokeWidth="1dp"
-                    app:boxCornerRadiusTopStart="14dp"
-                    app:boxCornerRadiusTopEnd="14dp"
-                    app:boxCornerRadiusBottomStart="14dp"
-                    app:boxCornerRadiusBottomEnd="14dp"
-                    app:boxBackgroundColor="#F7F9FA"
-                    app:startIconDrawable="@drawable/ic_calendar_month"
-                    app:startIconTint="#5A6B7C">
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etTanggal"
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#F4F7F4">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_shovel"
+                            app:tint="@color/primary"
+                            android:contentDescription="Icon Kegiatan" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FORM KEGIATAN"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.08" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Penggunaan Bahan &amp; Limbah"
+                            android:textColor="@color/tertiary"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:layout_marginTop="1dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lengkapi rincian kegiatan kebun sawit"
+                            android:textColor="#64748B"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/poppins_regular" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD CONTAINER 1: WAKTU & LOKASI -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- 1. TANGGAL RENCANA / PELAKSANAAN -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tanggal Pelaksanaan"
+                            android:textColor="@color/tertiary"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_semibold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*Wajib"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etTanggal"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:paddingHorizontal="16dp"
+                        android:hint="Pilih Tanggal Rencana"
                         android:focusable="false"
-                        android:focusableInTouchMode="false"
                         android:clickable="true"
                         android:cursorVisible="false"
                         android:inputType="none"
-                        android:hint="18 Jan 2026"
+                        android:textColor="#1E293B"
+                        android:textColorHint="#94A3B8"
+                        android:fontFamily="@font/poppins_medium"
                         android:textSize="14sp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textColor="#1E293B" />
+                        android:drawableEnd="@drawable/ic_calendar_month"
+                        android:drawableTint="@color/primary"
+                        android:layout_marginBottom="18dp" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <!-- ===== DIVIDER: DETAIL KEGIATAN ===== -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="14dp">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E8ECE9" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  DETAIL KEGIATAN  "
-                    android:textColor="#5A6B7C"
-                    android:textSize="11sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:letterSpacing="0.05" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E8ECE9" />
-            </LinearLayout>
-
-            <!-- ===== JENIS KEGIATAN ===== -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Jenis Kegiatan"
-                android:textColor="#5A6B7C"
-                android:textSize="13sp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginBottom="6dp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="#E2E8F0"
-                app:boxStrokeWidth="1dp"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxBackgroundColor="#F7F9FA"
-                app:startIconDrawable="@drawable/ic_shovel"
-                app:startIconTint="#5A6B7C">
-
-                <AutoCompleteTextView
-                    android:id="@+id/spinnerKegiatan"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Pilih Kegiatan (Mupuk / Panen / Semprot)"
-                    android:inputType="none"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="#1E293B" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- ===== BAHAN / HASIL KERJA ===== -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bahan / Hasil Kerja"
-                android:textColor="#5A6B7C"
-                android:textSize="13sp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="6dp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="#E2E8F0"
-                app:boxStrokeWidth="1dp"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxBackgroundColor="#F7F9FA"
-                app:startIconDrawable="@drawable/ic_package"
-                app:startIconTint="#5A6B7C">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etBahan"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Contoh: Pupuk NPK Mahkota / Egrek"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="#1E293B" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- ===== BARIS DOSIS & LAHAN ===== -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="14dp"
-                android:baselineAligned="false">
-
-                <!-- DOSIS -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.2"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dosis / Jumlah"
-                        android:textColor="#5A6B7C"
-                        android:textSize="13sp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_marginBottom="6dp" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <!-- 2. LOKASI LAHAN PENGENDALIAN -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:boxStrokeWidth="1dp"
-                        app:boxCornerRadiusTopStart="14dp"
-                        app:boxCornerRadiusTopEnd="14dp"
-                        app:boxCornerRadiusBottomStart="14dp"
-                        app:boxCornerRadiusBottomEnd="14dp"
-                        app:boxBackgroundColor="#F7F9FA"
-                        app:startIconDrawable="@drawable/ic_calculator"
-                        app:startIconTint="#5A6B7C"
-                        app:suffixText="kg"
-                        app:suffixTextColor="#5A6B7C">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDosis"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"
-                            android:hint="1"
-                            android:textSize="14sp"
-                            android:fontFamily="@font/poppins_medium"
-                            android:textColor="#1E293B" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                            android:layout_weight="1"
+                            android:text="Lokasi Lahan Pengendalian"
+                            android:textColor="@color/tertiary"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_semibold" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*Wajib"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Lahan"
-                        android:textColor="#5A6B7C"
-                        android:textSize="13sp"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_marginBottom="6dp" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <EditText
+                        android:id="@+id/etPilihLahan"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:boxStrokeWidth="1dp"
-                        app:boxCornerRadiusTopStart="14dp"
-                        app:boxCornerRadiusTopEnd="14dp"
-                        app:boxCornerRadiusBottomStart="14dp"
-                        app:boxCornerRadiusBottomEnd="14dp"
-                        app:boxBackgroundColor="#F7F9FA"
-                        app:startIconDrawable="@drawable/ic_map_pin"
-                        app:startIconTint="#5A6B7C">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPilihLahan"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:clickable="true"
-                            android:cursorVisible="false"
-                            android:inputType="none"
-                            android:hint="Pilih Lahan"
-                            android:textSize="14sp"
-                            android:fontFamily="@font/poppins_medium"
-                            android:textColor="#1E293B"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:paddingHorizontal="16dp"
+                        android:hint="Klik untuk Pilih Lahan"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:inputType="none"
+                        android:textColor="#1E293B"
+                        android:textColorHint="#94A3B8"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        android:drawableEnd="@drawable/ic_map_pin"
+                        android:drawableTint="@color/primary" />
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chipGroupLahan"
@@ -361,90 +278,338 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         app:singleLine="false"
-                        app:singleSelection="false"/>
+                        app:singleSelection="false" />
 
                 </LinearLayout>
-            </LinearLayout>
-            <!-- LAHAN -->
 
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- ===== DIVIDER: TENAGA & BIAYA ===== -->
-            <LinearLayout
+            <!-- CARD CONTAINER 2: RINCIAN KEGIATAN & BAHAN -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="14dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="#FFFFFF">
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E8ECE9" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  TENAGA &amp; BIAYA  "
-                    android:textColor="#5A6B7C"
-                    android:textSize="11sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:letterSpacing="0.05" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E8ECE9" />
-            </LinearLayout>
-
-            <!-- ===== TENAGA KERJA ===== -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tenaga Kerja"
-                android:textColor="#5A6B7C"
-                android:textSize="13sp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginBottom="6dp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:boxStrokeColor="#E2E8F0"
-                app:boxStrokeWidth="1dp"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxBackgroundColor="#F7F9FA"
-                app:startIconDrawable="@drawable/ic_users"
-                app:startIconTint="#5A6B7C">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTenagaKerja"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Upah Harian / Borongan"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="#1E293B" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
+                    <!-- 3. NAMA KEGIATAN -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
 
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nama Kegiatan"
+                            android:textColor="@color/tertiary"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_semibold" />
 
-            <!-- ===== TOMBOL SIMPAN ===== -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*Wajib"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxBackgroundColor="#F8FAFC">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spinnerKegiatan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Pilih Kegiatan (Hama / Gulma / Pemupukan)"
+                            android:inputType="none"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- 4. NAMA RACUN / PUPUK -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nama Racun / Pupuk"
+                            android:textColor="@color/tertiary"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_semibold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*Wajib"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etNamaBahan"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_input_soft"
+                        android:paddingHorizontal="16dp"
+                        android:hint="Contoh: Gramoxone / NPK Phonska / Roundup"
+                        android:inputType="textPersonName"
+                        android:textColor="#1E293B"
+                        android:textColorHint="#94A3B8"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="18dp" />
+
+                    <!-- 5. BARIS JUMLAH & SATUAN -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <!-- JUMLAH -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.3"
+                            android:layout_marginEnd="10dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="6dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Jumlah"
+                                    android:textColor="@color/tertiary"
+                                    android:textSize="13.5sp"
+                                    android:fontFamily="@font/poppins_semibold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="*Wajib"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="11sp"
+                                    android:fontFamily="@font/poppins_medium" />
+                            </LinearLayout>
+
+                            <EditText
+                                android:id="@+id/etDosis"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:background="@drawable/bg_input_soft"
+                                android:paddingHorizontal="16dp"
+                                android:hint="0"
+                                android:inputType="numberDecimal"
+                                android:textColor="#1E293B"
+                                android:textColorHint="#94A3B8"
+                                android:fontFamily="@font/poppins_medium"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <!-- SATUAN -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Satuan"
+                                android:textColor="@color/tertiary"
+                                android:textSize="13.5sp"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:layout_marginBottom="6dp" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:boxStrokeColor="#E2E8F0"
+                                app:boxStrokeWidth="1dp"
+                                app:boxCornerRadiusTopStart="12dp"
+                                app:boxCornerRadiusTopEnd="12dp"
+                                app:boxCornerRadiusBottomStart="12dp"
+                                app:boxCornerRadiusBottomEnd="12dp"
+                                app:boxBackgroundColor="#F8FAFC">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/spinnerSatuan"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Liter"
+                                    android:inputType="none"
+                                    android:textSize="13.5sp"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:textColor="#1E293B" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CARD CONTAINER 3: PENANGANAN LIMBAH -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- 6. JENIS LIMBAH YANG DIHASILKAN -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Jenis Limbah Dihasilkan"
+                            android:textColor="@color/tertiary"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_semibold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="*Wajib"
+                            android:textColor="@color/secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/poppins_medium" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp"
+                        app:boxStrokeColor="#E2E8F0"
+                        app:boxStrokeWidth="1dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxBackgroundColor="#F8FAFC">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/spinnerJenisLimbah"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Pilih Limbah (Botol 1L/5L/Plastik)"
+                            android:inputType="none"
+                            android:textSize="13.5sp"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textColor="#1E293B" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- 7. STATUS LIMBAH -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status Penyerahan Limbah *"
+                        android:textColor="@color/tertiary"
+                        android:textSize="13.5sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:layout_marginBottom="8dp" />
+
+                    <RadioGroup
+                        android:id="@+id/rgStatusLimbah"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rbBelumDisetor"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Belum Disetor"
+                            android:checked="true"
+                            android:textColor="#1E293B"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="13.5sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbSudahDisetor"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Sudah Disetor"
+                            android:textColor="#1E293B"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="13.5sp" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- TOMBOL SIMPAN (STYLE AUDIT INTERNAL) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSimpan"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="24dp"
                 app:cornerRadius="12dp"
-                android:backgroundTint="@color/agri_green_dark"
-                android:text="Simpan Kegiatan"
+                app:backgroundTint="@color/primary"
+                android:text="Simpan Data Kegiatan"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
@@ -454,7 +619,7 @@
                 app:iconSize="18dp"
                 app:iconPadding="8dp"
                 app:iconGravity="textStart"
-                app:elevation="4dp" />
+                app:elevation="2dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

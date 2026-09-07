@@ -1,127 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#F8F9FA"
     tools:context=".Home.DetailEdukasiActivity">
 
-    <!-- Top App Bar -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topBar"
+    <!-- TOP TOOLBAR BANNER -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/agri_green_dark"
-        android:paddingHorizontal="16dp"
-        android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_toolbar_gradient"
+        app:elevation="4dp">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_arrow_left"
-            app:tint="#FFFFFF"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:contentDescription="Back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp">
 
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Modul Edukasi"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_bold"
-            android:gravity="center"
-            android:layout_marginHorizontal="16dp"
-            app:layout_constraintStart_toEndOf="@id/btnBack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Kembali"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="@color/white" />
 
-    <!-- Progress Indicator at the top -->
-    <ProgressBar
-        android:id="@+id/pbReadingProgress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/custom_progress_bar"
-        app:layout_constraintTop_toBottomOf="@id/topBar" />
+                <TextView
+                    android:id="@+id/tvToolbarTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="Modul Edukasi"
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
 
+                <View
+                    android:layout_width="38dp"
+                    android:layout_height="38dp" />
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Progress Indicator at the top of content -->
+        <ProgressBar
+            android:id="@+id/pbReadingProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/custom_progress_bar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- MAIN SCROLL CONTENT -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/pbReadingProgress"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="16dp"
+            android:paddingBottom="40dp">
 
-            <TextView
-                android:id="@+id/tvModulTitle"
+            <!-- HEADER BANNER CARD FOR ARTICLE TITLE -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="PROFIL ASOSIASI PEKEBUN SWADAYA KELAPA SAWIT PELALAWAN SIAK"
-                android:textColor="#1E293B"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:fontFamily="@font/poppins_bold"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
 
-            <TextView
-                android:id="@+id/tvModulContent"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_green"
+                            android:fontFamily="@font/poppins_bold"
+                            android:letterSpacing="0.05"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="📖 MODUL EDUKASI"
+                            android:textColor="#1B4D2E"
+                            android:textSize="11sp" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="⏱️ ~5 Halaman"
+                            android:textColor="#64748B"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvModulTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#0D2617"
+                        android:textSize="17sp"
+                        tools:text="PROFIL ASOSIASI PEKEBUN SWADAYA KELAPA SAWIT PELALAWAN SIAK" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ARTICLE CONTENT CONTAINER CARD -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#334155"
-                android:textSize="14sp"
-                android:lineSpacingExtra="8dp"
-                android:fontFamily="@font/poppins_regular"
-                tools:text="1. Latar Belakang\n..." />
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/tvModulContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:lineSpacingExtra="8dp"
+                        android:textColor="#334155"
+                        android:textSize="13.5sp"
+                        tools:text="1. Latar Belakang\nAsosiasi Pekebun Swadaya Kelapa Sawit..." />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SELESAI / COMPLETION CARD -->
             <LinearLayout
                 android:id="@+id/layoutSelesai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:visibility="gone"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp">
-                
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:src="@android:drawable/ic_dialog_info"
-                    app:tint="@color/agri_green_dark" />
+                android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Anda telah menyelesaikan modul ini!"
-                    android:textColor="@color/agri_green_dark"
-                    android:fontFamily="@font/poppins_bold"
-                    android:layout_marginTop="8dp" />
+                    app:cardBackgroundColor="#F4F7F4"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#10B981"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:contentDescription="Selesai"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="#10B981" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="Selamat! Anda Telah Menyelesaikan Modul Ini 🎉"
+                            android:textColor="#1B4D2E"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:text="Progress membaca Anda telah tercatat 100%"
+                            android:textColor="#64748B"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -316,6 +316,8 @@ class RiwayatActivity : AppCompatActivity() {
                                 }
                             } catch (e: Exception) { null }
 
+                            val createdAtVal = item.optString("created_at", "").ifEmpty { tanggalVal }
+
                             list.add(
                                 RiwayatItem(
                                     id = idVal,
@@ -327,10 +329,19 @@ class RiwayatActivity : AppCompatActivity() {
                                     lahanId = lahanIdVal,
                                     jumlahTbs = jumlahVal,
                                     sourceTable = sourceTableVal,
-                                    isRead = item.optInt("is_read", 1)
+                                    isRead = item.optInt("is_read", 1),
+                                    createdAt = createdAtVal
                                 )
                             )
                         }
+
+                        // Urutkan transaksi berdasarkan created_at / tanggal terbaru di posisi PALING ATAS
+                        list.sortWith(Comparator { a, b ->
+                            val timeA = if (!a.createdAt.isNullOrEmpty()) a.createdAt!! else a.tanggal
+                            val timeB = if (!b.createdAt.isNullOrEmpty()) b.createdAt!! else b.tanggal
+                            val cmp = timeB.compareTo(timeA)
+                            if (cmp != 0) cmp else b.id.compareTo(a.id)
+                        })
 
                         runOnUiThread {
                             if (list.isEmpty()) {

@@ -487,8 +487,12 @@ object PetaniApi {
         jenisKegiatanId: Int,
         petaniId: Int,
         kegiatanKet: String,
+        namaBahan: String = "",
+        jenisLimbah: String = "",
+        statusLimbah: String = "Belum Disetor",
+        namaKegiatan: String = "",
         lahanIds: List<Int>
-    ): okhttp3.Call { // <-- 1. Tambahkan tipe kembalian Call di sini
+    ): okhttp3.Call {
 
         val builder = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
@@ -498,6 +502,10 @@ object PetaniApi {
             .addFormDataPart("jenis_kegiatan_id", jenisKegiatanId.toString())
             .addFormDataPart("petani_id", petaniId.toString())
             .addFormDataPart("kegiatan_ket", kegiatanKet)
+            .addFormDataPart("nama_bahan", namaBahan)
+            .addFormDataPart("jenis_limbah", jenisLimbah)
+            .addFormDataPart("status_limbah", statusLimbah)
+            .addFormDataPart("nama_kegiatan", namaKegiatan)
 
         // kirim semua lahan
         lahanIds.forEach { id ->
@@ -514,7 +522,6 @@ object PetaniApi {
             .post(requestBody)
             .build()
 
-        // 2. KUNCI UTAMA: Kembalikan objek Call-nya, hapus .enqueue()
         return ApiClient.client.newCall(request)
     }
 

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,8 +19,9 @@ import com.example.notasawit.databinding.ActivityEditProfilPetaniBinding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 class EditProfilPetaniActivity : AppCompatActivity() {
@@ -35,26 +37,25 @@ class EditProfilPetaniActivity : AppCompatActivity() {
         override fun toString(): String = name
     }
 
-    private var selectedImageFile: java.io.File? = null
+    private var selectedImageFile: File? = null
 
     private val pickImageLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri: android.net.Uri? ->
         if (uri != null) {
             try {
                 val inputStream = contentResolver.openInputStream(uri)
-                val tempFile = java.io.File(cacheDir, "temp_profile_image_${System.currentTimeMillis()}.jpg")
-                val outputStream = java.io.FileOutputStream(tempFile)
+                val tempFile = File(cacheDir, "temp_profile_image_${System.currentTimeMillis()}.jpg")
+                val outputStream = FileOutputStream(tempFile)
                 inputStream?.copyTo(outputStream)
                 inputStream?.close()
                 outputStream.close()
                 
                 val bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
-                val compressedFile = java.io.File(cacheDir, "compressed_profile_${System.currentTimeMillis()}.jpg")
-                val compressStream = java.io.FileOutputStream(compressedFile)
+                val compressedFile = File(cacheDir, "compressed_profile_${System.currentTimeMillis()}.jpg")
+                val compressStream = FileOutputStream(compressedFile)
                 bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, compressStream)
                 compressStream.flush()
                 compressStream.close()
                 
-                // Hapus tempFile asli karena tidak dipakai lagi
                 tempFile.delete()
                 
                 val finalFile = compressedFile
@@ -110,6 +111,12 @@ class EditProfilPetaniActivity : AppCompatActivity() {
             finish()
         }
 
+        // Setup Spinner Jenis Kelamin
+        val jkOptions = arrayOf("Laki-laki", "Perempuan")
+        val jkAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, jkOptions)
+        jkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerJenisKelamin.adapter = jkAdapter
+
         binding.btnSimpan.setOnClickListener {
             val nama = binding.etNama.text.toString().trim()
             val username = binding.etUsername.text.toString().trim()
@@ -117,7 +124,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
             val noHp = binding.etNoHp.text.toString().trim()
             val alamat = binding.etAlamat.text.toString().trim()
 
-            if (nama.isEmpty() || username.isEmpty() || email.isEmpty() || noHp.isEmpty() || alamat.isEmpty() || selectedDesaId == null) {
+            if (nama.isEmpty() || username.isEmpty() || noHp.isEmpty() || alamat.isEmpty() || selectedDesaId == null) {
                 Toast.makeText(this, "Harap lengkapi semua data wajib", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -145,10 +152,9 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                         var message = "Profil berhasil diperbarui"
                         try {
                             if (bodyString != null) {
-                                val json = org.json.JSONObject(bodyString)
+                                val json = JSONObject(bodyString)
                                 message = json.optString("message", message)
                                 
-                                // Extract specific validation error if present
                                 val errors = json.optJSONObject("errors")
                                 if (errors != null && errors.keys().hasNext()) {
                                     val firstKey = errors.keys().next()
@@ -223,6 +229,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                     val body = response.body?.string()
                     try {
                         val jsonArray = JSONObject(body!!).getJSONArray("data")
+                        desaList.clear()
                         for (i in 0 until jsonArray.length()) {
                             val obj = jsonArray.getJSONObject(i)
                             desaList.add(Desa(obj.getInt("desa_id"), obj.getString("desa_nama")))
@@ -231,13 +238,19 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                         runOnUiThread {
                             val adapter = ArrayAdapter(
                                 this@EditProfilPetaniActivity,
-                                android.R.layout.simple_dropdown_item_1line,
+                                android.R.layout.simple_spinner_item,
                                 desaList
                             )
-                            binding.spinnerDesa.setAdapter(adapter)
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                            binding.spinnerDesa.adapter = adapter
                             
-                            binding.spinnerDesa.setOnItemClickListener { _, _, position, _ ->
-                                selectedDesaId = desaList[position].id
+                            binding.spinnerDesa.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                    if (position >= 0 && position < desaList.size) {
+                                        selectedDesaId = desaList[position].id
+                                    }
+                                }
+                                override fun onNothingSelected(parent: AdapterView<*>?) {}
                             }
                             
                             fetchDataProfil(petaniId)
@@ -274,6 +287,7 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                 val username = data.optString("petani_username", "")
                                 val email = data.optString("petani_email", "")
                                 val noHp = data.optString("petani_no_hp", "")
+                                val jenisKelamin = data.optString("petani_jenis_kelamin", "")
                                 val alamat = if (data.isNull("petani_alamat")) "" else data.optString("petani_alamat", "")
                                 val desaId = data.optInt("desa_id", 0)
                                 val profilUrl = data.optString("petani_profil", "")
@@ -285,15 +299,19 @@ class EditProfilPetaniActivity : AppCompatActivity() {
                                     binding.etNoHp.setText(noHp)
                                     binding.etAlamat.setText(alamat)
 
+                                    if (jenisKelamin.isNotEmpty()) {
+                                        val jkPos = if (jenisKelamin.contains("Laki", ignoreCase = true)) 0 else 1
+                                        binding.spinnerJenisKelamin.setSelection(jkPos)
+                                    }
+
                                     if (desaId != 0) {
-                                        val selectedDesa = desaList.find { it.id == desaId }
-                                        if (selectedDesa != null) {
-                                            binding.spinnerDesa.setText(selectedDesa.name, false)
-                                            selectedDesaId = selectedDesa.id
+                                        val index = desaList.indexOfFirst { it.id == desaId }
+                                        if (index >= 0) {
+                                            binding.spinnerDesa.setSelection(index)
+                                            selectedDesaId = desaId
                                         }
                                     }
                                     
-                                    // Set Initials
                                     val parts = nama.trim().split("\\s+".toRegex())
                                     val initials = if (parts.size >= 2) {
                                         "${parts[0].take(1)}${parts[1].take(1)}".uppercase()

@@ -18,10 +18,10 @@ class NotificationAdapter(
     var isSelectionMode = false
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val rootCard: androidx.cardview.widget.CardView = view as androidx.cardview.widget.CardView
+        val rootCard: com.google.android.material.card.MaterialCardView = view as com.google.android.material.card.MaterialCardView
         val container: View = view.findViewById(R.id.containerNotification)
         val indicatorUnread: View = view.findViewById(R.id.indicatorUnread)
-        val cvIconBackground: androidx.cardview.widget.CardView = view.findViewById(R.id.cvIconBackground)
+        val cvIconBackground: com.google.android.material.card.MaterialCardView = view.findViewById(R.id.cvIconBackground)
         val ivIcon: android.widget.ImageView = view.findViewById(R.id.ivIcon)
         val tvTitle: TextView = view.findViewById(R.id.tvTitle)
         val tvAuditor: TextView = view.findViewById(R.id.tvAuditor)
@@ -46,7 +46,7 @@ class NotificationAdapter(
             "produksi" -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_income)
                 holder.ivIcon.setColorFilter(Color.parseColor("#1B4D2E"))
-                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#E8ECE9"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F4F7F4"))
             }
             "pengeluaran" -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_outcome)
@@ -60,17 +60,21 @@ class NotificationAdapter(
             }
             else -> {
                 holder.ivIcon.setImageResource(R.drawable.ic_notification)
-                holder.ivIcon.setColorFilter(Color.parseColor("#9E9E9E"))
-                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F8F9FA"))
+                holder.ivIcon.setColorFilter(Color.parseColor("#1B4D2E"))
+                holder.cvIconBackground.setCardBackgroundColor(Color.parseColor("#F4F7F4"))
             }
         }
 
         if (item.is_read == 0) {
             holder.indicatorUnread.visibility = View.VISIBLE
-            holder.rootCard.setCardBackgroundColor(Color.parseColor("#E8ECE9"))
+            holder.rootCard.setCardBackgroundColor(Color.parseColor("#FAFFFA"))
+            holder.rootCard.strokeColor = Color.parseColor("#1B4D2E")
+            holder.rootCard.strokeWidth = 2
         } else {
             holder.indicatorUnread.visibility = View.INVISIBLE
             holder.rootCard.setCardBackgroundColor(Color.parseColor("#FFFFFF"))
+            holder.rootCard.strokeColor = Color.parseColor("#E2E8F0")
+            holder.rootCard.strokeWidth = 1
         }
 
         if (isSelectionMode) {

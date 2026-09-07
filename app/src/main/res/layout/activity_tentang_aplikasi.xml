@@ -1,93 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA"
-    android:orientation="vertical">
+    tools:context=".ProfilPetani.TentangAplikasiActivity">
 
-    <LinearLayout
+    <!-- TOP TOOLBAR BANNER -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:background="@drawable/bg_toolbar_gradient"
+        app:elevation="4dp">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_left"
-            android:contentDescription="Kembali" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Tentang Aplikasi"
-            android:textColor="#1B4D2E"
-            android:textSize="18sp"
-            android:fontFamily="@font/poppins_bold" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-    <ScrollView
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Kembali"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_left"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:text="Tentang Aplikasi"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="38dp"
+                    android:layout_height="38dp" />
+
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- MAIN SCROLL CONTENT -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:gravity="center_horizontal">
+            android:padding="16dp"
+            android:paddingBottom="40dp">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/logo"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp" />
+            <!-- HERO LOGO & TITLE CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        app:cardBackgroundColor="#F4F7F4"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#1B4D2E"
+                        app:strokeWidth="1.5dp">
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Logo NotaSawit"
+                            android:src="@drawable/logo" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="NotaSawit"
+                        android:textColor="#0D2617"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_badge_green"
+                        android:fontFamily="@font/poppins_bold"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="3dp"
+                        android:text="Versi 1.0.0 (Build 2026)"
+                        android:textColor="#1B4D2E"
+                        android:textSize="11.5sp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ABOUT DESCRIPTION CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:useCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Tentang NotaSawit"
+                        android:textColor="#0D2617"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#F1F5F9" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:lineSpacingExtra="6dp"
+                        android:text="NotaSawit adalah platform digital pencatatan keuangan dan tata kelola audit kebun kelapa sawit swadaya. Dirancang khusus untuk membantu para petani dan pengurus asosiasi dalam mengelola transaksi keuangan, riwayat panen TBS, biaya operasional, serta pemetaan lahan sesuai standar sertifikasi RSPO dan ISPO."
+                        android:textColor="#334155"
+                        android:textSize="13.5sp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- COPYRIGHT FOOTER -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Notasawit"
-                android:textColor="#1B4D2E"
-                android:textSize="24sp"
-                android:fontFamily="@font/poppins_bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Versi 1.0.0"
-                android:textColor="#777777"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginBottom="32dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Notasawit adalah aplikasi pencatatan dan pengelolaan kebun kelapa sawit yang dirancang untuk memudahkan para petani dalam mencatat hasil panen, pengeluaran, serta aktivitas harian di kebun."
-                android:textColor="#002617"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"
-                android:textAlignment="center"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="24dp" />
-                
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="© 2026 Notasawit. Hak cipta dilindungi undang-undang."
-                android:textColor="#999999"
-                android:textSize="12sp"
+                android:text="© 2026 Asosiasi Pekebun Swadaya Pelalawan Siak.\nHak Cipta Dilindungi Undang-Undang."
                 android:textAlignment="center"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginTop="32dp" />
+                android:textColor="#64748B"
+                android:textSize="11.5sp" />
 
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

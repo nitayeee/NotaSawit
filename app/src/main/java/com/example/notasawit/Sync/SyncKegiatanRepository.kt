@@ -37,6 +37,10 @@ class SyncKegiatanRepository(
                     jenisKegiatanId = kegiatan.kegiatan_jenis,
                     petaniId = kegiatan.petani_id,
                     kegiatanKet = kegiatan.kegiatan_ket,
+                    namaBahan = kegiatan.nama_bahan,
+                    jenisLimbah = kegiatan.jenis_limbah,
+                    statusLimbah = kegiatan.status_limbah,
+                    namaKegiatan = kegiatan.nama_kegiatan,
                     lahanIds = lahanIds
                 )
 
