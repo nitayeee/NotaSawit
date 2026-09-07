@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Admin.Beranda.BerandaAdminFragment">
 
-    <!-- TOP BAR -->
+    <!-- TOP BAR DENGAN SOFT SHADOW (MATCHING PETANI BERANDA) -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:backgroundTint="@color/white"
-        android:elevation="0dp"
-        app:elevation="0dp">
+        android:elevation="3dp"
+        app:elevation="3dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -31,26 +31,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
 
                 <!-- Logo Box -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:layout_marginEnd="12dp"
+                    app:cardBackgroundColor="#F4F7F4"
                     app:cardCornerRadius="10dp"
-                    app:cardBackgroundColor="@color/agri_green_light"
-                    app:cardElevation="6dp">
+                    app:cardElevation="2dp"
+                    app:strokeColor="@android:color/transparent"
+                    app:strokeWidth="0dp">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/logo"
-                        android:contentDescription="Logo" />
+                        android:contentDescription="Logo NotaSawit"
+                        android:src="@drawable/logo" />
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- Greeting -->
                 <LinearLayout
@@ -62,41 +64,43 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
                         android:text="Selamat datang 👋"
-                        android:textColor="#999999"
-                        android:textSize="12sp"
-                        android:textStyle="normal" />
+                        android:textColor="#64748B"
+                        android:textSize="11.5sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_bold"
                             android:text="Halo, "
-                            android:textColor="#002617"
-                            android:textSize="17sp"
-                            android:fontFamily="@font/poppins_bold" />
+                            android:textColor="#0D2617"
+                            android:textSize="16.5sp" />
 
                         <TextView
                             android:id="@+id/username"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Dika!"
+                            android:fontFamily="@font/poppins_bold"
+                            android:text="Admin!"
                             android:textColor="#1B4D2E"
-                            android:textSize="17sp"
-                            android:fontFamily="@font/poppins_bold" />
+                            android:textSize="16.5sp" />
 
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Avatar -->
+                <!-- Avatar Profile Container -->
                 <FrameLayout
                     android:id="@+id/btnProfileContainer"
-                    android:layout_width="39dp"
-                    android:layout_height="39dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
 
@@ -104,11 +108,12 @@
                         android:id="@+id/tvInitial"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:background="@drawable/bg_avatar_circle"
                         android:fontFamily="@font/poppins_bold"
-                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:text="A"
                         android:textColor="@android:color/white"
-                        android:background="@drawable/bg_avatar_circle"/>
+                        android:textSize="16sp" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/imgProfile"
@@ -116,25 +121,25 @@
                         android:layout_height="match_parent"
                         android:padding="1dp"
                         android:scaleType="centerCrop"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/agri_green_dark"
-                        app:shapeAppearanceOverlay="@style/CircleImage"/>
+                        app:shapeAppearanceOverlay="@style/CircleImage"
+                        app:strokeColor="#1B4D2E"
+                        app:strokeWidth="2dp" />
 
                 </FrameLayout>
 
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
 
-        <!-- HEADER DIVIDER LINE -->
+        <!-- Dummy view for scroll compatibility -->
         <View
             android:id="@+id/view_header_shadow"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#ECEFF1"
+            android:layout_height="0dp"
             app:layout_scrollFlags="scroll|enterAlways|snap" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- SWIPE REFRESH CONTAINER -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshBeranda"
         android:layout_width="match_parent"
@@ -144,179 +149,331 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp"
+                android:paddingBottom="40dp">
 
+                <!-- AUDIT INTERNAL STYLE HEADER BANNER CARD -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardBackgroundColor="#F4F7F4"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Ikon Audit Header"
+                                android:src="@drawable/ic_audit_header"
+                                app:tint="@color/primary" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_bold"
+                                android:letterSpacing="0.08"
+                                android:text="PANTAUAN SISTEM ADMINISTRATOR"
+                                android:textColor="@color/secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="Dashboard Administrasi"
+                                android:textColor="@color/tertiary"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_regular"
+                                android:text="Ringkasan statistik petani, keuangan &amp; audit internal"
+                                android:textColor="#64748B"
+                                android:textSize="11.5sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- STATISTIK OVERVIEW CARDS (JUMLAH PETANI & LUAS LAHAN) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginBottom="24dp">
+                    android:weightSum="2">
 
+                    <!-- Card Jumlah Petani -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
                         android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
+                        app:cardBackgroundColor="@color/primary"
                         app:cardCornerRadius="16dp"
-                        app:cardElevation="6dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="@android:color/transparent">
+                        app:useCompatPadding="true">
 
-                        <RelativeLayout
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_gradient_petani"
+                            android:orientation="vertical"
                             android:padding="16dp">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_alignParentStart="true"
-                                android:layout_toStartOf="@id/icPetani"
-                                android:layout_centerInParent="true">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:text="Jumlah Petani"
-                                    android:textColor="@color/white"
+                                    android:layout_weight="1"
                                     android:fontFamily="@font/poppins_medium"
-                                    android:textSize="12sp" />
+                                    android:text="Jumlah Petani"
+                                    android:textColor="#E2E8F0"
+                                    android:textSize="11.5sp" />
 
-                                <TextView
-                                    android:id="@+id/tvJumlahPetani"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="13"
-                                    android:textColor="@color/white"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:textSize="28sp"
-                                    android:layout_marginTop="4dp" />
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    app:cardBackgroundColor="#2D6A4F"
+                                    app:cardCornerRadius="8dp"
+                                    app:cardElevation="0dp"
+                                    app:strokeWidth="0dp">
+
+                                    <ImageView
+                                        android:id="@+id/icPetani"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Ikon Petani"
+                                        android:src="@drawable/ic_profile"
+                                        app:tint="@color/white" />
+                                </com.google.android.material.card.MaterialCardView>
+
                             </LinearLayout>
 
-                            <ImageView
-                                android:id="@+id/icPetani"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/ic_profile"
-                                android:contentDescription="Icon Petani"
-                                app:tint="@color/white" />
-                        </RelativeLayout>
+                            <TextView
+                                android:id="@+id/tvJumlahPetani"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="0"
+                                android:textColor="@color/white"
+                                android:textSize="26sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_regular"
+                                android:text="Petani Terdaftar"
+                                android:textColor="#A7F3D0"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
+                    <!-- Card Luas Lahan -->
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="8dp"
+                        app:cardBackgroundColor="#0D2617"
                         app:cardCornerRadius="16dp"
-                        app:cardElevation="6dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
-                        app:cardBackgroundColor="@android:color/transparent">
+                        app:useCompatPadding="true">
 
-                        <RelativeLayout
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_gradient_lahan"
+                            android:orientation="vertical"
                             android:padding="16dp">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_alignParentStart="true"
-                                android:layout_toStartOf="@id/icMap"
-                                android:layout_centerInParent="true">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
                                 <TextView
-                                    android:layout_width="145dp"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="1"
                                     android:fontFamily="@font/poppins_medium"
-                                    android:text="Luas Lahan (Ha)"
-                                    android:textColor="@color/tertiary"
-                                    android:textSize="12sp" />
+                                    android:text="Luas Lahan"
+                                    android:textColor="#E2E8F0"
+                                    android:textSize="11.5sp" />
 
-                                <TextView
-                                    android:id="@+id/tvLuasLahan"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="29"
-                                    android:textColor="@color/tertiary"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:textSize="28sp"
-                                    android:layout_marginTop="4dp" />
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    app:cardBackgroundColor="#1F3D2A"
+                                    app:cardCornerRadius="8dp"
+                                    app:cardElevation="0dp"
+                                    app:strokeWidth="0dp">
+
+                                    <ImageView
+                                        android:id="@+id/icMap"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Ikon Peta"
+                                        android:src="@drawable/ic_map"
+                                        app:tint="@color/secondary" />
+                                </com.google.android.material.card.MaterialCardView>
+
                             </LinearLayout>
 
-                            <ImageView
-                                android:id="@+id/icMap"
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
-                                android:layout_alignParentEnd="true"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/ic_map"
-                                android:contentDescription="Icon Peta"
-                                app:tint="@color/tertiary" />
-                        </RelativeLayout>
+                            <TextView
+                                android:id="@+id/tvLuasLahan"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="0.00"
+                                android:textColor="@color/secondary"
+                                android:textSize="26sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_regular"
+                                android:text="Hektar (Ha)"
+                                android:textColor="#EED57B"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
-
 
                 <!-- PEMASUKAN CHART CARD -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardElevation="3dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="18dp">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
+                            android:orientation="horizontal">
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_trending_up"
-                                app:tint="#1B4D2E"
-                                android:layout_marginEnd="8dp"
-                                android:contentDescription="Icon Pemasukan" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                app:cardBackgroundColor="#F4F7F4"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="Ikon Pemasukan"
+                                    android:src="@drawable/ic_trending_up"
+                                    app:tint="@color/primary" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="PEMASUKAN PER BULAN"
-                                android:textColor="#4A5568"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="13sp" />
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="PEMASUKAN PER BULAN"
+                                    android:textColor="#0D2617"
+                                    android:textSize="13.5sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:text="Tren pendapatan total panen TBS"
+                                    android:textColor="#64748B"
+                                    android:textSize="11.5sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="12dp"
+                            android:background="#F1F5F9" />
 
                         <com.github.mikephil.charting.charts.LineChart
                             android:id="@+id/lineChartPemasukan"
                             android:layout_width="match_parent"
-                            android:layout_height="250dp"
+                            android:layout_height="240dp"
                             android:background="@android:color/transparent" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -324,264 +481,359 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardElevation="3dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="18dp">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
+                            android:orientation="horizontal">
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_pie_chart"
-                                app:tint="#1B4D2E"
-                                android:layout_marginEnd="8dp"
-                                android:contentDescription="Icon Pengeluaran" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                app:cardBackgroundColor="#F4F7F4"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="Ikon Pengeluaran"
+                                    android:src="@drawable/ic_pie_chart"
+                                    app:tint="@color/primary" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="PENGELUARAN BERDASARKAN KATEGORI"
-                                android:textColor="#4A5568"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="13sp" />
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="PENGELUARAN PER KATEGORI"
+                                    android:textColor="#0D2617"
+                                    android:textSize="13.5sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:text="Proporsi biaya pupuk, racun &amp; operasional"
+                                    android:textColor="#64748B"
+                                    android:textSize="11.5sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="12dp"
+                            android:background="#F1F5F9" />
 
                         <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/pieChartPengeluaran"
                             android:layout_width="match_parent"
-                            android:layout_height="270dp"
+                            android:layout_height="260dp"
                             android:background="@android:color/transparent" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-
 
                 <!-- STATUS AUDIT INTERNAL CARD -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardElevation="3dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="18dp">
 
-                        <!-- Header with Document Check Icon -->
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
+                            android:orientation="horizontal">
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_audit_header"
-                                app:tint="#1B4D2E"
-                                android:layout_marginEnd="8dp"
-                                android:contentDescription="Icon Audit" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                app:cardBackgroundColor="#F4F7F4"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="Ikon Audit"
+                                    android:src="@drawable/ic_audit_header"
+                                    app:tint="@color/primary" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="STATUS AUDIT INTERNAL"
-                                android:textColor="#4A5568"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="13sp" />
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="STATUS AUDIT INTERNAL"
+                                    android:textColor="#0D2617"
+                                    android:textSize="13.5sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:text="Progres kelulusan sertifikasi RSPO/ISPO"
+                                    android:textColor="#64748B"
+                                    android:textSize="11.5sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="12dp"
+                            android:background="#F1F5F9" />
 
                         <!-- Box 1: LULUS -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/bg_status_lulus"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="14dp"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:background="@drawable/bg_circle_green"
-                                android:layout_marginEnd="14dp">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_check_circle"
-                                    app:tint="@color/white" />
-                            </FrameLayout>
+                            android:layout_marginBottom="10dp"
+                            app:cardBackgroundColor="#F4F7F4"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#10B981"
+                            app:strokeWidth="1dp">
 
                             <LinearLayout
-                                android:layout_width="0dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="14dp"
+                                android:paddingVertical="12dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:background="@drawable/bg_circle_green">
+
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Lulus"
+                                        android:src="@drawable/ic_check_circle"
+                                        app:tint="@color/white" />
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="LULUS"
+                                        android:textColor="#1B4D2E"
+                                        android:textSize="14.5sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_regular"
+                                        android:text="Sudah Sesuai Standar"
+                                        android:textColor="#64748B"
+                                        android:textSize="11sp" />
+                                </LinearLayout>
 
                                 <TextView
+                                    android:id="@+id/tvLulusCount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="LULUS"
-                                    android:textColor="#1B4D2E"
                                     android:fontFamily="@font/poppins_bold"
-                                    android:textSize="15sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Sudah Sesuai"
-                                    android:textColor="#718096"
-                                    android:fontFamily="@font/poppins_regular"
-                                    android:textSize="11sp" />
+                                    android:text="0"
+                                    android:textColor="#1B4D2E"
+                                    android:textSize="22sp" />
                             </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvLulusCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1"
-                                android:textColor="#1B4D2E"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="24sp" />
-                        </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <!-- Box 2: PERBAIKAN -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/bg_status_perbaikan"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="14dp"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:background="@drawable/bg_circle_red"
-                                android:layout_marginEnd="14dp">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_info"
-                                    app:tint="@color/white" />
-                            </FrameLayout>
+                            android:layout_marginBottom="10dp"
+                            app:cardBackgroundColor="#FFF5F5"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#EF4444"
+                            app:strokeWidth="1dp">
 
                             <LinearLayout
-                                android:layout_width="0dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="14dp"
+                                android:paddingVertical="12dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:background="@drawable/bg_circle_red">
+
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Perbaikan"
+                                        android:src="@drawable/ic_info"
+                                        app:tint="@color/white" />
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="PERBAIKAN"
+                                        android:textColor="#B71C1C"
+                                        android:textSize="14.5sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_regular"
+                                        android:text="Butuh Tindak Lanjut"
+                                        android:textColor="#64748B"
+                                        android:textSize="11sp" />
+                                </LinearLayout>
 
                                 <TextView
+                                    android:id="@+id/tvPerbaikanCount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="PERBAIKAN"
-                                    android:textColor="#B71C1C"
                                     android:fontFamily="@font/poppins_bold"
-                                    android:textSize="15sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Butuh tindak lanjut"
-                                    android:textColor="#718096"
-                                    android:fontFamily="@font/poppins_regular"
-                                    android:textSize="11sp" />
+                                    android:text="0"
+                                    android:textColor="#B71C1C"
+                                    android:textSize="22sp" />
                             </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvPerbaikanCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textColor="#B71C1C"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="24sp" />
-                        </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                         <!-- Box 3: PENDING -->
-                        <LinearLayout
+                        <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:background="@drawable/bg_status_diaudit"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="14dp"
-                            android:gravity="center_vertical">
-
-                            <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:background="@drawable/bg_circle_blue"
-                                android:layout_marginEnd="14dp">
-
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_warning"
-                                    app:tint="@color/white" />
-                            </FrameLayout>
+                            app:cardBackgroundColor="#EFF6FF"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="#3B82F6"
+                            app:strokeWidth="1dp">
 
                             <LinearLayout
-                                android:layout_width="0dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="14dp"
+                                android:paddingVertical="12dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:background="@drawable/bg_circle_blue">
+
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:layout_gravity="center"
+                                        android:contentDescription="Pending"
+                                        android:src="@drawable/ic_warning"
+                                        app:tint="@color/white" />
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="PENDING"
+                                        android:textColor="#0D47A1"
+                                        android:textSize="14.5sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_regular"
+                                        android:text="Perlu Verifikasi Audit"
+                                        android:textColor="#64748B"
+                                        android:textSize="11sp" />
+                                </LinearLayout>
 
                                 <TextView
+                                    android:id="@+id/tvDiauditCount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="PENDING"
-                                    android:textColor="#0D47A1"
                                     android:fontFamily="@font/poppins_bold"
-                                    android:textSize="15sp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Perlu Verifikasi"
-                                    android:textColor="#718096"
-                                    android:fontFamily="@font/poppins_regular"
-                                    android:textSize="11sp" />
+                                    android:text="0"
+                                    android:textColor="#0D47A1"
+                                    android:textSize="22sp" />
                             </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvDiauditCount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textColor="#0D47A1"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="24sp" />
-                        </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -590,60 +842,85 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/white">
+                    app:cardElevation="3dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:useCompatPadding="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="18dp">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_bell_header"
-                                app:tint="#D4AF37"
-                                android:layout_marginEnd="8dp"
-                                android:contentDescription="Icon Pengingat" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                app:cardBackgroundColor="#F4F7F4"
+                                app:cardCornerRadius="10dp"
+                                app:cardElevation="0dp"
+                                app:strokeWidth="0dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="Ikon Pengingat"
+                                    android:src="@drawable/ic_bell_header"
+                                    app:tint="@color/secondary" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="Pengingat Tugas"
-                                android:textColor="#1A202C"
-                                android:fontFamily="@font/poppins_bold"
-                                android:textSize="15sp" />
+                                android:layout_marginStart="12dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:text="PENGINGAT TUGAS"
+                                    android:textColor="#0D2617"
+                                    android:textSize="13.5sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/poppins_regular"
+                                    android:text="Tugas diurutkan berdasarkan deadline terdekat"
+                                    android:textColor="#64748B"
+                                    android:textSize="11.5sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tugas dari Superadmin diurutkan berdasarkan deadline terdekat."
-                            android:textColor="#718096"
-                            android:fontFamily="@font/poppins_regular"
-                            android:textSize="11sp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginBottom="16dp" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="12dp"
+                            android:background="#F1F5F9" />
 
                         <TextView
                             android:id="@+id/tvEmptyPengingat"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:padding="20dp"
                             android:text="Tidak ada tugas aktif untuk ditampilkan."
                             android:textAlignment="center"
-                            android:textColor="#A0AEC0"
-                            android:textSize="13sp"
-                            android:padding="24dp"
+                            android:textColor="#94A3B8"
+                            android:textSize="12.5sp"
                             android:visibility="gone" />
 
                         <androidx.recyclerview.widget.RecyclerView
