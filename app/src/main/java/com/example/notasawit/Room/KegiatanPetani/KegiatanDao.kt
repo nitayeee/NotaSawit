@@ -29,9 +29,15 @@ interface KegiatanDao {
     suspend fun updateSynced(id: Int)
 
     @Query("""
+        UPDATE kegiatan
+        SET isSynced = 0
+        WHERE localId = :id
+    """)
+    suspend fun updateUnsynced(id: Int)
+
+    @Query("""
     DELETE FROM kegiatan
     WHERE localId = :id
     """)
     suspend fun deleteById(id: Int)
-
 }

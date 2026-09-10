@@ -72,10 +72,23 @@
                     android:layout_marginTop="1dp" />
             </LinearLayout>
 
-            <!-- Spacer Kanan -->
-            <View
+            <!-- Tombol Riwayat -->
+            <LinearLayout
+                android:id="@+id/btnRiwayat"
                 android:layout_width="36dp"
-                android:layout_height="36dp" />
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:background="@drawable/bg_toolbar_btn"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_history"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="Riwayat Kegiatan" />
+            </LinearLayout>
 
         </LinearLayout>
 

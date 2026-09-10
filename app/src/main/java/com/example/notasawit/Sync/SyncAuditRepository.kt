@@ -6,6 +6,7 @@ import com.example.notasawit.Admin.AuditInternal.AuditDao.AuditDao
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 
 class SyncAuditRepository(
@@ -13,15 +14,25 @@ class SyncAuditRepository(
     private val database: AppDatabase
 ) {
 
+    companion object {
+        private val syncMutex = Mutex()
+    }
+
     suspend fun syncAudit(): Boolean = withContext(Dispatchers.IO) {
-        val auditList = database.auditDao().getUnsyncedAudit()
+        if (!syncMutex.tryLock()) {
+            Log.d("SYNC_AUDIT", "Sinkronisasi audit sedang berjalan di thread lain, skip.")
+            return@withContext true
+        }
 
-        if (auditList.isEmpty()) return@withContext true
+        try {
+            val auditList = database.auditDao().getUnsyncedAudit()
 
-        var allSuccess = true
-        
-        val sharedPref = context.getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-        val userId = sharedPref.getInt("user_id", 0)
+            if (auditList.isEmpty()) return@withContext true
+
+            var allSuccess = true
+            
+            val sharedPref = context.getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val userId = sharedPref.getInt("user_id", 0)
 
         auditList.forEach { audit ->
             Log.d("SYNC_AUDIT", "==========================")
@@ -67,6 +78,9 @@ class SyncAuditRepository(
             }
         }
 
-        return@withContext allSuccess
+            return@withContext allSuccess
+        } finally {
+            syncMutex.unlock()
+        }
     }
 }

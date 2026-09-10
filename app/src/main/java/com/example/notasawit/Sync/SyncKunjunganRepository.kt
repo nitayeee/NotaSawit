@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 
 class SyncKunjunganRepository(
@@ -12,12 +13,22 @@ class SyncKunjunganRepository(
     private val database: AppDatabase
 ) {
 
+    companion object {
+        private val syncMutex = Mutex()
+    }
+
     suspend fun syncKunjungan(): Boolean = withContext(Dispatchers.IO) {
-        val kunjunganList = database.KunjunganLahanDao().getUnsyncedKunjunganLahan()
+        if (!syncMutex.tryLock()) {
+            Log.d("SYNC_KUNJUNGAN", "Sinkronisasi kunjungan sedang berjalan di thread lain, skip.")
+            return@withContext true
+        }
 
-        if (kunjunganList.isEmpty()) return@withContext true
+        try {
+            val kunjunganList = database.KunjunganLahanDao().getUnsyncedKunjunganLahan()
 
-        var allSuccess = true
+            if (kunjunganList.isEmpty()) return@withContext true
+
+            var allSuccess = true
 
         kunjunganList.forEach { kunjungan ->
             Log.d("SYNC_KUNJUNGAN", "==========================")
@@ -62,6 +73,9 @@ class SyncKunjunganRepository(
             }
         }
 
-        return@withContext allSuccess
+            return@withContext allSuccess
+        } finally {
+            syncMutex.unlock()
+        }
     }
 }

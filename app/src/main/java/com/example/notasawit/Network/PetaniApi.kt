@@ -530,7 +530,7 @@ object PetaniApi {
         callback: Callback
     ) {
 
-        val url = "$BASE_URL/api/kegiatan?petani_id=$petaniId"
+        val url = "$BASE_URL/kegiatan?petani_id=$petaniId"
 
         val request = Request.Builder()
             .url(url)
@@ -546,7 +546,7 @@ object PetaniApi {
         callback: Callback
     ) {
 
-        val url = "$BASE_URL/api/detail-kegiatan?petani_id=$petaniId"
+        val url = "$BASE_URL/detail-kegiatan?petani_id=$petaniId"
 
         val request = Request.Builder()
             .url(url)

@@ -1,6 +1,7 @@
 package com.example.notasawit.InputKegiatan
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -58,6 +59,9 @@ class InputKegiatanActivity : AppCompatActivity() {
         loadLahan()
 
         binding.btnBack.setOnClickListener { finish() }
+        binding.btnRiwayat.setOnClickListener {
+            startActivity(Intent(this, RiwayatKegiatanActivity::class.java))
+        }
 
         binding.etPilihLahan.setOnClickListener {
             showLahanDialog()
@@ -265,7 +269,7 @@ class InputKegiatanActivity : AppCompatActivity() {
             .build()
 
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            "SyncKegiatanWork",
+            "sync_data",
             ExistingWorkPolicy.KEEP,
             syncRequest
         )
