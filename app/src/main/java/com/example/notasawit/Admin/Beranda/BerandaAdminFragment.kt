@@ -60,11 +60,13 @@ class BerandaAdminFragment : Fragment() {
         }
 
         fetchDashboardData()
+        fetchHargaTbs()
     }
 
     override fun onResume() {
         super.onResume()
         loadUserProfile()
+        fetchHargaTbs()
     }
 
     private fun loadUserProfile() {
@@ -515,6 +517,40 @@ class BerandaAdminFragment : Fragment() {
             binding.rvPengingat.layoutManager = LinearLayoutManager(requireContext())
             binding.rvPengingat.adapter = adapter
         }
+    }
+
+    private fun fetchHargaTbs() {
+        PetaniApi.getHargaTbs(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (response.isSuccessful && !responseData.isNullOrEmpty()) {
+                    try {
+                        val json = JSONObject(responseData)
+                        val data = if (json.has("data")) json.optJSONObject("data") else json
+                        if (data != null) {
+                            val hargaDinas = data.optDouble("harga_dinas", 0.0)
+                            val hargaPtSar = data.optDouble("harga_pt_sar", 0.0)
+                            val tgl = data.optString("tanggal_berlaku", data.optString("created_at", "Terbaru"))
+
+                            val fmtDinas = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaDinas.toLong())
+                            val fmtPtSar = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaPtSar.toLong())
+
+                            activity?.runOnUiThread {
+                                if (_binding != null) {
+                                    binding.tvHargaDinas.text = "Rp $fmtDinas / Kg"
+                                    binding.tvHargaPtSar.text = "Rp $fmtPtSar / Kg"
+                                    binding.tvTanggalBerlakuTbs.text = "Tmt: $tgl"
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        })
     }
 
     override fun onDestroyView() {

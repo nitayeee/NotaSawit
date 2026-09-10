@@ -42,10 +42,35 @@ class PetaLahanActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener { finish() }
 
+        // Minta Izin Lokasi di Android jika belum diizinkan
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            androidx.core.app.ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1001
+            )
+        }
+
         // Setup WebView
         binding.webViewPeta.settings.javaScriptEnabled = true
         binding.webViewPeta.settings.domStorageEnabled = true
-        binding.webViewPeta.webChromeClient = WebChromeClient()
+        binding.webViewPeta.settings.setGeolocationEnabled(true)
+
+        binding.webViewPeta.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: android.webkit.GeolocationPermissions.Callback?
+            ) {
+                callback?.invoke(origin, true, false)
+            }
+        }
         binding.webViewPeta.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)

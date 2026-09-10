@@ -774,4 +774,14 @@ object PetaniApi {
             .build()
         ApiClient.client.newCall(request).enqueue(callback)
     }
+
+    fun getHargaTbs(callback: Callback) {
+        val url = "$BASE_URL/harga-tbs/latest"
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
 }

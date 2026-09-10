@@ -22,11 +22,14 @@ import com.example.notasawit.Model.QuoteResponse
 import com.example.notasawit.Network.RetrofitClient
 import com.example.notasawit.Pengeluaran.InputPengeluaranActivity
 
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
+import org.json.JSONObject
+import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class BerandaFragment : Fragment() {
 
@@ -38,28 +41,6 @@ class BerandaFragment : Fragment() {
         requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
     }
     private lateinit var database: AppDatabase
-    private val quoteRunnable = object : Runnable {
-        override fun run() {
-
-            if (_binding != null) {
-
-                binding.tvQuote.animate()
-                    .alpha(0f)
-                    .setDuration(300)
-                    .withEndAction {
-                        loadQuote()
-                        binding.tvQuote.animate()
-                            .alpha(1f)
-                            .setDuration(300)
-                            .start()
-                    }
-                    .start()
-
-                // ganti quote setiap 10 detik
-                handler.postDelayed(this, 10000)
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,16 +60,14 @@ class BerandaFragment : Fragment() {
         val username = sharedPref.getString("username", "") ?: ""
         binding.username.setText("$username!")
         binding.username.setTextColor(Color.parseColor("#1B4D2E"))
-        // quote pertama
-        loadQuote()
         database = AppDatabase.getDatabase(requireContext())
+        fetchHargaTbs()
 
         binding.swipeRefresh.setOnRefreshListener {
             refreshAllDataFromSync()
         }
 
-        // mulai auto refresh quote
-        handler.postDelayed(quoteRunnable, 10000)
+
 
         binding.cardInputKegiatan.setOnClickListener {
             startActivity(
@@ -192,44 +171,6 @@ class BerandaFragment : Fragment() {
         }
     }
 
-    private fun loadQuote() {
-
-        RetrofitClient.api.getRandomQuote()
-            .enqueue(object : Callback<List<QuoteResponse>> {
-
-                override fun onResponse(
-                    call: Call<List<QuoteResponse>>,
-                    response: Response<List<QuoteResponse>>
-                ) {
-
-                    if (!isAdded || _binding == null) return
-
-                    if (response.isSuccessful &&
-                        response.body() != null &&
-                        response.body()!!.isNotEmpty()
-                    ) {
-
-                        val quote = response.body()!![0]
-
-                        binding.tvQuote.text = quote.q
-                        binding.createdBy.text = "— ${quote.a}"
-                    } else {
-                        binding.tvQuote.text =
-                            "Tetap semangat dalam mengelola kebun hari ini 🌱"
-                    }
-                }
-                override fun onFailure(
-                    call: Call<List<QuoteResponse>>,
-                    t: Throwable
-                ) {
-                    if (!isAdded || _binding == null) return
-                    Log.e("QUOTE_ERROR", t.message ?: "Unknown Error")
-                    binding.tvQuote.text =
-                        "Tetap semangat dalam mengelola kebun hari ini 🌱"
-                }
-            })
-    }
-
     private fun loadPetaniSummary(petaniId: Int) {
         com.example.notasawit.Network.PetaniApi.getPetaniSummary(petaniId, object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
@@ -302,11 +243,7 @@ class BerandaFragment : Fragment() {
         return format.format(amount).replace("Rp", "Rp ")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        handler.removeCallbacks(quoteRunnable)
-        _binding = null
-    }
+
 //    override fun onResume() {
 //        super.onResume()
 //
@@ -397,7 +334,7 @@ class BerandaFragment : Fragment() {
         pendingSyncCount = 3
         val petaniId = sharedPref.getInt("petani_id", -1)
 
-        loadQuote()
+        fetchHargaTbs()
         if (petaniId != -1) {
             loadPetaniSummary(petaniId)
             checkTahunTanamLahan(petaniId)
@@ -544,5 +481,44 @@ class BerandaFragment : Fragment() {
                 checkFinishRefreshing()
             }
         })
+    }
+
+    private fun fetchHargaTbs() {
+        PetaniApi.getHargaTbs(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (response.isSuccessful && !responseData.isNullOrEmpty()) {
+                    try {
+                        val json = JSONObject(responseData)
+                        val data = if (json.has("data")) json.optJSONObject("data") else json
+                        if (data != null) {
+                            val hargaDinas = data.optDouble("harga_dinas", 0.0)
+                            val hargaPtSar = data.optDouble("harga_pt_sar", 0.0)
+                            val tgl = data.optString("tanggal_berlaku", data.optString("created_at", "Terbaru"))
+
+                            val fmtDinas = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaDinas.toLong())
+                            val fmtPtSar = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaPtSar.toLong())
+
+                            activity?.runOnUiThread {
+                                if (_binding != null) {
+                                    binding.tvHargaDinas.text = "Rp $fmtDinas / Kg"
+                                    binding.tvHargaPtSar.text = "Rp $fmtPtSar / Kg"
+                                    binding.tvTanggalBerlakuTbs.text = "Tmt: $tgl"
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

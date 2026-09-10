@@ -6,6 +6,9 @@ plugins {
 }
 
 android {
+
+
+
     namespace = "com.example.notasawit"
     compileSdk = 36
 

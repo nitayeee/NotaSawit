@@ -10,6 +10,45 @@
     <style>
         body { padding: 0; margin: 0; }
         html, body, #map { height: 100vh; width: 100vw; }
+
+        .live-location-marker {
+            width: 16px;
+            height: 16px;
+            background-color: #1a73e8;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(26, 115, 232, 0.9);
+            position: relative;
+        }
+        .live-location-marker::after {
+            content: '';
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            border-radius: 50%;
+            background-color: rgba(26, 115, 232, 0.35);
+            animation: live-pulse-ring 2s infinite ease-out;
+        }
+        @keyframes live-pulse-ring {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2.3); opacity: 0; }
+        }
+
+        .leaflet-control-locate-btn {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .leaflet-control-locate-btn:hover {
+            background: #f8fafc;
+            transform: scale(1.08);
+        }
     </style>
 </head>
 <body>
@@ -29,19 +68,112 @@
             attribution: 'Tiles &copy; Esri'
         });
 
-        // Inisialisasi peta dengan layer Satelit sebagai default
+        // Inisialisasi peta dengan layer OSM sebagai default
         var map = L.map('map', {
             center: [0.5, 101.5],
             zoom: 13,
-            layers: [satellite]
+            layers: [osm]
         });
 
         // Tambahkan kontrol layer di pojok kanan atas
         var baseMaps = {
-            "Satelit": satellite,
-            "OSM Standar": osm
+            "OSM Standar": osm,
+            "Satelit": satellite
         };
         L.control.layers(baseMaps).addTo(map);
+
+        // -------------------------------------------------------------
+        // LIVE LOCATION TRACKING ON-DEMAND (HANYA SAAT TOMBOL DIKLIK)
+        // -------------------------------------------------------------
+        let userMarker = null;
+        let accuracyCircle = null;
+        let watchId = null;
+
+        const pulseIcon = L.divIcon({
+            className: 'custom-live-pin',
+            html: '<div class="live-location-marker"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+
+        // Tombol Melayang "Lokasi Saya" di Peta (Pojok Kanan Atas)
+        const locateControl = L.control({ position: 'topright' });
+        locateControl.onAdd = function () {
+            const btn = L.DomUtil.create('div', 'leaflet-control-locate-btn');
+            btn.title = "Lihat Lokasi Saya (GPS)";
+            btn.innerHTML = `<svg style="width:22px;height:22px;color:#1a73e8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"></path>
+            </svg>`;
+
+            L.DomEvent.disableClickPropagation(btn);
+            btn.onclick = function () {
+                if (!("geolocation" in navigator)) {
+                    alert("GPS tidak didukung pada browser/perangkat ini.");
+                    return;
+                }
+
+                btn.style.opacity = "0.5";
+
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) {
+                        btn.style.opacity = "1";
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        const accuracy = pos.coords.accuracy;
+                        const userPos = [lat, lng];
+
+                        if (!userMarker) {
+                            userMarker = L.marker(userPos, { icon: pulseIcon }).addTo(map);
+                            userMarker.bindPopup(`
+                                <div style="font-family: sans-serif; font-size: 12px; min-width: 130px;">
+                                    <strong style="color: #1a73e8; font-size: 13px;">Lokasi Admin (Live)</strong><br>
+                                    <hr style="margin: 4px 0; border: 0; border-top: 1px solid #eee;">
+                                    Akurasi GPS: &plusmn;` + Math.round(accuracy) + ` m
+                                </div>
+                            `);
+
+                            accuracyCircle = L.circle(userPos, {
+                                radius: accuracy,
+                                color: '#1a73e8',
+                                fillColor: '#2563eb',
+                                fillOpacity: 0.12,
+                                weight: 1.5,
+                                dashArray: '4, 4'
+                            }).addTo(map);
+                        } else {
+                            userMarker.setLatLng(userPos);
+                            accuracyCircle.setLatLng(userPos);
+                            accuracyCircle.setRadius(accuracy);
+                        }
+
+                        map.flyTo(userPos, 16, { animate: true, duration: 1.2 });
+                        userMarker.openPopup();
+
+                        if (!watchId) {
+                            watchId = navigator.geolocation.watchPosition(function (wPos) {
+                                const wLat = wPos.coords.latitude;
+                                const wLng = wPos.coords.longitude;
+                                const wAcc = wPos.coords.accuracy;
+                                const wPosArr = [wLat, wLng];
+                                if (userMarker) {
+                                    userMarker.setLatLng(wPosArr);
+                                    accuracyCircle.setLatLng(wPosArr);
+                                    accuracyCircle.setRadius(wAcc);
+                                }
+                            }, null, { enableHighAccuracy: true, maximumAge: 3000 });
+                        }
+                    },
+                    function (err) {
+                        btn.style.opacity = "1";
+                        alert("Gagal mengambil lokasi GPS: Silakan izinkan akses lokasi pada HP.");
+                    },
+                    { enableHighAccuracy: true, timeout: 15000 }
+                );
+            };
+            return btn;
+        };
+        locateControl.addTo(map);
 
         var featureGroup = new L.FeatureGroup();
         map.addLayer(featureGroup);
@@ -88,7 +220,7 @@
                 });
                 
                 if (featureGroup.getLayers().length > 0) {
-                    // Zoom fokus ke semua lahan yang ditampilkan
+                    // Zoom fokus ke semua lahan yang ditampilkan (Default)
                     var bounds = featureGroup.getBounds();
                     map.fitBounds(bounds, {padding: [30, 30], maxZoom: 17});
                 }

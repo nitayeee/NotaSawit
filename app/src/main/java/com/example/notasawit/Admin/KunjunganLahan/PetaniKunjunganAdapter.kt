@@ -95,14 +95,18 @@ class PetaniKunjunganAdapter(
                     lahanBinding.tvNamaLahan.text = "🌾 ${lahanItem.namaLahan}$luasStr"
                     lahanBinding.tvStatusLahan.text = lahanItem.statusLahan
 
-                    when (lahanItem.statusLahan) {
-                        "Selesai", "Lulus" -> {
+                    when {
+                        lahanItem.statusLahan.equals("Selesai", ignoreCase = true) || lahanItem.statusLahan.equals("Lulus", ignoreCase = true) -> {
                             lahanBinding.tvStatusLahan.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_lulus)
                             lahanBinding.tvStatusLahan.setTextColor(android.graphics.Color.parseColor("#1B5E20"))
                         }
-                        "Perlu Perbaikan" -> {
+                        lahanItem.statusLahan.equals("Perlu Perbaikan", ignoreCase = true) || lahanItem.statusLahan.contains("Perbaikan", ignoreCase = true) -> {
                             lahanBinding.tvStatusLahan.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_perbaikan)
                             lahanBinding.tvStatusLahan.setTextColor(android.graphics.Color.parseColor("#B71C1C"))
+                        }
+                        lahanItem.statusLahan.contains("Menunggu", ignoreCase = true) || lahanItem.statusLahan.equals("Pending", ignoreCase = true) -> {
+                            lahanBinding.tvStatusLahan.setBackgroundResource(com.example.notasawit.R.drawable.bg_status_diaudit)
+                            lahanBinding.tvStatusLahan.setTextColor(android.graphics.Color.parseColor("#0D47A1"))
                         }
                         else -> {
                             lahanBinding.tvStatusLahan.setBackgroundResource(com.example.notasawit.R.drawable.rounded_bg_gray)
