@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.activity.result.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -50,6 +51,7 @@ class InputPengeluaranActivity : AppCompatActivity() {
     private val selectedLahanNames = mutableListOf<String>()
     // Untuk Nota
     private var imageUri: Uri? = null
+    private var tempPhotoFile: File? = null
     private lateinit var database: AppDatabase
 
     // Pilih dari galeri
@@ -69,11 +71,11 @@ class InputPengeluaranActivity : AppCompatActivity() {
 
     // Ambil foto dari kamera
     private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-
-            bitmap?.let {
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && tempPhotoFile != null && tempPhotoFile!!.exists()) {
+                imageUri = Uri.fromFile(tempPhotoFile)
                 binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageBitmap(it)
+                binding.imgNotaPreview.setImageURI(imageUri)
             }
         }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,7 +226,10 @@ class InputPengeluaranActivity : AppCompatActivity() {
                 when (which) {
 
                     0 -> {
-                        cameraLauncher.launch()
+                        val uri = createImageUri()
+                        uri?.let {
+                            cameraLauncher.launch(it)
+                        }
                     }
 
                     1 -> {
@@ -404,5 +409,22 @@ class InputPengeluaranActivity : AppCompatActivity() {
             .setNegativeButton("Batal", null)
             .show()
 
+    }
+    private fun createImageUri(): Uri? {
+        return try {
+            val dir = File(filesDir, "nota_pengeluaran")
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, "bukti_${System.currentTimeMillis()}.jpg")
+            tempPhotoFile = file
+            FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.fileprovider",
+                file
+            )
+        } catch (e: Exception) {
+            Log.e("CAMERA", "Gagal membuat Uri kamera", e)
+            Toast.makeText(this, "Gagal membuka kamera: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
+        }
     }
 }

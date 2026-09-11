@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import android.content.ContentValues
 import android.provider.MediaStore
 import androidx.appcompat.app.AlertDialog
@@ -50,7 +51,7 @@ class InputPemasukanActivity : AppCompatActivity() {
     private val selectedLahanIds = mutableListOf<Int>()
     private val selectedLahanNames = mutableListOf<String>()
     private var imageUri: Uri? = null
-    private var cameraUri: Uri? = null
+    private var tempPhotoFile: File? = null
     private lateinit var database: AppDatabase
 
     // Pilih dari galeri
@@ -73,13 +74,10 @@ class InputPemasukanActivity : AppCompatActivity() {
         registerForActivityResult(
             ActivityResultContracts.TakePicture()
         ) { success ->
-            if(success){
-                cameraUri?.let {
-                    imageUri = it
-                    binding.imgNotaPreview.visibility = View.VISIBLE
-                    binding.imgNotaPreview.setImageURI(it)
-
-                }
+            if (success && tempPhotoFile != null && tempPhotoFile!!.exists()) {
+                imageUri = Uri.fromFile(tempPhotoFile)
+                binding.imgNotaPreview.visibility = View.VISIBLE
+                binding.imgNotaPreview.setImageURI(imageUri)
             }
         }
 
@@ -251,9 +249,8 @@ class InputPemasukanActivity : AppCompatActivity() {
                 when (which) {
 
                     0 -> {
-                        cameraUri = createImageUri()
-
-                        cameraUri?.let {
+                        val uri = createImageUri()
+                        uri?.let {
                             cameraLauncher.launch(it)
                         }
                     }
@@ -307,25 +304,21 @@ class InputPemasukanActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
     private fun createImageUri(): Uri? {
-
-        val contentValues = ContentValues().apply {
-
-            put(
-                MediaStore.Images.Media.DISPLAY_NAME,
-                "bukti_${System.currentTimeMillis()}.jpg"
+        return try {
+            val dir = File(filesDir, "nota_pemasukan")
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, "bukti_${System.currentTimeMillis()}.jpg")
+            tempPhotoFile = file
+            FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.fileprovider",
+                file
             )
-
-            put(
-                MediaStore.Images.Media.MIME_TYPE,
-                "image/jpeg"
-            )
+        } catch (e: Exception) {
+            Log.e("CAMERA", "Gagal membuat Uri kamera", e)
+            Toast.makeText(this, "Gagal membuka kamera: ${e.message}", Toast.LENGTH_SHORT).show()
+            null
         }
-
-
-        return contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
     }
 
     private fun copyImageToInternalStorage(uri: Uri): String {
