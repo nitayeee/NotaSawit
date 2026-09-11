@@ -65,6 +65,23 @@ object PetaniApi {
         ApiClient.client.newCall(request).enqueue(callback)
     }
 
+    fun ubahPinUser(userId: Int, pinBaru: String, callback: Callback) {
+        val json = """
+        {
+            "pin_baru": "$pinBaru"
+        }
+        """.trimIndent()
+
+        val body = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("$BASE_URL/user/ubah-pin/$userId")
+            .post(body)
+            .build()
+
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
     fun ubahPin(petaniId: Int, pinBaru: String, callback: Callback) {
         val json = """
         {

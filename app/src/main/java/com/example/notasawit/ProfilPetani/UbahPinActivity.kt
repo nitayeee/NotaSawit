@@ -81,19 +81,27 @@ class UbahPinActivity : AppCompatActivity() {
     }
 
     private fun ubahPin(pinBaru: String) {
-        val petaniId = sharedPref.getInt("petani_id", 0)
-        if (petaniId == 0) {
-            Toast.makeText(this, "Petani ID tidak ditemukan", Toast.LENGTH_SHORT).show()
+        val role = sharedPref.getString("role", "") ?: ""
+        val isPetani = role == "petani"
+
+        val id = if (isPetani) {
+            sharedPref.getInt("petani_id", 0)
+        } else {
+            sharedPref.getInt("user_id", 0)
+        }
+
+        if (id == 0) {
+            Toast.makeText(this, "ID Pengguna tidak ditemukan", Toast.LENGTH_SHORT).show()
             btnSimpan.isEnabled = true
-            btnSimpan.text = "Simpan PIN"
+            btnSimpan.text = "Simpan PIN Baru"
             return
         }
 
-        PetaniApi.ubahPin(petaniId, pinBaru, object : Callback {
+        val callback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     btnSimpan.isEnabled = true
-                    btnSimpan.text = "Simpan PIN"
+                    btnSimpan.text = "Simpan PIN Baru"
                     Toast.makeText(this@UbahPinActivity, "Terjadi kesalahan jaringan: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -101,7 +109,7 @@ class UbahPinActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
                 var message = "Gagal mengubah PIN"
-                
+
                 if (body != null) {
                     try {
                         val json = JSONObject(body)
@@ -111,8 +119,8 @@ class UbahPinActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     btnSimpan.isEnabled = true
-                    btnSimpan.text = "Simpan PIN"
-                    
+                    btnSimpan.text = "Simpan PIN Baru"
+
                     if (response.isSuccessful) {
                         Toast.makeText(this@UbahPinActivity, message, Toast.LENGTH_LONG).show()
                         finish()
@@ -121,6 +129,12 @@ class UbahPinActivity : AppCompatActivity() {
                     }
                 }
             }
-        })
+        }
+
+        if (isPetani) {
+            PetaniApi.ubahPin(id, pinBaru, callback)
+        } else {
+            PetaniApi.ubahPinUser(id, pinBaru, callback)
+        }
     }
 }

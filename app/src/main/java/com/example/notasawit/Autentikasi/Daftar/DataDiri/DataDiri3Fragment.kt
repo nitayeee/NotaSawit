@@ -107,10 +107,25 @@ class DataDiri3Fragment : Fragment() {
                                 tampilkanDialogCustom()
 
                             } else {
+                                var msg = "Gagal daftar (${response.code})"
+                                try {
+                                    val json = org.json.JSONObject(responseBody)
+                                    if (json.has("message")) {
+                                        msg = json.getString("message")
+                                    }
+                                    val errors = json.optJSONObject("errors")
+                                    if (errors != null && errors.keys().hasNext()) {
+                                        val firstKey = errors.keys().next()
+                                        val errorArray = errors.optJSONArray(firstKey)
+                                        if (errorArray != null && errorArray.length() > 0) {
+                                            msg = errorArray.getString(0)
+                                        }
+                                    }
+                                } catch (e: Exception) {}
 
                                 Toast.makeText(
                                     requireContext(),
-                                    "Gagal daftar (${response.code})",
+                                    msg,
                                     Toast.LENGTH_LONG
                                 ).show()
 
