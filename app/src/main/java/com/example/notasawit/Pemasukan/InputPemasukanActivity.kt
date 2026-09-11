@@ -1,6 +1,7 @@
 package com.example.notasawit.Pemasukan
 
 import android.app.DatePickerDialog
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -71,13 +72,12 @@ class InputPemasukanActivity : AppCompatActivity() {
 
     // Ambil foto dari kamera
     private val cameraLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.TakePicture()
-        ) { success ->
-            if (success && tempPhotoFile != null && tempPhotoFile!!.exists()) {
-                imageUri = Uri.fromFile(tempPhotoFile)
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+            bitmap?.let {
+                val localPath = saveBitmapToInternalStorage(it)
+                imageUri = Uri.fromFile(File(localPath))
                 binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageURI(imageUri)
+                binding.imgNotaPreview.setImageBitmap(it)
             }
         }
 
@@ -249,10 +249,7 @@ class InputPemasukanActivity : AppCompatActivity() {
                 when (which) {
 
                     0 -> {
-                        val uri = createImageUri()
-                        uri?.let {
-                            cameraLauncher.launch(it)
-                        }
+                        cameraLauncher.launch(null)
                     }
 
                     1 -> {
@@ -303,22 +300,17 @@ class InputPemasukanActivity : AppCompatActivity() {
         )
         datePickerDialog.show()
     }
-    private fun createImageUri(): Uri? {
-        return try {
-            val dir = File(filesDir, "nota_pemasukan")
-            if (!dir.exists()) dir.mkdirs()
-            val file = File(dir, "bukti_${System.currentTimeMillis()}.jpg")
-            tempPhotoFile = file
-            FileProvider.getUriForFile(
-                this,
-                "${applicationContext.packageName}.fileprovider",
-                file
-            )
-        } catch (e: Exception) {
-            Log.e("CAMERA", "Gagal membuat Uri kamera", e)
-            Toast.makeText(this, "Gagal membuka kamera: ${e.message}", Toast.LENGTH_SHORT).show()
-            null
+    private fun saveBitmapToInternalStorage(bitmap: Bitmap): String {
+        val fileName = "nota_${System.currentTimeMillis()}.jpg"
+        val dir = File(filesDir, "nota_pemasukan")
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
+        val file = File(dir, fileName)
+        FileOutputStream(file).use { output ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output)
+        }
+        return file.absolutePath
     }
 
     private fun copyImageToInternalStorage(uri: Uri): String {
