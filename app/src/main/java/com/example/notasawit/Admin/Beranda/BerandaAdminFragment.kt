@@ -59,14 +59,22 @@ class BerandaAdminFragment : Fragment() {
             refreshAllData()
         }
 
+        binding.cardHargaTbs.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.HargaTbs.RiwayatHargaTbsActivity::class.java))
+        }
+
         fetchDashboardData()
         fetchHargaTbs()
+        requestNotificationPermission()
+        initFcmToken()
     }
 
     override fun onResume() {
         super.onResume()
         loadUserProfile()
         fetchHargaTbs()
+        requestNotificationPermission()
+        initFcmToken()
     }
 
     private fun loadUserProfile() {
@@ -530,8 +538,12 @@ class BerandaAdminFragment : Fragment() {
                         val json = JSONObject(responseData)
                         val data = if (json.has("data")) json.optJSONObject("data") else json
                         if (data != null) {
-                            val hargaDinas = data.optDouble("harga_dinas", 0.0)
-                            val hargaPtSar = data.optDouble("harga_pt_sar", 0.0)
+                            val rawDinas = data.optString("harga_dinas", "0")
+                            val hargaDinas = rawDinas.toDoubleOrNull() ?: data.optDouble("harga_dinas", 0.0)
+
+                            val rawPtSar = data.optString("harga_pt_sar", "0")
+                            val hargaPtSar = rawPtSar.toDoubleOrNull() ?: data.optDouble("harga_pt_sar", 0.0)
+
                             val tgl = data.optString("tanggal_berlaku", data.optString("created_at", "Terbaru"))
 
                             val fmtDinas = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaDinas.toLong())
@@ -551,6 +563,35 @@ class BerandaAdminFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun requestNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (requireContext().checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                activity?.requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+    }
+
+    private fun initFcmToken() {
+        try {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful && !task.result.isNullOrEmpty()) {
+                        val token = task.result
+                        val adminId = sharedPref.getInt("user_id", -1)
+                        val idStr = if (adminId != -1) adminId.toString() else sharedPref.getString("user_id", null)
+                        if (!idStr.isNullOrEmpty()) {
+                            PetaniApi.sendFcmToken(idStr, token, object : Callback {
+                                override fun onFailure(call: Call, e: IOException) {}
+                                override fun onResponse(call: Call, response: Response) {}
+                            })
+                        }
+                    }
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroyView() {

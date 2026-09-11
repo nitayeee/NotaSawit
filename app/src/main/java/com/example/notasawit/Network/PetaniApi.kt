@@ -8,6 +8,8 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Callback
 import okhttp3.MultipartBody
+import okhttp3.FormBody
+import okhttp3.RequestBody
 import java.io.File
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,7 +18,7 @@ import java.io.ByteArrayOutputStream
 
 object PetaniApi {
 
-    private const val BASE_URL = "http://160.187.144.157/api"
+    private const val BASE_URL = "http://notasawit.pocari.id/api"
 
     fun registerPetani(
         nama: String,
@@ -446,7 +448,7 @@ object PetaniApi {
             .header("Accept", "application/json") // <-- TAMBAHKAN INI
             .build()
 
-        // 🔄 KUNCI UTAMA: Mengembalikan objek Call agar bisa dieksekusi via Repository/Worker secara sinkronus
+        // Ã°Å¸â€â€ž KUNCI UTAMA: Mengembalikan objek Call agar bisa dieksekusi via Repository/Worker secara sinkronus
         return ApiClient.client.newCall(request)
     }
     fun getDetailProduksi(
@@ -780,6 +782,54 @@ object PetaniApi {
         val request = Request.Builder()
             .url(url)
             .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun getRiwayatHargaTbs(callback: Callback) {
+        val url = "$BASE_URL/harga-tbs/riwayat"
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun getDaftarTugas(userId: String?, callback: Callback) {
+        val url = if (userId.isNullOrEmpty()) {
+            "$BASE_URL/tugas"
+        } else {
+            "$BASE_URL/tugas?user_id=$userId"
+        }
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun completeTugas(taskId: Int, callback: Callback) {
+        val url = "$BASE_URL/tugas/$taskId/complete"
+        val request = Request.Builder()
+            .url(url)
+            .post(RequestBody.create("application/json".toMediaTypeOrNull(), "{}"))
+            .header("Accept", "application/json")
+            .build()
+        ApiClient.client.newCall(request).enqueue(callback)
+    }
+
+    fun sendFcmToken(userId: String, fcmToken: String, callback: Callback) {
+        val formBody = FormBody.Builder()
+            .add("user_id", userId)
+            .add("fcm_token", fcmToken)
+            .build()
+
+        val request = Request.Builder()
+            .url("$BASE_URL/user/fcm-token")
+            .post(formBody)
             .header("Accept", "application/json")
             .build()
         ApiClient.client.newCall(request).enqueue(callback)

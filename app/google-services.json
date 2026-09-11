@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "888782626699",
+    "project_id": "notasawit-2028",
+    "storage_bucket": "notasawit-2028.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888782626699:android:7670bd5da00cb74ca1d98e",
+        "android_client_info": {
+          "package_name": "com.example.notasawit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888782626699-hsjt4p1e2j67m6c9idb4mgj9rdelorfo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSSHGX3DjjvbElWVajyD6xdfDiNrqVuhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "888782626699-hsjt4p1e2j67m6c9idb4mgj9rdelorfo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

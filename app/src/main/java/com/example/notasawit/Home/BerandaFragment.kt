@@ -95,6 +95,15 @@ class BerandaFragment : Fragment() {
             )
         }
         
+        binding.cardHargaTbs.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    com.example.notasawit.Admin.HargaTbs.RiwayatHargaTbsActivity::class.java
+                )
+            )
+        }
+
         binding.btnProfileContainer.setOnClickListener {
             startActivity(
                 Intent(
@@ -494,8 +503,12 @@ class BerandaFragment : Fragment() {
                         val json = JSONObject(responseData)
                         val data = if (json.has("data")) json.optJSONObject("data") else json
                         if (data != null) {
-                            val hargaDinas = data.optDouble("harga_dinas", 0.0)
-                            val hargaPtSar = data.optDouble("harga_pt_sar", 0.0)
+                            val rawDinas = data.optString("harga_dinas", "0")
+                            val hargaDinas = rawDinas.toDoubleOrNull() ?: data.optDouble("harga_dinas", 0.0)
+
+                            val rawPtSar = data.optString("harga_pt_sar", "0")
+                            val hargaPtSar = rawPtSar.toDoubleOrNull() ?: data.optDouble("harga_pt_sar", 0.0)
+
                             val tgl = data.optString("tanggal_berlaku", data.optString("created_at", "Terbaru"))
 
                             val fmtDinas = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(hargaDinas.toLong())
