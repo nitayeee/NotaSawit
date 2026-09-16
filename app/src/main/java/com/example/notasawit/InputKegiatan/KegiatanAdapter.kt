@@ -69,12 +69,17 @@ class KegiatanAdapter(
         }
         holder.tvLimbah.text = limbahInfo
 
-        if (item.isSynced) {
-            holder.tvStatusSync.text = "Tersinkron"
+        val statusLimbah = item.status_limbah.ifEmpty { "Belum Disetor" }
+        if (statusLimbah.equals("Sudah Disetor", ignoreCase = true)) {
+            holder.tvStatusSync.text = "Sudah Disetor"
             holder.tvStatusSync.setBackgroundResource(R.drawable.bg_badge_green)
             holder.tvStatusSync.setTextColor(android.graphics.Color.parseColor("#1B4D2E"))
+        } else if (statusLimbah.equals("Tidak Ada", ignoreCase = true) || item.jenis_limbah.isEmpty()) {
+            holder.tvStatusSync.text = "Tidak Ada Limbah"
+            holder.tvStatusSync.setBackgroundResource(R.drawable.bg_rounded_gray)
+            holder.tvStatusSync.setTextColor(android.graphics.Color.parseColor("#475569"))
         } else {
-            holder.tvStatusSync.text = "Mengantre Sync"
+            holder.tvStatusSync.text = "Belum Disetor"
             holder.tvStatusSync.setBackgroundResource(R.drawable.bg_badge_red)
             holder.tvStatusSync.setTextColor(android.graphics.Color.parseColor("#B71C1C"))
         }

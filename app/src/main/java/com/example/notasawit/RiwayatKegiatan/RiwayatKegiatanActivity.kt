@@ -20,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notasawit.InputKegiatan.InputKegiatanActivity
 import com.example.notasawit.InputKegiatan.KegiatanAdapter
@@ -410,6 +412,47 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
             tvDetailStatusSync.text = "Mengantre Sync"
             tvDetailStatusSync.setTextColor(Color.parseColor("#B71C1C"))
         }
+
+        val btnUbahStatusLimbah = view.findViewById<TextView>(R.id.btnUbahStatusLimbah)
+
+        val onStatusChangeClick = View.OnClickListener {
+            val options = arrayOf("Belum Disetor", "Sudah Disetor", "Tidak Ada")
+            AlertDialog.Builder(this)
+                .setTitle("Pilih Status Setor Limbah")
+                .setItems(options) { _, which ->
+                    val newStatus = options[which]
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val targetId = item.localId
+                        if (targetId > 0) {
+                            database.KegiatanDao().updateStatusLimbah(targetId, newStatus)
+                        } else {
+                            val newEntity = item.copy(status_limbah = newStatus, isSynced = false)
+                            database.KegiatanDao().insert(newEntity)
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            tvDetailStatusLimbahBadge.text = newStatus
+                            if (newStatus.equals("Sudah Disetor", ignoreCase = true)) {
+                                tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_badge_green)
+                                tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#1B4D2E"))
+                            } else if (newStatus.equals("Tidak Ada", ignoreCase = true)) {
+                                tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_rounded_gray)
+                                tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#475569"))
+                            } else {
+                                tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_badge_red)
+                                tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#B71C1C"))
+                            }
+
+                            Toast.makeText(this@RiwayatKegiatanActivity, "Status setor limbah diperbarui ke: $newStatus", Toast.LENGTH_SHORT).show()
+                            loadData()
+                        }
+                    }
+                }
+                .show()
+        }
+
+        btnUbahStatusLimbah?.setOnClickListener(onStatusChangeClick)
+        tvDetailStatusLimbahBadge.setOnClickListener(onStatusChangeClick)
 
         btnClose.setOnClickListener { dialog.dismiss() }
         btnTutup.setOnClickListener { dialog.dismiss() }

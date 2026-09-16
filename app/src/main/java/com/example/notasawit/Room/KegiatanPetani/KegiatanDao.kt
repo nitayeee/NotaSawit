@@ -40,4 +40,11 @@ interface KegiatanDao {
     WHERE localId = :id
     """)
     suspend fun deleteById(id: Int)
+
+    @Query("""
+        UPDATE kegiatan
+        SET status_limbah = :status, isSynced = 0
+        WHERE localId = :id
+    """)
+    suspend fun updateStatusLimbah(id: Int, status: String)
 }
