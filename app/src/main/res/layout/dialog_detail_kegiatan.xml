@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_dialog"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <!-- DRAG HANDLE -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_drag_handle" />
+
+    <!-- HEADER TITLE & CLOSE -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/btnClose"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:letterSpacing="0.08"
+                android:text="DETAIL RECORD KEGIATAN KEBUN"
+                android:textColor="#1B4D2E"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvDetailJenisKegiatan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Penyemprotan Gulma"
+                android:textColor="#0D2617"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="6dp"
+            android:src="@drawable/ic_close"
+            app:tint="#64748B" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="16dp"
+        android:background="#E2E8F0" />
+
+    <!-- ROW 1: TANGGAL & STATUS DATA -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- TANGGAL RENCANA -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#F8FAFC"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="📅 Tanggal Rencana"
+                    android:textColor="#64748B"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tvDetailTanggal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="2026-09-15"
+                    android:textColor="#0D2617"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- STATUS DATA -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#F8FAFC"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="🔄 Status Data"
+                    android:textColor="#64748B"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tvDetailStatusSync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="Tersinkronisasi"
+                    android:textColor="#1B4D2E"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- ROW 2: BAHAN & DOSIS -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        app:cardBackgroundColor="#F8FAFC"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#E2E8F0"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- BAHAN -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="🧪 Bahan / Pupuk / Racun"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvDetailBahan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="Pupuk Urea"
+                        android:textColor="#0D2617"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- DOSIS -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="⚖️ Dosis Penggunaan"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvDetailDosis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="12 Sak"
+                        android:textColor="#0D2617"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ROW 3: PENGELOLAAN LIMBAH -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="#F8FAFC"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#E2E8F0"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="🗑️ Jenis Limbah"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvDetailLimbah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="Plastik Pupuk"
+                        android:textColor="#0D2617"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDetailStatusLimbahBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_badge_red"
+                    android:fontFamily="@font/poppins_bold"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="Belum Disetor"
+                    android:textColor="#B71C1C"
+                    android:textSize="11sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- BUTTON TUTUP -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTutup"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:backgroundTint="#1B4D2E"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Tutup"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:cornerRadius="12dp" />
+
+</LinearLayout>

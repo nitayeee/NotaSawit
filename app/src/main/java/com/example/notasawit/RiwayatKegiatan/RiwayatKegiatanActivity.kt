@@ -2,6 +2,7 @@ package com.example.notasawit.RiwayatKegiatan
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -26,14 +29,16 @@ import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.KegiatanPetani.KegiatanEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.databinding.ActivityRiwayatKegiatanBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.io.IOException
+import java.util.Locale
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.IOException
-import java.util.Locale
+
 
 class RiwayatKegiatanActivity : AppCompatActivity() {
 
@@ -352,28 +357,71 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDetailDialog(item: KegiatanEntity) {
-        val namaKeg = item.nama_kegiatan.ifEmpty { "Kegiatan Kebun" }
+        private fun showDetailDialog(item: KegiatanEntity) {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_detail_kegiatan, null)
+
+        val tvDetailJenisKegiatan = view.findViewById<TextView>(R.id.tvDetailJenisKegiatan)
+        val tvDetailTanggal = view.findViewById<TextView>(R.id.tvDetailTanggal)
+        val tvDetailBahan = view.findViewById<TextView>(R.id.tvDetailBahan)
+        val tvDetailDosis = view.findViewById<TextView>(R.id.tvDetailDosis)
+        val tvDetailLimbah = view.findViewById<TextView>(R.id.tvDetailLimbah)
+        val tvDetailStatusLimbahBadge = view.findViewById<TextView>(R.id.tvDetailStatusLimbahBadge)
+        val tvDetailStatusSync = view.findViewById<TextView>(R.id.tvDetailStatusSync)
+        val btnClose = view.findViewById<ImageView>(R.id.btnClose)
+        val btnTutup = view.findViewById<View>(R.id.btnTutup)
+
+        val namaKeg = item.nama_kegiatan.ifEmpty {
+            when (item.kegiatan_jenis) {
+                1 -> "Pemupukan"
+                2 -> "Pengendalian Gulma"
+                3 -> "Pengendalian Hama"
+                else -> "Kegiatan Kebun"
+            }
+        }
         val bahan = item.nama_bahan.ifEmpty { item.kegiatan_ket.ifEmpty { "-" } }
         val dosis = "${item.kegiatan_jumlah} ${item.kegiatan_satuan}"
-        val statusSync = if (item.isSynced) "Tersinkronisasi dari Server" else "Belum Tersinkron (Tersimpan Lokal)"
 
-        val message = """
-            📌 Jenis Kegiatan: $namaKeg
-            📅 Tanggal Rencana: ${item.kegiatan_tanggal}
-            🧪 Bahan / Pupuk / Racun: $bahan
-            ⚖️ Dosis Penggunaan: $dosis
-            🗑️ Jenis Limbah: ${item.jenis_limbah.ifEmpty { "-" }}
-            📦 Status Limbah: ${item.status_limbah}
-            🔄 Status Data: $statusSync
-        """.trimIndent()
+        tvDetailJenisKegiatan.text = namaKeg
+        tvDetailTanggal.text = item.kegiatan_tanggal.ifEmpty { "-" }
+        tvDetailBahan.text = bahan
+        tvDetailDosis.text = dosis
+        tvDetailLimbah.text = item.jenis_limbah.ifEmpty { "Tidak Ada Limbah" }
 
-        AlertDialog.Builder(this)
-            .setTitle("Detail Record Kegiatan Kebun")
-            .setMessage(message)
-            .setPositiveButton("Tutup", null)
-            .show()
+        // Status Limbah Badge
+        val statusLimbah = item.status_limbah.ifEmpty { "Belum Disetor" }
+        tvDetailStatusLimbahBadge.text = statusLimbah
+        if (statusLimbah.equals("Sudah Disetor", ignoreCase = true)) {
+            tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_badge_green)
+            tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#1B4D2E"))
+        } else if (statusLimbah.equals("Tidak Ada", ignoreCase = true) || item.jenis_limbah.isEmpty()) {
+            tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_badge_gold)
+            tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#475569"))
+        } else {
+            tvDetailStatusLimbahBadge.setBackgroundResource(R.drawable.bg_badge_red)
+            tvDetailStatusLimbahBadge.setTextColor(Color.parseColor("#B71C1C"))
+        }
+
+        // Status Sync Data
+        if (item.isSynced) {
+            tvDetailStatusSync.text = "Tersinkronisasi"
+            tvDetailStatusSync.setTextColor(Color.parseColor("#1B4D2E"))
+        } else {
+            tvDetailStatusSync.text = "Mengantre Sync"
+            tvDetailStatusSync.setTextColor(Color.parseColor("#B71C1C"))
+        }
+
+        btnClose.setOnClickListener { dialog.dismiss() }
+        btnTutup.setOnClickListener { dialog.dismiss() }
+
+        dialog.setContentView(view)
+        dialog.window?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundResource(android.R.color.transparent)
+
+        dialog.show()
     }
+
+
 
     override fun onResume() {
         super.onResume()
