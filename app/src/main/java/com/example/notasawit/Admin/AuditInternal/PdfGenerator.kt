@@ -179,11 +179,34 @@ object PdfGenerator {
                 yPosition += lineSpacing * 1.3f
                 checkNewPage()
 
+                val bitmapPaint = Paint().apply {
+                    isFilterBitmap = true
+                    isAntiAlias = true
+                    isDither = true
+                }
+
                 for ((index, item) in buktiList.withIndex()) {
                     val imgFile = File(item.fotoPath)
                     if (imgFile.exists()) {
                         try {
-                            val bitmap = android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath)
+                            // Decode dengan resolusi optimal agar tajam dan hemat RAM
+                            val boundsOptions = android.graphics.BitmapFactory.Options().apply {
+                                inJustDecodeBounds = true
+                            }
+                            android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath, boundsOptions)
+                            
+                            var sampleSize = 1
+                            val targetDimension = 1200
+                            while (boundsOptions.outWidth / (sampleSize * 2) >= targetDimension && 
+                                   boundsOptions.outHeight / (sampleSize * 2) >= targetDimension) {
+                                sampleSize *= 2
+                            }
+                            
+                            val decodeOptions = android.graphics.BitmapFactory.Options().apply {
+                                inSampleSize = sampleSize
+                            }
+                            val bitmap = android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath, decodeOptions)
+
                             if (bitmap != null) {
                                 val maxImgWidth = PAGE_WIDTH - (MARGIN_LEFT * 2) - 20
                                 var scale = maxImgWidth / bitmap.width.toFloat()
@@ -211,11 +234,15 @@ object PdfGenerator {
                                 yPosition += lineSpacing
                                 checkNewPage()
 
-                                // 2. Gambar Foto
+                                // 2. Gambar Foto dengan anti-aliasing & bilinear filter
                                 val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
-                                canvas.drawBitmap(scaledBitmap, MARGIN_LEFT + 10, yPosition, null)
+                                canvas.drawBitmap(scaledBitmap, MARGIN_LEFT + 10, yPosition, bitmapPaint)
                                 yPosition += finalHeight + 10f
                                 checkNewPage()
+
+                                if (scaledBitmap != bitmap) {
+                                    bitmap.recycle()
+                                }
 
                                 // 3. Teks Keterangan Foto
                                 if (item.keterangan.isNotBlank()) {

@@ -41,14 +41,19 @@ class Section4Fragment : Fragment() {
     private val listBuktiTemuan = mutableListOf<BuktiTemuanItem>()
     private lateinit var buktiAdapter: BuktiTemuanAdapter
 
-    // Launcher untuk kamera
+    private var tempCameraFilePath: String? = null
+
+    // Launcher untuk kamera dengan resolusi penuh (Full Resolution via TakePicture)
     private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap: Bitmap? ->
-        if (bitmap != null) {
-            val path = saveBitmapToStorage(bitmap)
-            if (path != null) {
-                listBuktiTemuan.add(BuktiTemuanItem(fotoPath = path, keterangan = ""))
+        ActivityResultContracts.TakePicture()
+    ) { success: Boolean ->
+        if (success && !tempCameraFilePath.isNullOrEmpty()) {
+            val file = File(tempCameraFilePath!!)
+            if (file.exists() && file.length() > 0) {
+                // Perbaiki rotasi EXIF agar foto tegak lurus sempurna
+                fixImageOrientation(file.absolutePath)
+
+                listBuktiTemuan.add(BuktiTemuanItem(fotoPath = file.absolutePath, keterangan = ""))
                 buktiAdapter.notifyItemInserted(listBuktiTemuan.size - 1)
                 binding.rvBuktiTemuan.scrollToPosition(listBuktiTemuan.size - 1)
             }
@@ -69,23 +74,24 @@ class Section4Fragment : Fragment() {
         }
     }
 
-    private fun saveBitmapToStorage(bitmap: Bitmap): String? {
-        return try {
+    private fun launchCamera() {
+        try {
             val directory = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             if (directory != null && !directory.exists()) {
                 directory.mkdirs()
             }
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val file = File(directory, "Audit_Temuan_${timeStamp}_${System.currentTimeMillis() % 1000}.jpg")
-            val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
-            outputStream.flush()
-            outputStream.close()
-            file.absolutePath
+            tempCameraFilePath = file.absolutePath
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                file
+            )
+            cameraLauncher.launch(uri)
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(requireContext(), "Gagal menyimpan foto dari kamera", Toast.LENGTH_SHORT).show()
-            null
+            Toast.makeText(requireContext(), "Gagal membuka kamera: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -102,11 +108,46 @@ class Section4Fragment : Fragment() {
             inputStream?.copyTo(outputStream)
             inputStream?.close()
             outputStream.close()
+
+            // Perbaiki orientasi foto galeri jika ada rotasi EXIF
+            fixImageOrientation(file.absolutePath)
+
             file.absolutePath
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Gagal menyimpan foto dari galeri", Toast.LENGTH_SHORT).show()
             null
+        }
+    }
+
+    private fun fixImageOrientation(imagePath: String) {
+        try {
+            val exif = android.media.ExifInterface(imagePath)
+            val orientation = exif.getAttributeInt(
+                android.media.ExifInterface.TAG_ORIENTATION,
+                android.media.ExifInterface.ORIENTATION_NORMAL
+            )
+            val rotationAngle = when (orientation) {
+                android.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                android.media.ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                android.media.ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                else -> 0
+            }
+            if (rotationAngle != 0) {
+                val bitmap = android.graphics.BitmapFactory.decodeFile(imagePath)
+                if (bitmap != null) {
+                    val matrix = android.graphics.Matrix().apply { postRotate(rotationAngle.toFloat()) }
+                    val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                    val out = FileOutputStream(imagePath)
+                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                    out.flush()
+                    out.close()
+                    bitmap.recycle()
+                    rotatedBitmap.recycle()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -116,7 +157,7 @@ class Section4Fragment : Fragment() {
             .setTitle("Tambah Bukti Foto Temuan")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> cameraLauncher.launch(null)
+                    0 -> launchCamera()
                     1 -> galleryLauncher.launch("image/*")
                 }
             }
