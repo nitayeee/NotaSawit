@@ -72,6 +72,24 @@ class SyncPengeluaranRepository(
                             allSuccess = false
                         } else {
                             Log.d("API_PENGELUARAN", "Sukses masuk server asli: $body")
+                            
+                            // Ambil ID biaya dari server untuk navigasi ke detail
+                            val serverId = try {
+                                val jsonObj = org.json.JSONObject(body)
+                                val dataObj = jsonObj.optJSONObject("data")
+                                dataObj?.optInt("id", 0) ?: jsonObj.optInt("id", 0)
+                            } catch (e: Exception) {
+                                0
+                            }
+
+                            // Tampilkan notifikasi sistem di HP
+                            com.example.notasawit.Notification.NotificationHelper.showPengeluaranNotification(
+                                context = context,
+                                biayaId = serverId,
+                                biayaNama = biaya_operasional.biaya_nama,
+                                biayaTotal = biaya_operasional.biaya_total
+                            )
+
                             database.DetailPengeluaranDao().deleteByPengeluaran(biaya_operasional.localId)
                             database.PengeluaranDao().deleteById(biaya_operasional.localId)
                             Log.d("SYNC_PENGELUARAN", "Data Utama Pengeluaran ID ${biaya_operasional.localId} bersih dari lokal Room.")

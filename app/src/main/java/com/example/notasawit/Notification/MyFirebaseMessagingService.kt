@@ -23,16 +23,30 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        val type = remoteMessage.data["type"] ?: ""
+        val dataId = remoteMessage.data["id"]?.toIntOrNull()
+            ?: remoteMessage.data["produksi_id"]?.toIntOrNull()
+            ?: remoteMessage.data["biaya_id"]?.toIntOrNull()
+            ?: 0
+
         val title = remoteMessage.notification?.title 
             ?: remoteMessage.data["title"] 
-            ?: "Tugas Baru"
+            ?: when (type) {
+                "produksi" -> "Pemasukan / Produksi Baru"
+                "pengeluaran" -> "Pengeluaran Baru"
+                else -> "Tugas Baru"
+            }
 
         val message = remoteMessage.notification?.body 
             ?: remoteMessage.data["body"] 
             ?: remoteMessage.data["pesan"] 
-            ?: "Anda menerima tugas baru dari Superadmin."
+            ?: when (type) {
+                "produksi" -> "Ada data produksi baru. Ketuk untuk melihat detail."
+                "pengeluaran" -> "Ada data pengeluaran baru. Ketuk untuk melihat detail."
+                else -> "Anda menerima tugas baru dari Superadmin."
+            }
 
-        sendNotification(title, message)
+        sendNotification(title, message, type, dataId)
     }
 
     override fun onNewToken(token: String) {
@@ -49,14 +63,32 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(title: String, messageBody: String) {
-        val intent = Intent(applicationContext, DaftarTugasActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    private fun sendNotification(title: String, messageBody: String, type: String = "", id: Int = 0) {
+        val intent = when (type) {
+            "produksi" -> {
+                Intent(applicationContext, com.example.notasawit.DetailRiwayatKeuangan.RiwayatPemasukanActivity::class.java).apply {
+                    putExtra("produksi_id", id)
+                    putExtra("from_notification", true)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            }
+            "pengeluaran" -> {
+                Intent(applicationContext, com.example.notasawit.DetailRiwayatKeuangan.RiwayatPengeluaranActivity::class.java).apply {
+                    putExtra("biaya_id", id)
+                    putExtra("from_notification", true)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            }
+            else -> {
+                Intent(applicationContext, DaftarTugasActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(
-            applicationContext, 0, intent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            applicationContext, (System.currentTimeMillis() % 10000).toInt(), intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val channelId = "tugas_notification_channel"

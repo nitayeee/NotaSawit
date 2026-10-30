@@ -39,8 +39,16 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
                 "biaya_id",
                 0
             )
-        if(biayaId != 0){
+        if (biayaId != 0) {
             getDetailBiayaOperasional(biayaId)
+            PetaniApi.markNotificationAsRead("pengeluaran", biayaId, object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.e("RiwayatPengeluaran", "Gagal markNotificationAsRead: ${e.message}")
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    Log.d("RiwayatPengeluaran", "Notifikasi pengeluaran $biayaId berhasil ditandai sudah dibaca")
+                }
+            })
         }
         binding.btnBack.setOnClickListener {
             finish()

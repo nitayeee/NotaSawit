@@ -71,6 +71,24 @@ class SyncProduksiRepository(
                             allSuccess = false
                         } else {
                             Log.d("API_PRODUKSI", "Sukses masuk server asli: $body")
+                            
+                            // Ambil ID produksi dari server untuk navigasi ke detail
+                            val serverId = try {
+                                val jsonObj = org.json.JSONObject(body)
+                                val dataObj = jsonObj.optJSONObject("data")
+                                dataObj?.optInt("id", 0) ?: jsonObj.optInt("id", 0)
+                            } catch (e: Exception) {
+                                0
+                            }
+
+                            // Tampilkan notifikasi sistem di HP
+                            com.example.notasawit.Notification.NotificationHelper.showProduksiNotification(
+                                context = context,
+                                produksiId = serverId,
+                                jumlahTbs = produksi.jumlah_tbs,
+                                totalPendapatan = produksi.total_pendapatan
+                            )
+
                             // Hapus detail dan produksi utama
                             database.DetailProduksiDao().deleteByProduksi(produksi.localId)
                             database.ProduksiDao().deleteById(produksi.localId)

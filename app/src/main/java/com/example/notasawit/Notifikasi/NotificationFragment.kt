@@ -73,6 +73,13 @@ class NotificationFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (::adapter.isInitialized && !adapter.isSelectionMode) {
+            fetchNotifications()
+        }
+    }
+
     private fun setupSelectionListeners() {
         btnBatalSeleksi.setOnClickListener {
             adapter.isSelectionMode = false
