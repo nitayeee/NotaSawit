@@ -185,7 +185,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ===================== BUKTI AUDIT (FOTO) ===================== -->
+        <!-- ===================== BUKTI PELAKSANAAN / FOTO TEMUAN AUDIT ===================== -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -203,27 +203,33 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BUKTI PELAKSANAAN AUDIT (OPSIONAL)"
+                    android:text="BUKTI FOTO TEMUAN AUDIT (OPSIONAL)"
                     android:fontFamily="@font/poppins_bold"
                     android:textSize="16sp"/>
 
-                <ImageView
-                    android:id="@+id/ivBuktiAudit"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="12dp"
-                    android:scaleType="centerCrop"
-                    android:background="#E0E0E0"
-                    android:contentDescription="Bukti Audit"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tambahkan foto temuan beserta keterangannya"
+                    android:textColor="#757575"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="10dp"/>
 
-                <Button
-                    app:backgroundTint="@color/secondary"
-                    android:id="@+id/btnPilihFoto"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBuktiTemuan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Ambil / Pilih Foto"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                    android:nestedScrollingEnabled="false" />
+
+                <Button
+                    android:id="@+id/btnTambahFoto"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="📷 + Tambah Foto Temuan"
+                    app:backgroundTint="@color/secondary" />
 
             </LinearLayout>
 

@@ -1,24 +1,35 @@
 package com.example.notasawit.Admin.AuditInternal
 
 import android.app.DatePickerDialog
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notasawit.Admin.AuditInternal.AuditViewModel.AuditViewModel
+import com.example.notasawit.Admin.AuditInternal.adapter.BuktiTemuanAdapter
+import com.example.notasawit.Admin.AuditInternal.model.BuktiTemuanHelper
+import com.example.notasawit.Admin.AuditInternal.model.BuktiTemuanItem
 import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.databinding.FragmentSection4Binding
 import com.example.notasawit.Utils.CustomAlert
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import kotlin.getValue
-
 
 class Section4Fragment : Fragment() {
 
@@ -27,36 +38,89 @@ class Section4Fragment : Fragment() {
     private val viewModel: AuditViewModel by activityViewModels()
     private lateinit var database: AppDatabase
     
-    private var currentPhotoPath: String? = null
+    private val listBuktiTemuan = mutableListOf<BuktiTemuanItem>()
+    private lateinit var buktiAdapter: BuktiTemuanAdapter
 
-    private val pickImageLauncher = registerForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.GetContent()
-    ) { uri: android.net.Uri? ->
-        if (uri != null) {
-            try {
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                val directory = requireContext().getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES)
-                if (directory != null && !directory.exists()) {
-                    directory.mkdirs()
-                }
-                val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
-                val file = java.io.File(directory, "Audit_Bukti_$timeStamp.jpg")
-                val outputStream = java.io.FileOutputStream(file)
-                inputStream?.copyTo(outputStream)
-                inputStream?.close()
-                outputStream.close()
-                
-                currentPhotoPath = file.absolutePath
-                viewModel.auditHeader = viewModel.auditHeader.copy(fotoPath = currentPhotoPath ?: "")
-                
-                com.bumptech.glide.Glide.with(this)
-                    .load(file)
-                    .into(binding.ivBuktiAudit)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(requireContext(), "Gagal menyimpan foto", Toast.LENGTH_SHORT).show()
+    // Launcher untuk kamera
+    private val cameraLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicturePreview()
+    ) { bitmap: Bitmap? ->
+        if (bitmap != null) {
+            val path = saveBitmapToStorage(bitmap)
+            if (path != null) {
+                listBuktiTemuan.add(BuktiTemuanItem(fotoPath = path, keterangan = ""))
+                buktiAdapter.notifyItemInserted(listBuktiTemuan.size - 1)
+                binding.rvBuktiTemuan.scrollToPosition(listBuktiTemuan.size - 1)
             }
         }
+    }
+
+    // Launcher untuk galeri
+    private val galleryLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            val path = saveUriToStorage(uri)
+            if (path != null) {
+                listBuktiTemuan.add(BuktiTemuanItem(fotoPath = path, keterangan = ""))
+                buktiAdapter.notifyItemInserted(listBuktiTemuan.size - 1)
+                binding.rvBuktiTemuan.scrollToPosition(listBuktiTemuan.size - 1)
+            }
+        }
+    }
+
+    private fun saveBitmapToStorage(bitmap: Bitmap): String? {
+        return try {
+            val directory = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            if (directory != null && !directory.exists()) {
+                directory.mkdirs()
+            }
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val file = File(directory, "Audit_Temuan_${timeStamp}_${System.currentTimeMillis() % 1000}.jpg")
+            val outputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
+            outputStream.flush()
+            outputStream.close()
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Gagal menyimpan foto dari kamera", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+
+    private fun saveUriToStorage(uri: Uri): String? {
+        return try {
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val directory = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            if (directory != null && !directory.exists()) {
+                directory.mkdirs()
+            }
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val file = File(directory, "Audit_Temuan_${timeStamp}_${System.currentTimeMillis() % 1000}.jpg")
+            val outputStream = FileOutputStream(file)
+            inputStream?.copyTo(outputStream)
+            inputStream?.close()
+            outputStream.close()
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Gagal menyimpan foto dari galeri", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+
+    private fun showPickPhotoDialog() {
+        val options = arrayOf("📷 Ambil Foto (Kamera)", "🖼️ Pilih dari Galeri")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Tambah Bukti Foto Temuan")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> cameraLauncher.launch(null)
+                    1 -> galleryLauncher.launch("image/*")
+                }
+            }
+            .show()
     }
 
     override fun onCreateView(
@@ -64,7 +128,6 @@ class Section4Fragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentSection4Binding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,7 +140,6 @@ class Section4Fragment : Fragment() {
         binding.etTemuan.isEnabled = false
         binding.etPerbaikan.isEnabled = false
 
-
         setupRadio()
         setupDatePicker()
         binding.etTemuan.setText(viewModel.auditHeader.ringkasanTemuan)
@@ -89,12 +151,23 @@ class Section4Fragment : Fragment() {
             binding.rbOtherTemuan.isChecked = true
             binding.etTemuan.isEnabled = true
         }
-        
-        currentPhotoPath = viewModel.auditHeader.fotoPath
-        if (!currentPhotoPath.isNullOrEmpty()) {
-            com.bumptech.glide.Glide.with(this)
-                .load(java.io.File(currentPhotoPath!!))
-                .into(binding.ivBuktiAudit)
+
+        // Setup RecyclerView Bukti Temuan
+        listBuktiTemuan.clear()
+        listBuktiTemuan.addAll(BuktiTemuanHelper.fromJson(viewModel.auditHeader.fotoPath))
+
+        buktiAdapter = BuktiTemuanAdapter(listBuktiTemuan) { position ->
+            if (position in 0 until listBuktiTemuan.size) {
+                listBuktiTemuan.removeAt(position)
+                buktiAdapter.notifyItemRemoved(position)
+                buktiAdapter.notifyItemRangeChanged(position, listBuktiTemuan.size - position)
+            }
+        }
+        binding.rvBuktiTemuan.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvBuktiTemuan.adapter = buktiAdapter
+
+        binding.btnTambahFoto.setOnClickListener {
+            showPickPhotoDialog()
         }
 
         binding.rgStatusAudit.setOnCheckedChangeListener { _, checkedId ->
@@ -114,15 +187,9 @@ class Section4Fragment : Fragment() {
             binding.cardTanggalAudit.visibility = View.VISIBLE
         }
 
-        binding.btnPilihFoto.setOnClickListener {
-            pickImageLauncher.launch("image/*")
-        }
-
         binding.btnBack.setOnClickListener {
-
             (requireActivity() as AuditInternalActivity)
                 .navigateBack(3)
-
         }
 
         binding.btnSelesai.setOnClickListener {
@@ -144,13 +211,15 @@ class Section4Fragment : Fragment() {
 
             val statusAudit = if (binding.rbStatusLulus.isChecked) "Lulus" else "Perlu Perbaikan"
             val rencanaPemeriksaan = if (binding.rbStatusLulus.isChecked) "" else binding.etTanggalAudit.text.toString()
+            val fotoPathJson = BuktiTemuanHelper.toJson(listBuktiTemuan)
 
             viewModel.auditHeader =
                 viewModel.auditHeader.copy(
                     ringkasanTemuan = temuanValue,
                     rencanaPerbaikan = perbaikanValue,
                     rencanaPemeriksaan = rencanaPemeriksaan,
-                    statusAudit = statusAudit
+                    statusAudit = statusAudit,
+                    fotoPath = fotoPathJson
                 )
 
             lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {

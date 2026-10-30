@@ -9,6 +9,7 @@ import android.os.Environment
 import com.example.notasawit.Admin.AuditInternal.data.Section2QuestionData
 import com.example.notasawit.Admin.AuditInternal.data.Section3QuestionData
 import com.example.notasawit.Admin.AuditInternal.model.AuditItem
+import com.example.notasawit.Admin.AuditInternal.model.BuktiTemuanHelper
 import com.example.notasawit.Room.AuditEntity.AuditHeader
 import java.io.File
 import java.io.FileOutputStream
@@ -170,36 +171,70 @@ object PdfGenerator {
         yPosition += lineSpacing * 2
         checkNewPage()
         
-        // Bukti Pelaksanaan Audit (Image)
+        // Bukti Foto Temuan Audit (Multiple Images & Captions)
         if (auditHeader.fotoPath.isNotEmpty()) {
-            val imgFile = File(auditHeader.fotoPath)
-            if (imgFile.exists()) {
-                canvas.drawText("Bukti Pelaksanaan Audit:", MARGIN_LEFT + 10, yPosition, boldPaint)
-                yPosition += lineSpacing
+            val buktiList = BuktiTemuanHelper.fromJson(auditHeader.fotoPath)
+            if (buktiList.isNotEmpty()) {
+                canvas.drawText("Bukti Foto Temuan Audit:", MARGIN_LEFT + 10, yPosition, boldPaint)
+                yPosition += lineSpacing * 1.3f
                 checkNewPage()
-                
-                try {
-                    val bitmap = android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath)
-                    if (bitmap != null) {
-                        // Calculate scale to fit page width with margins
-                        val maxImgWidth = PAGE_WIDTH - (MARGIN_LEFT * 2) - 20
-                        val scale = maxImgWidth / bitmap.width.toFloat()
-                        val scaledHeight = bitmap.height * scale
-                        
-                        // Check if it fits on current page
-                        if (yPosition + scaledHeight > PAGE_HEIGHT - MARGIN_BOTTOM - 20) {
-                            yPosition = PAGE_HEIGHT - MARGIN_BOTTOM - 10f // force new page
+
+                for ((index, item) in buktiList.withIndex()) {
+                    val imgFile = File(item.fotoPath)
+                    if (imgFile.exists()) {
+                        try {
+                            val bitmap = android.graphics.BitmapFactory.decodeFile(imgFile.absolutePath)
+                            if (bitmap != null) {
+                                val maxImgWidth = PAGE_WIDTH - (MARGIN_LEFT * 2) - 20
+                                var scale = maxImgWidth / bitmap.width.toFloat()
+                                var scaledHeight = bitmap.height * scale
+
+                                // Batasi tinggi foto maksimum agar proporsional
+                                val maxImgHeight = 220f
+                                if (scaledHeight > maxImgHeight) {
+                                    val hScale = maxImgHeight / scaledHeight
+                                    scale *= hScale
+                                    scaledHeight = maxImgHeight
+                                }
+                                val finalWidth = (bitmap.width * scale).toInt()
+                                val finalHeight = scaledHeight.toInt()
+
+                                // Estimasi tinggi blok: Header temuan + foto + keterangan
+                                val estimatedBlockHeight = finalHeight + 80f
+                                if (yPosition + estimatedBlockHeight > PAGE_HEIGHT - MARGIN_BOTTOM - 20) {
+                                    yPosition = PAGE_HEIGHT - MARGIN_BOTTOM - 10f
+                                    checkNewPage()
+                                }
+
+                                // 1. Label nomor temuan
+                                canvas.drawText("Bukti Temuan #${index + 1}:", MARGIN_LEFT + 10, yPosition, boldPaint)
+                                yPosition += lineSpacing
+                                checkNewPage()
+
+                                // 2. Gambar Foto
+                                val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
+                                canvas.drawBitmap(scaledBitmap, MARGIN_LEFT + 10, yPosition, null)
+                                yPosition += finalHeight + 10f
+                                checkNewPage()
+
+                                // 3. Teks Keterangan Foto
+                                if (item.keterangan.isNotBlank()) {
+                                    canvas.drawText("Keterangan:", MARGIN_LEFT + 10, yPosition, textPaint)
+                                    yPosition += lineSpacing
+                                    checkNewPage()
+                                    drawTextWrapped(item.keterangan, MARGIN_LEFT + 20, textPaint, PAGE_WIDTH - MARGIN_LEFT - 40)
+                                }
+
+                                yPosition += lineSpacing * 1.2f
+                                checkNewPage()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            canvas.drawText("(Gagal memuat foto temuan #${index + 1})", MARGIN_LEFT + 20, yPosition, textPaint)
+                            yPosition += lineSpacing
                             checkNewPage()
                         }
-                        
-                        val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, maxImgWidth.toInt(), scaledHeight.toInt(), true)
-                        canvas.drawBitmap(scaledBitmap, MARGIN_LEFT + 10, yPosition, null)
-                        yPosition += scaledHeight + lineSpacing
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    canvas.drawText("(Gagal memuat foto)", MARGIN_LEFT + 20, yPosition, textPaint)
-                    yPosition += lineSpacing
                 }
             }
         }
