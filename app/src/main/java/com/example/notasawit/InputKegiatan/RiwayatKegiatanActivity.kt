@@ -130,6 +130,8 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     private fun loadData() {
         binding.swipeRefresh.isRefreshing = true
 
+        triggerKegiatanSync()
+
         lifecycleScope.launch {
             try {
                 val currentPetaniId = spPetaniId
@@ -352,6 +354,16 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
 
         adapter.updateItems(filteredItems)
 
+        val targetKegiatanId = intent.getIntExtra("kegiatan_id", 0)
+        if (targetKegiatanId != 0) {
+            val target = filteredItems.find { it.kegiatan.localId == targetKegiatanId }
+                ?: allItemsWithLahan.find { it.kegiatan.localId == targetKegiatanId }
+            if (target != null) {
+                intent.removeExtra("kegiatan_id")
+                showDetailDialog(target.kegiatan)
+            }
+        }
+
         binding.tvTotalCatatan.text = "${filteredItems.size} Kegiatan"
         if (filteredItems.isEmpty()) {
             binding.rvKegiatan.visibility = View.GONE
@@ -468,6 +480,16 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     }
 
 
+
+    private fun triggerKegiatanSync() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                com.example.notasawit.Sync.SyncKegiatanRepository(applicationContext, database).sync()
+            } catch (e: Exception) {
+                Log.e("SYNC_KEGIATAN", "Direct sync failed in RiwayatKegiatan", e)
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()

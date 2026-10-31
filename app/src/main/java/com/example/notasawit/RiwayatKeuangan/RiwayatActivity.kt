@@ -18,9 +18,16 @@ import com.example.notasawit.DetailRiwayatKeuangan.RiwayatPengeluaranActivity
 import com.example.notasawit.Model.Lahan
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Sync.SyncPengeluaranRepository
+import com.example.notasawit.Sync.SyncProduksiRepository
 import com.example.notasawit.databinding.ActivityRiwayatBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -32,6 +39,7 @@ class RiwayatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRiwayatBinding
     private lateinit var adapter: RiwayatAdapter
+    private val database by lazy { AppDatabase.getDatabase(this) }
 
     private val riwayatList  = mutableListOf<RiwayatItem>()
     private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
@@ -241,18 +249,38 @@ class RiwayatActivity : AppCompatActivity() {
                     call: Call,
                     e: IOException
                 ) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val localList = getLocalUnsyncedRiwayat()
+                        val filteredLocal = when (selectedTipe.lowercase()) {
+                            "pemasukan" -> localList.filter { it.tipe == "pemasukan" }
+                            "pengeluaran" -> localList.filter { it.tipe == "pengeluaran" }
+                            else -> localList
+                        }
 
-                    runOnUiThread {
-                        binding.rvTransaksi.visibility = View.GONE
-                        binding.layoutEmptyState.visibility = View.VISIBLE
-                        binding.ivEmptyState.setImageResource(R.drawable.ic_warning)
-                        binding.tvEmptyState.text = "Tidak ada koneksi jaringan"
+                        withContext(Dispatchers.Main) {
+                            if (filteredLocal.isNotEmpty()) {
+                                binding.rvTransaksi.visibility = View.VISIBLE
+                                binding.layoutEmptyState.visibility = View.GONE
+                                adapter.updateData(filteredLocal)
 
-                        Toast.makeText(
-                            this@RiwayatActivity,
-                            e.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                                val totalPemasukan = filteredLocal.filter { it.tipe.equals("pemasukan", ignoreCase = true) }.sumOf { it.nominal }
+                                val totalPengeluaran = filteredLocal.filter { it.tipe.equals("pengeluaran", ignoreCase = true) }.sumOf { it.nominal }
+                                val numberFormat = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID"))
+                                binding.tvKeuntungan.text = "Rp ${numberFormat.format(totalPemasukan.toLong())}"
+                                binding.tvTotalPengeluaran.text = "Rp ${numberFormat.format(totalPengeluaran.toLong())}"
+                            } else {
+                                binding.rvTransaksi.visibility = View.GONE
+                                binding.layoutEmptyState.visibility = View.VISIBLE
+                                binding.ivEmptyState.setImageResource(R.drawable.ic_warning)
+                                binding.tvEmptyState.text = "Tidak ada koneksi jaringan"
+                            }
+
+                            Toast.makeText(
+                                this@RiwayatActivity,
+                                "Offline: Menampilkan data tersimpan lokal",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
 
@@ -335,32 +363,45 @@ class RiwayatActivity : AppCompatActivity() {
                             )
                         }
 
-                        // Urutkan transaksi berdasarkan created_at / tanggal terbaru di posisi PALING ATAS
-                        list.sortWith(Comparator { a, b ->
-                            val timeA = if (!a.createdAt.isNullOrEmpty()) a.createdAt!! else a.tanggal
-                            val timeB = if (!b.createdAt.isNullOrEmpty()) b.createdAt!! else b.tanggal
-                            val cmp = timeB.compareTo(timeA)
-                            if (cmp != 0) cmp else b.id.compareTo(a.id)
-                        })
-
-                        runOnUiThread {
-                            if (list.isEmpty()) {
-                                binding.rvTransaksi.visibility = View.GONE
-                                binding.layoutEmptyState.visibility = View.VISIBLE
-                                binding.ivEmptyState.setImageResource(R.drawable.ic_no_data)
-                                binding.tvEmptyState.text = "Tidak ada riwayat"
-                            } else {
-                                binding.rvTransaksi.visibility = View.VISIBLE
-                                binding.layoutEmptyState.visibility = View.GONE
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val localList = getLocalUnsyncedRiwayat()
+                            val filteredLocal = when (selectedTipe.lowercase()) {
+                                "pemasukan" -> localList.filter { it.tipe == "pemasukan" }
+                                "pengeluaran" -> localList.filter { it.tipe == "pengeluaran" }
+                                else -> localList
                             }
-                            adapter.updateData(list)
 
-                            val totalPemasukan = list.filter { it.tipe.equals("pemasukan", ignoreCase = true) }.sumOf { it.nominal }
-                            val totalPengeluaran = list.filter { it.tipe.equals("pengeluaran", ignoreCase = true) }.sumOf { it.nominal }
+                            val combinedList = mutableListOf<RiwayatItem>()
+                            combinedList.addAll(filteredLocal)
+                            combinedList.addAll(list)
 
-                            val numberFormat = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID"))
-                            binding.tvKeuntungan.text = "Rp ${numberFormat.format(totalPemasukan.toLong())}"
-                            binding.tvTotalPengeluaran.text = "Rp ${numberFormat.format(totalPengeluaran.toLong())}"
+                            // Urutkan transaksi berdasarkan created_at / tanggal terbaru di posisi PALING ATAS
+                            combinedList.sortWith(Comparator { a, b ->
+                                val timeA = if (!a.createdAt.isNullOrEmpty()) a.createdAt!! else a.tanggal
+                                val timeB = if (!b.createdAt.isNullOrEmpty()) b.createdAt!! else b.tanggal
+                                val cmp = timeB.compareTo(timeA)
+                                if (cmp != 0) cmp else b.id.compareTo(a.id)
+                            })
+
+                            withContext(Dispatchers.Main) {
+                                if (combinedList.isEmpty()) {
+                                    binding.rvTransaksi.visibility = View.GONE
+                                    binding.layoutEmptyState.visibility = View.VISIBLE
+                                    binding.ivEmptyState.setImageResource(R.drawable.ic_no_data)
+                                    binding.tvEmptyState.text = "Tidak ada riwayat"
+                                } else {
+                                    binding.rvTransaksi.visibility = View.VISIBLE
+                                    binding.layoutEmptyState.visibility = View.GONE
+                                }
+                                adapter.updateData(combinedList)
+
+                                val totalPemasukan = combinedList.filter { it.tipe.equals("pemasukan", ignoreCase = true) }.sumOf { it.nominal }
+                                val totalPengeluaran = combinedList.filter { it.tipe.equals("pengeluaran", ignoreCase = true) }.sumOf { it.nominal }
+
+                                val numberFormat = java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID"))
+                                binding.tvKeuntungan.text = "Rp ${numberFormat.format(totalPemasukan.toLong())}"
+                                binding.tvTotalPengeluaran.text = "Rp ${numberFormat.format(totalPengeluaran.toLong())}"
+                            }
                         }
                     } catch (e: Exception) {
                         android.util.Log.e("RIWAYAT_ERROR", "Parsing error: ${e.message}", e)
@@ -522,5 +563,77 @@ class RiwayatActivity : AppCompatActivity() {
         }
     }
 
+    private suspend fun getLocalUnsyncedRiwayat(): List<RiwayatItem> = withContext(Dispatchers.IO) {
+        val list = mutableListOf<RiwayatItem>()
+        val currentPetaniId = sp_petaniId
 
+        try {
+            val unsyncedProduksi = database.ProduksiDao().getUnsynced()
+            val filteredProduksi = if (currentPetaniId != 0) {
+                unsyncedProduksi.filter { it.petaniId == currentPetaniId }
+            } else unsyncedProduksi
+
+            filteredProduksi.forEach { prod ->
+                list.add(
+                    RiwayatItem(
+                        id = prod.localId,
+                        judul = "Penjualan TBS (Menunggu Sinkron)",
+                        tanggal = prod.produksi_tanggal,
+                        nominal = prod.total_pendapatan,
+                        tipe = "pemasukan",
+                        lahanNama = null,
+                        lahanId = null,
+                        jumlahTbs = prod.jumlah_tbs.toDouble(),
+                        sourceTable = "produksi",
+                        isRead = 1,
+                        createdAt = prod.produksi_tanggal
+                    )
+                )
+            }
+
+            val unsyncedPengeluaran = database.PengeluaranDao().getUnsynced()
+            val filteredPengeluaran = if (currentPetaniId != 0) {
+                unsyncedPengeluaran.filter { it.petani_id == currentPetaniId }
+            } else unsyncedPengeluaran
+
+            filteredPengeluaran.forEach { peng ->
+                list.add(
+                    RiwayatItem(
+                        id = peng.localId,
+                        judul = "${peng.biaya_nama} (Menunggu Sinkron)",
+                        tanggal = peng.biaya_tanggal,
+                        nominal = peng.biaya_total,
+                        tipe = "pengeluaran",
+                        lahanNama = null,
+                        lahanId = null,
+                        jumlahTbs = peng.biaya_jumlah.toDouble(),
+                        sourceTable = "biaya",
+                        isRead = 1,
+                        createdAt = peng.biaya_tanggal
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("RIWAYAT_LOCAL", "Error getLocalUnsyncedRiwayat", e)
+        }
+
+        list
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val pSuccess = SyncProduksiRepository(applicationContext, database).syncProduksi()
+                val bSuccess = SyncPengeluaranRepository(applicationContext, database).syncPengeluaran()
+                if (pSuccess || bSuccess) {
+                    withContext(Dispatchers.Main) {
+                        loadRiwayat()
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("RIWAYAT", "Failed triggering background sync onResume", e)
+            }
+        }
+    }
 }

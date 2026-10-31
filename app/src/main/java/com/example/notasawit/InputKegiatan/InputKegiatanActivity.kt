@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -22,8 +23,10 @@ import com.example.notasawit.Room.AppDatabase
 import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
 import com.example.notasawit.Room.KegiatanPetani.KegiatanEntity
 import com.example.notasawit.Room.Lahan.LahanEntity
+import com.example.notasawit.Sync.SyncKegiatanRepository
 import com.example.notasawit.Sync.SyncWorker
 import com.example.notasawit.databinding.ActivityInputKegiatanBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -260,6 +263,16 @@ class InputKegiatanActivity : AppCompatActivity() {
     }
 
     private fun triggerDataSync() {
+        // Eksekusi langsung ke server di background coroutine
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val success = SyncKegiatanRepository(applicationContext, database).sync()
+                Log.d("SYNC_DIRECT", "Kegiatan direct sync success: $success")
+            } catch (e: Exception) {
+                Log.e("SYNC_DIRECT", "Kegiatan direct sync failed, background worker will retry", e)
+            }
+        }
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -269,8 +282,8 @@ class InputKegiatanActivity : AppCompatActivity() {
             .build()
 
         WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            "sync_data",
-            ExistingWorkPolicy.KEEP,
+            "SyncKegiatanWork",
+            ExistingWorkPolicy.REPLACE,
             syncRequest
         )
     }

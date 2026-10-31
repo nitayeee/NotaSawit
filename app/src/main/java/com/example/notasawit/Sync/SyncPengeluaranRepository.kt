@@ -1,4 +1,4 @@
-package com.example.notasawit.Sync
+﻿package com.example.notasawit.Sync
 
 import android.content.Context
 import android.net.Uri

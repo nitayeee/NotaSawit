@@ -3,6 +3,7 @@ package com.example.notasawit.Sync
 import android.content.Context
 import android.util.Log
 import com.example.notasawit.Network.PetaniApi
+import com.example.notasawit.Notification.NotificationHelper
 import com.example.notasawit.Room.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -31,14 +32,17 @@ class SyncKegiatanRepository(
             var allSuccess = true
 
             kegiatanList.forEach { kegiatan ->
-                // Tandai sementara agar tidak diambil ulang jika ada proses bersamaan
-                database.KegiatanDao().updateSynced(kegiatan.localId)
-
                 val detailLahan = database.DetailKegiatanDao().gethByKegiatan(kegiatan.localId)
                 val lahanIds = detailLahan.map { it.lahanId }
 
-                Log.d("SYNC", "==========================")
-                Log.d("SYNC", "Mengirim Kegiatan ID: ${kegiatan.localId}")
+                if (lahanIds.isEmpty()) {
+                    Log.w("SYNC_KEGIATAN", "Kegiatan lokal ${kegiatan.localId} tidak memiliki data lahan, hapus dari Room")
+                    database.KegiatanDao().deleteById(kegiatan.localId)
+                    return@forEach
+                }
+
+                Log.d("SYNC_KEGIATAN", "==========================")
+                Log.d("SYNC_KEGIATAN", "Mengirim Kegiatan ID: ${kegiatan.localId}")
 
                 try {
                     val call = PetaniApi.postKegiatan(
@@ -57,22 +61,44 @@ class SyncKegiatanRepository(
 
                     val response = call.execute()
                     val body = response.body?.string() ?: ""
-                    Log.d("API", "CODE = ${response.code}")
+                    Log.d("API_KEGIATAN", "CODE = ${response.code}")
 
                     if (response.isSuccessful) {
-                        Log.d("API", "isSuccessful = true. Response = $body")
-                        database.DetailKegiatanDao().deleteByKegiatan(kegiatan.localId)
-                        database.KegiatanDao().deleteById(kegiatan.localId)
-                        Log.d("SYNC", "Kegiatan ${kegiatan.localId} berhasil dikirim ke server dan dihapus dari Room")
+                        if (body.contains("<!DOCTYPE html>") || body.contains("<html")) {
+                            Log.e("API_KEGIATAN", "Kritis! Server merespon 200 tapi isinya HTML Login. Data lokal TIDAK dihapus.")
+                            allSuccess = false
+                        } else {
+                            Log.d("API_KEGIATAN", "Sukses masuk server asli: $body")
+
+                            val serverId = try {
+                                val jsonObj = org.json.JSONObject(body)
+                                val dataObj = jsonObj.optJSONObject("data")
+                                dataObj?.optInt("kegiatan_id", 0)
+                                    ?: dataObj?.optInt("id", 0)
+                                    ?: jsonObj.optInt("kegiatan_id", jsonObj.optInt("id", 0))
+                            } catch (e: Exception) {
+                                0
+                            }
+
+                            // Tampilkan notifikasi sistem di HP
+                            NotificationHelper.showKegiatanNotification(
+                                context = context,
+                                kegiatanId = serverId,
+                                namaKegiatan = kegiatan.nama_kegiatan,
+                                tanggal = kegiatan.kegiatan_tanggal
+                            )
+
+                            database.DetailKegiatanDao().deleteByKegiatan(kegiatan.localId)
+                            database.KegiatanDao().deleteById(kegiatan.localId)
+                            Log.d("SYNC_KEGIATAN", "Kegiatan ${kegiatan.localId} berhasil dikirim ke server dan dihapus dari Room")
+                        }
                     } else {
-                        Log.e("SYNC", "Sync gagal untuk ID ${kegiatan.localId}: ${response.code}")
-                        database.KegiatanDao().updateUnsynced(kegiatan.localId)
+                        Log.e("SYNC_KEGIATAN", "Sync gagal untuk ID ${kegiatan.localId}: ${response.code} | $body")
                         allSuccess = false
                     }
 
                 } catch (e: Exception) {
-                    Log.e("SYNC", "Gagal sync karena koneksi/RTO untuk ID ${kegiatan.localId}", e)
-                    database.KegiatanDao().updateUnsynced(kegiatan.localId)
+                    Log.e("SYNC_KEGIATAN", "Gagal sync karena koneksi/RTO untuk ID ${kegiatan.localId}", e)
                     allSuccess = false
                 }
             }

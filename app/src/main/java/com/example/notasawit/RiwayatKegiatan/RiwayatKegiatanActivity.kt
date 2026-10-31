@@ -1,4 +1,7 @@
-package com.example.notasawit.RiwayatKegiatan
+﻿package com.example.notasawit.RiwayatKegiatan
+
+import com.example.notasawit.InputKegiatan.InputKegiatanActivity
+import com.example.notasawit.InputKegiatan.KegiatanAdapter
 
 import android.content.Context
 import android.content.Intent
@@ -23,8 +26,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.notasawit.InputKegiatan.InputKegiatanActivity
-import com.example.notasawit.InputKegiatan.KegiatanAdapter
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.R
 import com.example.notasawit.Room.AppDatabase
@@ -132,10 +133,13 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     private fun loadData() {
         binding.swipeRefresh.isRefreshing = true
 
+        triggerKegiatanSync()
+
         lifecycleScope.launch {
             try {
                 val currentPetaniId = spPetaniId
 
+                // 1. Load data lokal (yang belum tersinkron) dari Room DB
                 val rawLocalKegiatan = database.KegiatanDao().getAll()
                 val localKegiatanFiltered = if (currentPetaniId != 0) {
                     val list = rawLocalKegiatan.filter { it.petani_id == currentPetaniId }
@@ -170,6 +174,7 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                     )
                 }
 
+                // 2. Cek koneksi internet
                 if (!isOnline()) {
                     Toast.makeText(this@RiwayatKegiatanActivity, "Anda sedang offline. Menampilkan data lokal.", Toast.LENGTH_SHORT).show()
                     allItemsWithLahan.clear()
@@ -179,6 +184,7 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                     return@launch
                 }
 
+                // 3. Jika online, ambil data dari API server
                 PetaniApi.getRiwayatKegiatan(
                     petaniId = currentPetaniId,
                     callback = object : Callback {
@@ -289,7 +295,9 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                             runOnUiThread {
                                 binding.swipeRefresh.isRefreshing = false
                                 allItemsWithLahan.clear()
+                                // Tampilkan data lokal yang belum tersinkron
                                 allItemsWithLahan.addAll(localItems)
+                                // Tampilkan data resmi server
                                 allItemsWithLahan.addAll(serverItems)
                                 sortAndApplyFilters()
                             }
@@ -348,6 +356,16 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
         }
 
         adapter.updateItems(filteredItems)
+
+        val targetKegiatanId = intent.getIntExtra("kegiatan_id", 0)
+        if (targetKegiatanId != 0) {
+            val target = filteredItems.find { it.kegiatan.localId == targetKegiatanId }
+                ?: allItemsWithLahan.find { it.kegiatan.localId == targetKegiatanId }
+            if (target != null) {
+                intent.removeExtra("kegiatan_id")
+                showDetailDialog(target.kegiatan)
+            }
+        }
 
         binding.tvTotalCatatan.text = "${filteredItems.size} Kegiatan"
         if (filteredItems.isEmpty()) {
@@ -465,6 +483,16 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     }
 
 
+
+    private fun triggerKegiatanSync() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                com.example.notasawit.Sync.SyncKegiatanRepository(applicationContext, database).sync()
+            } catch (e: Exception) {
+                Log.e("SYNC_KEGIATAN", "Direct sync failed in RiwayatKegiatan", e)
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()

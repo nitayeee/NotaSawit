@@ -18,8 +18,8 @@ import java.util.Locale
 object NotificationHelper {
 
     private const val CHANNEL_ID = "keuangan_notification_channel"
-    private const val CHANNEL_NAME = "Notifikasi Transaksi Keuangan"
-    private const val CHANNEL_DESC = "Pemberitahuan pencatatan produksi dan pengeluaran sawit"
+    private const val CHANNEL_NAME = "Notifikasi Transaksi Keuangan & Kegiatan"
+    private const val CHANNEL_DESC = "Pemberitahuan pencatatan produksi, pengeluaran, dan kegiatan kebun sawit"
 
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -125,6 +125,52 @@ object NotificationHelper {
             .setContentIntent(pendingIntent)
 
         val notificationId = 200000 + requestCode
+        val notificationManager = NotificationManagerCompat.from(context)
+        try {
+            notificationManager.notify(notificationId, builder.build())
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun showKegiatanNotification(
+        context: Context,
+        kegiatanId: Int,
+        namaKegiatan: String,
+        tanggal: String
+    ) {
+        createNotificationChannel(context)
+
+        val intent = Intent(context, com.example.notasawit.InputKegiatan.RiwayatKegiatanActivity::class.java).apply {
+            putExtra("kegiatan_id", kegiatanId)
+            putExtra("from_notification", true)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val requestCode = if (kegiatanId != 0) kegiatanId else (System.currentTimeMillis() % 10000).toInt()
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val namaText = if (namaKegiatan.isNotBlank()) namaKegiatan else "Kegiatan Kebun"
+        val message = "Catatan $namaText tanggal $tanggal berhasil disimpan. Ketuk untuk melihat riwayat."
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Kegiatan Baru Disimpan")
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSound(defaultSound)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val notificationId = 300000 + requestCode
         val notificationManager = NotificationManagerCompat.from(context)
         try {
             notificationManager.notify(notificationId, builder.build())

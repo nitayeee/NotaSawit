@@ -296,6 +296,74 @@ object PetaniApi {
             .enqueue(callback)
     }
 
+    fun compressImageBytes(context: Context, uri: Uri, maxDimension: Int = 1280, maxSizeBytes: Int = 1024 * 1024): ByteArray? {
+        return try {
+            val bytes = if (uri.scheme == "file" && uri.path != null) {
+                val f = File(uri.path!!)
+                if (f.exists()) f.readBytes() else null
+            } else {
+                try {
+                    context.contentResolver.openInputStream(uri)?.use {
+                        it.readBytes()
+                    }
+                } catch (e: Exception) {
+                    Log.e("UPLOAD_IMAGE", "Gagal membaca bytes dari URI: $uri", e)
+                    null
+                }
+            } ?: return null
+
+            val boundsOptions = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, boundsOptions)
+
+            var sampleSize = 1
+            var origWidth = boundsOptions.outWidth
+            var origHeight = boundsOptions.outHeight
+
+            while (origWidth / 2 >= maxDimension || origHeight / 2 >= maxDimension) {
+                origWidth /= 2
+                origHeight /= 2
+                sampleSize *= 2
+            }
+
+            val decodeOptions = BitmapFactory.Options().apply {
+                inSampleSize = sampleSize
+                inPreferredConfig = Bitmap.Config.RGB_565
+            }
+            var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, decodeOptions) ?: return bytes
+
+            if (bitmap.width > maxDimension || bitmap.height > maxDimension) {
+                val ratio = minOf(maxDimension.toFloat() / bitmap.width, maxDimension.toFloat() / bitmap.height)
+                val newWidth = (bitmap.width * ratio).toInt()
+                val newHeight = (bitmap.height * ratio).toInt()
+                val scaled = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+                if (scaled != bitmap) {
+                    bitmap.recycle()
+                    bitmap = scaled
+                }
+            }
+
+            var quality = 80
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+
+            while (stream.toByteArray().size > maxSizeBytes && quality > 15) {
+                stream.reset()
+                quality -= 15
+                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+            }
+            bitmap.recycle()
+
+            val result = stream.toByteArray()
+            Log.d("UPLOAD_IMAGE", "Original: ${bytes.size} bytes -> Compressed: ${result.size} bytes (quality: $quality)")
+            result
+        } catch (e: Throwable) {
+            Log.e("UPLOAD_IMAGE", "Gagal kompres gambar dari URI: $uri", e)
+            null
+        }
+    }
+
     fun postProduksi(
         context: Context,
         produksiTanggal: String,
@@ -327,53 +395,12 @@ object PetaniApi {
 
         imageUri?.let { uri ->
             Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
-
-            val bytes = if (uri.scheme == "file" && uri.path != null) {
-                val f = File(uri.path!!)
-                if (f.exists()) f.readBytes() else null
-            } else {
-                try {
-                    context.contentResolver.openInputStream(uri)?.use {
-                        it.readBytes()
-                    }
-                } catch (e: Exception) {
-                    Log.e("UPLOAD_IMAGE", "Gagal membaca bytes dari URI: $uri", e)
-                    null
-                }
-            }
-
-            Log.d("UPLOAD_IMAGE", "Image size: ${bytes?.size}")
-
-            Log.d("UPLOAD_IMAGE", "Image size before compression: ${bytes?.size}")
-
-            if (bytes != null) {
-                var finalBytes = bytes
-                try {
-                    // Kompres gambar agar tidak melebihi batas (maksimum upload PHP biasanya 2MB atau 5MB)
-                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    if (bmp != null) {
-                        val stream = ByteArrayOutputStream()
-                        // Mulai dengan quality 80
-                        var quality = 80
-                        bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-                        
-                        // Jika masih lebih besar dari 1.5MB, turunkan kualitas
-                        while (stream.toByteArray().size > 1.5 * 1024 * 1024 && quality > 10) {
-                            stream.reset()
-                            quality -= 15
-                            bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-                        }
-                        finalBytes = stream.toByteArray()
-                        Log.d("UPLOAD_IMAGE", "Image size after compression: ${finalBytes.size}")
-                    }
-                } catch (e: Exception) {
-                    Log.e("UPLOAD_IMAGE", "Gagal kompres gambar", e)
-                }
-
+            val compressedBytes = compressImageBytes(context, uri)
+            if (compressedBytes != null) {
                 builder.addFormDataPart(
                     "produksi_bukti",
                     "bukti.jpg",
-                    finalBytes.toRequestBody("image/jpeg".toMediaType())
+                    compressedBytes.toRequestBody("image/jpeg".toMediaType())
                 )
             }
         }
@@ -419,40 +446,12 @@ object PetaniApi {
 
         imageUri?.let { uri ->
             Log.d("UPLOAD_IMAGE", "Image Uri: $uri")
-
-            val bytes = if (uri.scheme == "file") {
-                File(uri.path!!).readBytes()
-            } else {
-                context.contentResolver.openInputStream(uri)?.use {
-                    it.readBytes()
-                }
-            }
-
-            if (bytes != null) {
-                var finalBytes = bytes
-                try {
-                    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    if (bmp != null) {
-                        val stream = ByteArrayOutputStream()
-                        var quality = 80
-                        bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-
-                        while (stream.toByteArray().size > 1.5 * 1024 * 1024 && quality > 10) {
-                            stream.reset()
-                            quality -= 15
-                            bmp.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-                        }
-                        finalBytes = stream.toByteArray()
-                        Log.d("UPLOAD_IMAGE", "Image size after compression: ${finalBytes.size}")
-                    }
-                } catch (e: Exception) {
-                    Log.e("UPLOAD_IMAGE", "Gagal kompres gambar", e)
-                }
-
+            val compressedBytes = compressImageBytes(context, uri)
+            if (compressedBytes != null) {
                 builder.addFormDataPart(
                     "biaya_bukti",
                     "bukti.jpg",
-                    finalBytes.toRequestBody("image/jpeg".toMediaType())
+                    compressedBytes.toRequestBody("image/jpeg".toMediaType())
                 )
             }
         }
@@ -539,6 +538,7 @@ object PetaniApi {
         val request = Request.Builder()
             .url("$BASE_URL/kegiatan")
             .post(requestBody)
+            .header("Accept", "application/json")
             .build()
 
         return ApiClient.client.newCall(request)

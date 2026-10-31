@@ -124,7 +124,16 @@ class InputPengeluaranActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (binding.etNamaItem.text.toString().isEmpty() || binding.etJumlah.text.toString().isEmpty() || binding.etTotal.text.toString().isEmpty() || binding.etTanggal.text.toString().isEmpty()) {
+            if (binding.spinnerKategori.text.toString().trim().isEmpty()) {
+                AlertDialog.Builder(this)
+                    .setTitle("Peringatan")
+                    .setMessage("Silakan pilih kategori pengeluaran terlebih dahulu")
+                    .setPositiveButton("OK", null)
+                    .show()
+                return@setOnClickListener
+            }
+
+            if (binding.etNamaItem.text.toString().trim().isEmpty() || binding.etJumlah.text.toString().trim().isEmpty() || binding.etTotal.text.toString().trim().isEmpty() || binding.etTanggal.text.toString().trim().isEmpty()) {
                 AlertDialog.Builder(this)
                     .setTitle("Peringatan")
                     .setMessage("Silakan lengkapi semua data")
@@ -135,23 +144,26 @@ class InputPengeluaranActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
 
+                val tanggal = binding.etTanggal.tag?.toString()?.ifEmpty { null }
+                    ?: binding.etTanggal.text.toString().trim().ifEmpty { null }
+                    ?: SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Calendar.getInstance().time)
+
+                val jenis = binding.spinnerKategori.text.toString().trim()
+                val nama = binding.etNamaItem.text.toString().trim()
+                val jumlah = binding.etJumlah.text.toString().trim().toIntOrNull() ?: 1
+                val total = binding.etTotal.text.toString().trim().toDoubleOrNull() ?: 0.0
+                val catatan = binding.etCatatan.text.toString().trim()
+
                 val biaya_operasional = PengeluaranEntity(
-
-                    biaya_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
-
-                    biaya_jenis = binding.spinnerKategori.text.toString(),
-
-                    biaya_nama = binding.etNamaItem.text.toString(),
-
-                    biaya_jumlah = binding.etJumlah.text.toString().toInt(),
+                    biaya_tanggal = tanggal,
+                    biaya_jenis = jenis,
+                    biaya_nama = nama,
+                    biaya_jumlah = jumlah,
                     petani_id = sp_petaniId,
-
-                    biaya_total = binding.etTotal.text.toString().toDouble(),
-                    biaya_ket = binding.etCatatan.text.toString(),
-
+                    biaya_total = total,
+                    biaya_ket = catatan,
                     imagePath = imageUri?.toString(),
                     isSynced = false
-
                 )
                 val biaya_operasional_id = database.PengeluaranDao().insert(biaya_operasional)
 
@@ -420,5 +432,10 @@ class InputPengeluaranActivity : AppCompatActivity() {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output)
         }
         return file.absolutePath
+    }
+
+    override fun onResume() {
+        super.onResume()
+        triggerDataSync()
     }
 }
