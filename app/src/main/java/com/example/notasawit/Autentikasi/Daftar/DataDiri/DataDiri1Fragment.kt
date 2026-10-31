@@ -22,12 +22,6 @@ class DataDiri1Fragment : Fragment() {
         requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
     }
 
-    private val sp_namaPetani by lazy { sharedPref.getString("namaPetani", "") }
-    private val sp_username by lazy { sharedPref.getString("username", "") }
-    private val sp_tanggalLahir by lazy { sharedPref.getString("tanggalLahir", "") }
-    private val sp_jenisKelamin by lazy { sharedPref.getString("jenisKelamin", "") }
-    private val sp_usia by lazy { sharedPref.getString("usia", "") }
-
     private var _binding: FragmentDataDiri1Binding? = null
     private val binding get() = _binding!!
     
@@ -52,13 +46,27 @@ class DataDiri1Fragment : Fragment() {
             tampilkanDatePicker()
         }
         
-        binding.etNamaDepan.setText(sp_namaPetani)
-        binding.etUsername.setText(sp_username)
-        binding.etTanggalLahir.setText(sp_tanggalLahir)
-        binding.etUsia.setText(sp_usia)
-        
-        if (sp_jenisKelamin?.isNotEmpty() == true) {
-            setJenisKelamin(sp_jenisKelamin!!)
+        // Pulihkan data yang tersimpan sebelumnya
+        val spNama = sharedPref.getString("namaPetani", "") ?: ""
+        val spUsername = sharedPref.getString("username", "") ?: ""
+        val spTanggalLahir = sharedPref.getString("tanggalLahir", "") ?: ""
+        val spUsia = sharedPref.getString("usia", "") ?: ""
+        val spJenisKelamin = sharedPref.getString("jenisKelamin", "") ?: ""
+
+        if (binding.etNamaDepan.text.isNullOrEmpty() && spNama.isNotEmpty()) {
+            binding.etNamaDepan.setText(spNama)
+        }
+        if (binding.etUsername.text.isNullOrEmpty() && spUsername.isNotEmpty()) {
+            binding.etUsername.setText(spUsername)
+        }
+        if (binding.etTanggalLahir.text.isNullOrEmpty() && spTanggalLahir.isNotEmpty()) {
+            binding.etTanggalLahir.setText(spTanggalLahir)
+        }
+        if (binding.etUsia.text.isNullOrEmpty() && spUsia.isNotEmpty()) {
+            binding.etUsia.setText(spUsia)
+        }
+        if (selectedJenisKelamin.isEmpty() && spJenisKelamin.isNotEmpty()) {
+            setJenisKelamin(spJenisKelamin)
         }
 
         binding.etUsia.isEnabled = false
@@ -84,6 +92,14 @@ class DataDiri1Fragment : Fragment() {
             setJenisKelamin("Perempuan")
         }
 
+        // Tombol Kembali
+        binding.btnBack.setOnClickListener {
+            simpanKeSharedPref()
+            val bapakActivity = activity as? DataDiriActivity
+            bapakActivity?.previousStep()
+        }
+
+        // Tombol Selanjutnya
         binding.btnNext.setOnClickListener {
             val namaPetani = binding.etNamaDepan.text.toString().trim()
             val username = binding.etUsername.text.toString().trim()
@@ -92,16 +108,7 @@ class DataDiri1Fragment : Fragment() {
 
             if (namaPetani.isNotEmpty() && tanggalLahir.isNotEmpty()
                 && selectedJenisKelamin.isNotEmpty() && usia.isNotEmpty() && username.isNotEmpty()) {
-                // Simpan ke SharedPreferences
-                sharedPref.edit().apply {
-                    putString("namaPetani", namaPetani)
-                    putString("tanggalLahir", tanggalLahir)
-                    putString("jenisKelamin", selectedJenisKelamin)
-                    putString("username", username)
-                    putString("usia", usia)
-                    apply()
-                }
-
+                simpanKeSharedPref()
                 val bapakActivity = activity as? DataDiriActivity
                 bapakActivity?.nextStep()
             }
@@ -110,6 +117,30 @@ class DataDiri1Fragment : Fragment() {
         periksaKelengkapanData()
     }
     
+    private fun simpanKeSharedPref() {
+        if (_binding == null) return
+        val namaPetani = binding.etNamaDepan.text.toString().trim()
+        val username = binding.etUsername.text.toString().trim()
+        val tanggalLahir = binding.etTanggalLahir.text.toString().trim()
+        val usia = binding.etUsia.text.toString().trim()
+
+        sharedPref.edit().apply {
+            putString("namaPetani", namaPetani)
+            putString("tanggalLahir", tanggalLahir)
+            if (selectedJenisKelamin.isNotEmpty()) {
+                putString("jenisKelamin", selectedJenisKelamin)
+            }
+            putString("username", username)
+            putString("usia", usia)
+            apply()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        simpanKeSharedPref()
+    }
+
     private fun setJenisKelamin(jk: String) {
         selectedJenisKelamin = jk
         val activeBgColor = Color.parseColor("#E8ECE9")
@@ -145,6 +176,7 @@ class DataDiri1Fragment : Fragment() {
     }
 
     private fun periksaKelengkapanData() {
+        if (_binding == null) return
         val namaDepan = binding.etNamaDepan.text.toString().trim()
         val username = binding.etUsername.text.toString().trim()
         val tanggalLahir = binding.etTanggalLahir.text.toString().trim()
@@ -166,34 +198,30 @@ class DataDiri1Fragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        simpanKeSharedPref()
         super.onDestroyView()
         _binding = null
     }
 
     private fun tampilkanDatePicker() {
-        // 1. Inisialisasi MaterialDatePicker
         val builder = MaterialDatePicker.Builder.datePicker()
         builder.setTitleText("Pilih Tanggal Lahir")
         val picker = builder.build()
 
         picker.addOnPositiveButtonClickListener { selection ->
-            // 2. Format tanggal untuk ditampilkan di EditText
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val tanggalTerpilih = sdf.format(Date(selection))
             binding.etTanggalLahir.setText(tanggalTerpilih)
 
-            // 3. Hitung Usia Otomatis
             val kalenderLahir = Calendar.getInstance().apply { timeInMillis = selection }
             val kalenderSekarang = Calendar.getInstance()
 
             var usia = kalenderSekarang.get(Calendar.YEAR) - kalenderLahir.get(Calendar.YEAR)
 
-            // Cek jika belum ulang tahun di tahun ini, maka kurangi 1
             if (kalenderSekarang.get(Calendar.DAY_OF_YEAR) < kalenderLahir.get(Calendar.DAY_OF_YEAR)) {
                 usia--
             }
 
-            // Set ke EditText Usia (pastikan minimal 0)
             val hasilUsia = if (usia < 0) 0 else usia
             binding.etUsia.setText(hasilUsia.toString())
         }

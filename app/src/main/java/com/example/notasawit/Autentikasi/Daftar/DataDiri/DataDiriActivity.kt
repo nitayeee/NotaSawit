@@ -34,18 +34,27 @@ class DataDiriActivity : AppCompatActivity() {
         // Di dalam onCreate() DataDiriActivity
         viewPager = binding.tutorialMessageViewPager
 
-// Pastikan kirim 'this' sebagai context Activity
         val adapter = DataDiriAdapter(this)
         viewPager.adapter = adapter
 
-// Matikan swipe biar terkontrol lewat tombol
+        // Matikan swipe biar terkontrol lewat tombol
         viewPager.isUserInputEnabled = false
+
+        // Pertahankan semua fragment (tahap 1, 2, 3) di memori agar isian data tidak hilang saat pindah
+        viewPager.offscreenPageLimit = 2
 
         // Logika otomatis mengubah warna indikator (1-2-3) saat ViewPager digeser
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 updateStepIndicator(position)
+            }
+        })
+
+        // Tangani tombol fisik / gestur Back dari HP
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                previousStep()
             }
         })
     }
@@ -89,11 +98,21 @@ class DataDiriActivity : AppCompatActivity() {
         }
     }
 
-    // Fungsi yang dipanggil dari Fragment saat tombol "Lanjut" ditekan
-    // Fungsi nextStep yang dipanggil Fragment
+    // Fungsi yang dipanggil dari Fragment saat tombol "Selanjutnya" ditekan
     fun nextStep() {
         val current = viewPager.currentItem
-        // Paksa ViewPager pindah ke halaman berikutnya dengan animasi smooth
-        viewPager.setCurrentItem(current + 1, true)
+        if (current < 2) {
+            viewPager.setCurrentItem(current + 1, true)
+        }
+    }
+
+    // Fungsi yang dipanggil dari Fragment saat tombol "Kembali" ditekan
+    fun previousStep() {
+        val current = viewPager.currentItem
+        if (current > 0) {
+            viewPager.setCurrentItem(current - 1, true)
+        } else {
+            finish()
+        }
     }
 }

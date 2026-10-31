@@ -163,21 +163,50 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_verify"
+            <LinearLayout
+                android:id="@+id/layoutActionButtons"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#1B4D2E"
-                android:text="Kirim"
-                android:textAllCaps="false"
-                android:fontFamily="@font/poppins_semibold"
-                android:textSize="16sp"
-                app:cornerRadius="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pin_container"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pin_container" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBack"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:text="Kembali"
+                    android:textAllCaps="false"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#1B4D2E"
+                    android:textSize="15sp"
+                    app:cornerRadius="12dp"
+                    app:strokeColor="#1B4D2E"
+                    app:strokeWidth="1.5dp"
+                    app:icon="@drawable/ic_arrow_back"
+                    app:iconGravity="textStart"
+                    app:iconTint="#1B4D2E" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_verify"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:backgroundTint="#1B4D2E"
+                    android:text="Kirim"
+                    android:textAllCaps="false"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/tvSecure"
@@ -186,7 +215,7 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/btn_verify">
+                app:layout_constraintTop_toBottomOf="@+id/layoutActionButtons">
                 <ImageView
                     android:layout_width="14dp"
                     android:layout_height="14dp"

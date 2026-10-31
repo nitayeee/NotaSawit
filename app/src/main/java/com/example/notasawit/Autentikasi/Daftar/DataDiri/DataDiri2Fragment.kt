@@ -21,29 +21,11 @@ import okhttp3.Response
 import com.google.gson.Gson
 import java.io.IOException
 
-
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DataDiri2Fragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DataDiri2Fragment : Fragment() {
 
-    // GUNAKAN 'by lazy' agar requireActivity() tidak langsung dipanggil saat Fragment dibuat
     private val sharedPref by lazy {
         requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
     }
-
-    // Pindahkan pengambilan data string ini ke dalam fungsi atau gunakan lazy juga
-
-
-    private val sp_noHpPetani by lazy { sharedPref.getString("noHpPetani", "") }
-    private val sp_emailPetani by lazy { sharedPref.getString("emailPetani", "") }
-    private val sp_alamatPetani by lazy { sharedPref.getString("alamatPetani", "") }
-    private val sp_desaPetani by lazy { sharedPref.getInt("desaPetani", 0) }
-
-
 
     private var _binding: FragmentDataDiri2Binding? = null
     private val binding get() = _binding!!
@@ -53,16 +35,41 @@ class DataDiri2Fragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDataDiri2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadDesa()
+        
         binding.btnNext.isEnabled = false
         binding.btnNext.alpha = 0.5f
+
+        // Pulihkan data yang tersimpan sebelumnya
+        val spEmail = sharedPref.getString("emailPetani", "") ?: ""
+        val spNoHp = sharedPref.getString("noHpPetani", "") ?: ""
+        val spAlamat = sharedPref.getString("alamatPetani", "") ?: ""
+        val spDesaNama = sharedPref.getString("desaNamaPetani", "") ?: ""
+        val spDesaId = sharedPref.getInt("desaIdPetani", sharedPref.getInt("desaPetani", 0))
+
+        if (binding.etEmail.text.isNullOrEmpty() && spEmail.isNotEmpty()) {
+            binding.etEmail.setText(spEmail)
+        }
+        if (binding.etNomorHandphone.text.isNullOrEmpty() && spNoHp.isNotEmpty()) {
+            binding.etNomorHandphone.setText(spNoHp)
+        }
+        if (binding.etAlamat.text.isNullOrEmpty() && spAlamat.isNotEmpty()) {
+            binding.etAlamat.setText(spAlamat)
+        }
+        if (spDesaId != 0) {
+            selectedDesaId = spDesaId
+        }
+        if (binding.etDesa.text.isNullOrEmpty() && spDesaNama.isNotEmpty()) {
+            binding.etDesa.setText(spDesaNama, false)
+        }
+
+        loadDesa()
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -71,61 +78,98 @@ class DataDiri2Fragment : Fragment() {
             }
             override fun afterTextChanged(s: Editable?) {}
         }
-        binding.etEmail.setText(sp_emailPetani)
 
         binding.etEmail.addTextChangedListener(textWatcher)
         binding.etNomorHandphone.addTextChangedListener(textWatcher)
         binding.etAlamat.addTextChangedListener(textWatcher)
         binding.etDesa.addTextChangedListener(textWatcher)
-//Ambil ID Desa
-        binding.etDesa.setOnItemClickListener { _, _, position, _ ->
 
-            selectedDesaId = desaList[position].desa_id
+        // Ambil ID Desa dari pemilihan dropdown
+        binding.etDesa.setOnItemClickListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position).toString()
+            val found = desaList.find { it.desa_nama == selectedName }
+            selectedDesaId = found?.desa_id ?: desaList.getOrNull(position)?.desa_id
+            periksaKelengkapanData()
         }
 
+        // Tombol Kembali
+        binding.btnBack.setOnClickListener {
+            simpanKeSharedPref()
+            val bapakActivity = activity as? DataDiriActivity
+            bapakActivity?.previousStep()
+        }
+
+        // Tombol Selanjutnya
         binding.btnNext.setOnClickListener {
-            val email_petani = binding.etEmail.text.toString().trim()
+            val emailPetani = binding.etEmail.text.toString().trim()
             val noHpPetani = binding.etNomorHandphone.text.toString().trim()
             val alamatPetani = binding.etAlamat.text.toString().trim()
             val desaPetani = binding.etDesa.text.toString().trim()
 
-            // 1. Tambahkan validasi apakah user sudah memilih desa dari dropdown (selectedDesaId tidak null)
-            if (selectedDesaId == null) {
-                Toast.makeText(requireContext(), "Silakan pilih desa dari daftar yang tersedia", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            // Jika selectedDesaId masih null, coba cari dari text dropdown
+            if (selectedDesaId == null || selectedDesaId == 0) {
+                val found = desaList.find { it.desa_nama.equals(desaPetani, ignoreCase = true) }
+                if (found != null) {
+                    selectedDesaId = found.desa_id
+                } else {
+                    Toast.makeText(requireContext(), "Silakan pilih desa dari daftar yang tersedia", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
             }
 
-            if (email_petani.isNotEmpty() && noHpPetani.isNotEmpty()
+            if (emailPetani.isNotEmpty() && noHpPetani.isNotEmpty()
                 && alamatPetani.isNotEmpty() && desaPetani.isNotEmpty()) {
-
-                // Simpan ke SharedPreferences
-                sharedPref.edit().apply {
-                    putString("emailPetani", email_petani)
-                    putString("noHpPetani", noHpPetani)
-                    putString("alamatPetani", alamatPetani)
-                    putInt("desaPetani", selectedDesaId ?: 0) // Tetap simpan nama desa jika diperlukan untuk tampilan
-
-                    // 2. PERBAIKAN UTAMA: Simpan ID Desanya ke SharedPreferences sebagai Integer
-                    putInt("desaIdPetani", selectedDesaId ?: 0)
-                    apply()
-                }
-
+                simpanKeSharedPref()
                 val bapakActivity = activity as? DataDiriActivity
                 bapakActivity?.nextStep()
             }
         }
 
+        periksaKelengkapanData()
     }
-    private fun periksaKelengkapanData() {
-        val email_petani = binding.etEmail.text.toString().trim()
+
+    private fun simpanKeSharedPref() {
+        if (_binding == null) return
+        val emailPetani = binding.etEmail.text.toString().trim()
         val noHpPetani = binding.etNomorHandphone.text.toString().trim()
         val alamatPetani = binding.etAlamat.text.toString().trim()
         val desaPetani = binding.etDesa.text.toString().trim()
 
-        val semuaSudahIsi = email_petani.isNotEmpty() &&
+        sharedPref.edit().apply {
+            putString("emailPetani", emailPetani)
+            putString("noHpPetani", noHpPetani)
+            putString("alamatPetani", alamatPetani)
+            if (selectedDesaId != null && selectedDesaId != 0) {
+                putInt("desaPetani", selectedDesaId!!)
+                putInt("desaIdPetani", selectedDesaId!!)
+            }
+            if (desaPetani.isNotEmpty()) {
+                putString("desaNamaPetani", desaPetani)
+            }
+            apply()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        simpanKeSharedPref()
+    }
+
+    private fun periksaKelengkapanData() {
+        if (_binding == null) return
+        val emailPetani = binding.etEmail.text?.toString()?.trim() ?: ""
+        val noHpPetani = binding.etNomorHandphone.text?.toString()?.trim() ?: ""
+        val alamatPetani = binding.etAlamat.text?.toString()?.trim() ?: ""
+        val desaPetani = binding.etDesa.text?.toString()?.trim() ?: ""
+
+        val desaValid = (selectedDesaId != null && selectedDesaId != 0) ||
+                desaList.any { it.desa_nama.equals(desaPetani, ignoreCase = true) }
+
+        val semuaSudahIsi = emailPetani.isNotEmpty() &&
                 noHpPetani.isNotEmpty() &&
                 alamatPetani.isNotEmpty() &&
-                desaPetani.isNotEmpty()
+                desaPetani.isNotEmpty() &&
+                desaValid
 
         if (semuaSudahIsi) {
             binding.btnNext.isEnabled = true
@@ -135,67 +179,75 @@ class DataDiri2Fragment : Fragment() {
             binding.btnNext.alpha = 0.5f
         }
     }
+
     private fun loadDesa() {
-
         PetaniApi.getDesa(object : Callback {
-
-            override fun onFailure(
-                call: Call,
-                e: IOException
-            ) {
-
-                requireActivity().runOnUiThread {
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Gagal mengambil desa",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            override fun onFailure(call: Call, e: IOException) {
+                activity?.runOnUiThread {
+                    if (isAdded) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Gagal mengambil desa: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 
-            override fun onResponse(
-                call: Call,
-                response: Response
-            ) {
+            override fun onResponse(call: Call, response: Response) {
+                val json = response.body?.string() ?: return
+                try {
+                    val desaResponse = Gson().fromJson(json, DesaApiResponse::class.java)
 
-                val json = response.body?.string()
+                    desaList.clear()
+                    if (desaResponse.data != null) {
+                        desaList.addAll(desaResponse.data)
+                    }
 
-                val desaResponse =
-                    Gson().fromJson(
-                        json,
-                        DesaApiResponse::class.java
-                    )
+                    val namaDesa = desaList.map { it.desa_nama }
 
-                desaList.clear()
-                desaList.addAll(desaResponse.data)
+                    activity?.runOnUiThread {
+                        if (_binding == null || !isAdded) return@runOnUiThread
 
-                val namaDesa =
-                    desaList.map { it.desa_nama }
+                        val adapter = ArrayAdapter(
+                            requireContext(),
+                            R.layout.simple_dropdown_item_1line,
+                            namaDesa
+                        )
+                        binding.etDesa.setAdapter(adapter)
 
-                requireActivity().runOnUiThread {
+                        // Pulihkan pilihan desa jika sebelumnya sudah pernah dipilih
+                        val curSavedDesaId = selectedDesaId ?: sharedPref.getInt("desaIdPetani", sharedPref.getInt("desaPetani", 0))
+                        val curSavedDesaNama = sharedPref.getString("desaNamaPetani", "") ?: ""
 
-                    val adapter = ArrayAdapter(
-                        requireContext(),
-                        R.layout.simple_dropdown_item_1line,
-                        namaDesa
-                    )
+                        if (curSavedDesaId != 0) {
+                            val found = desaList.find { it.desa_id == curSavedDesaId }
+                            if (found != null) {
+                                selectedDesaId = found.desa_id
+                                binding.etDesa.setText(found.desa_nama, false)
+                            } else if (curSavedDesaNama.isNotEmpty()) {
+                                binding.etDesa.setText(curSavedDesaNama, false)
+                            }
+                        } else if (curSavedDesaNama.isNotEmpty()) {
+                            binding.etDesa.setText(curSavedDesaNama, false)
+                            val found = desaList.find { it.desa_nama.equals(curSavedDesaNama, ignoreCase = true) }
+                            if (found != null) {
+                                selectedDesaId = found.desa_id
+                            }
+                        }
 
-                    binding.etDesa.setAdapter(adapter)
+                        periksaKelengkapanData()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
         })
     }
 
-
     override fun onDestroyView() {
+        simpanKeSharedPref()
         super.onDestroyView()
         _binding = null
     }
-
-
-
-
-
-
 }

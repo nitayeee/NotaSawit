@@ -15,16 +15,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.example.notasawit.R
 import com.example.notasawit.databinding.FragmentDataDiri3Binding
 import com.example.notasawit.Network.PetaniApi
-import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import java.security.MessageDigest
 
 class DataDiri3Fragment : Fragment() {
 
@@ -48,6 +45,24 @@ class DataDiri3Fragment : Fragment() {
 
         setupPinInputs()
 
+        // Pulihkan PIN jika sebelumnya sudah pernah dimasukkan
+        val savedPin = sharedPref.getString("pinPetani", "") ?: ""
+        if (savedPin.isNotEmpty()) {
+            val pins = arrayOf(binding.pin1, binding.pin2, binding.pin3, binding.pin4, binding.pin5, binding.pin6)
+            for (i in pins.indices) {
+                if (i < savedPin.length) {
+                    pins[i].setText(savedPin[i].toString())
+                }
+            }
+        }
+
+        // Tombol Kembali
+        binding.btnBack.setOnClickListener {
+            simpanPinKeSharedPref()
+            val bapakActivity = activity as? DataDiriActivity
+            bapakActivity?.previousStep()
+        }
+
         binding.btnVerify.setOnClickListener {
 
             val pinMentah = ambilPinInput()
@@ -64,7 +79,9 @@ class DataDiri3Fragment : Fragment() {
             val email = sharedPref.getString("emailPetani", "") ?: ""
             val noHp = sharedPref.getString("noHpPetani", "") ?: ""
             val alamat = sharedPref.getString("alamatPetani", "") ?: ""
-            val desa = sharedPref.getInt("desaPetani", 0)
+            val desa = sharedPref.getInt("desaPetani", sharedPref.getInt("desaIdPetani", 0))
+
+            binding.btnVerify.isEnabled = false
 
             PetaniApi.registerPetani(
                 nama,
@@ -80,6 +97,7 @@ class DataDiri3Fragment : Fragment() {
 
                     override fun onFailure(call: Call, e: IOException) {
                         activity?.runOnUiThread {
+                            binding.btnVerify.isEnabled = true
                             Log.e("REGISTER", "Request gagal", e)
                             Toast.makeText(
                                 requireContext(),
@@ -96,8 +114,8 @@ class DataDiri3Fragment : Fragment() {
                         Log.d("REGISTER", "Response: $responseBody")
 
                         activity?.runOnUiThread {
+                            binding.btnVerify.isEnabled = true
                             if (response.isSuccessful) {
-
                                 Toast.makeText(
                                     requireContext(),
                                     "Pendaftaran Berhasil!",
@@ -141,6 +159,19 @@ class DataDiri3Fragment : Fragment() {
         }
     }
 
+    private fun simpanPinKeSharedPref() {
+        if (_binding == null) return
+        val pinMentah = ambilPinInput()
+        if (pinMentah.isNotEmpty()) {
+            sharedPref.edit().putString("pinPetani", pinMentah).apply()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        simpanPinKeSharedPref()
+    }
+
     private fun setupPinInputs() {
         val pins = arrayOf(
             binding.pin1, binding.pin2, binding.pin3,
@@ -174,6 +205,7 @@ class DataDiri3Fragment : Fragment() {
     }
 
     private fun ambilPinInput(): String {
+        if (_binding == null) return ""
         return binding.pin1.text.toString() +
                 binding.pin2.text.toString() +
                 binding.pin3.text.toString() +
@@ -181,7 +213,6 @@ class DataDiri3Fragment : Fragment() {
                 binding.pin5.text.toString() +
                 binding.pin6.text.toString()
     }
-
 
     private fun tampilkanDialogCustom() {
         val dialog = Dialog(requireContext())
@@ -208,6 +239,7 @@ class DataDiri3Fragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        simpanPinKeSharedPref()
         super.onDestroyView()
         _binding = null
     }
