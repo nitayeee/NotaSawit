@@ -260,7 +260,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
                     android:backgroundTint="#1B4D2E"
-                    android:text="Selanjutnya"
+                    android:text="Lanjut"
                     android:textAllCaps="false"
                     android:fontFamily="@font/poppins_semibold"
                     android:textColor="#FFFFFF"

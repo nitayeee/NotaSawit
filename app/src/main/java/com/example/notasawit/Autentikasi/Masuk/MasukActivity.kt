@@ -163,20 +163,13 @@ getJenisKegiatan()
 
                                 runOnUiThread {
                                     val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
-                                    com.example.notasawit.Utils.CustomAlert.showSuccess(
-                                        this@MasukActivity,
-                                        "Berhasil",
-                                        "Selamat datang, $nama"
-                                    )
-
-                                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                                        if(loginResponse.role == "petani"){
-                                            startActivity(Intent(this@MasukActivity, BaseActivity::class.java))
-                                        } else {
-                                            startActivity(Intent(this@MasukActivity, BaseAdminActivity::class.java))
-                                        }
-                                        finish()
-                                    }, 1500)
+                                    val welcomeIntent = Intent(this@MasukActivity, WelcomeActivity::class.java).apply {
+                                        putExtra("EXTRA_NAME", nama ?: "")
+                                        putExtra("EXTRA_ROLE", loginResponse.role ?: "petani")
+                                    }
+                                    startActivity(welcomeIntent)
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                    finish()
                                 }
                             } else {
                                 runOnUiThread {
@@ -247,13 +240,15 @@ getJenisKegiatan()
                     super.onAuthenticationSucceeded(result)
                     
                     val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-                    val role = sharedPref.getString("role", "")
+                    val role = sharedPref.getString("role", "petani")
+                    val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
                     
-                    if (role == "petani") {
-                        startActivity(Intent(this@MasukActivity, BaseActivity::class.java))
-                    } else if (role == "admin") {
-                        startActivity(Intent(this@MasukActivity, BaseAdminActivity::class.java))
+                    val welcomeIntent = Intent(this@MasukActivity, WelcomeActivity::class.java).apply {
+                        putExtra("EXTRA_NAME", nama ?: "")
+                        putExtra("EXTRA_ROLE", role ?: "petani")
                     }
+                    startActivity(welcomeIntent)
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     finish()
                 }
 
