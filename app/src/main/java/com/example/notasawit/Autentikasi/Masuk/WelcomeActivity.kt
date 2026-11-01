@@ -1,10 +1,12 @@
 package com.example.notasawit.Autentikasi.Masuk
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.view.animation.DecelerateInterpolator
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,9 +20,8 @@ import com.example.notasawit.databinding.ActivityWelcomeBinding
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
-    private val handler = Handler(Looper.getMainLooper())
+    private var progressAnimator: ObjectAnimator? = null
     private var isNavigated = false
-    private lateinit var navigateRunnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,14 +53,20 @@ class WelcomeActivity : AppCompatActivity() {
             .placeholder(R.drawable.sawit_mascot)
             .into(binding.ivMascot)
 
-        navigateRunnable = Runnable {
-            lanjutKeHalamanUtama(userRole)
+        // Animasi progress bar bergerak halus dari 0% ke 100% untuk indikasi pindah ke homepage
+        binding.progressWelcome.progress = 0
+        progressAnimator = ObjectAnimator.ofInt(binding.progressWelcome, "progress", 0, 100).apply {
+            duration = 2800 // 2.8 detik melambai lalu pindah ke homepage
+            interpolator = DecelerateInterpolator()
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    lanjutKeHalamanUtama(userRole)
+                }
+            })
+            start()
         }
 
-        // Otomatis berpindah setelah 2.8 detik melambai
-        handler.postDelayed(navigateRunnable, 2800)
-
-        // Ketuk layar atau teks untuk langsung masuk tanpa menunggu
+        // Ketuk layar atau tombol lewati untuk langsung masuk tanpa menunggu
         binding.layoutRoot.setOnClickListener {
             lanjutKeHalamanUtama(userRole)
         }
@@ -71,7 +78,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun lanjutKeHalamanUtama(role: String?) {
         if (isNavigated) return
         isNavigated = true
-        handler.removeCallbacks(navigateRunnable)
+        progressAnimator?.cancel()
 
         val targetIntent = if (role == "admin") {
             Intent(this, BaseAdminActivity::class.java)
@@ -87,7 +94,6 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(navigateRunnable)
+        progressAnimator?.cancel()
     }
 }
-
