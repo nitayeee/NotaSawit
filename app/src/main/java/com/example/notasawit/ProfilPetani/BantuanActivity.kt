@@ -34,7 +34,7 @@ class BantuanActivity : AppCompatActivity() {
         val btnKontakAdmin = findViewById<View>(R.id.btnKontakAdmin)
         btnKontakAdmin?.setOnClickListener {
             try {
-                val adminPhone = "6282285335295"
+                val adminPhone = "6285364615887"
                 val pesan = "Halo Admin SILAUSA, saya ingin bertanya seputar penggunaan aplikasi SILAUSA."
                 val url = "https://api.whatsapp.com/send?phone=$adminPhone&text=${URLEncoder.encode(pesan, "UTF-8")}"
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
