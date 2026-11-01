@@ -7,9 +7,9 @@ object StatusSplashHelper {
 
     fun showSuccess(
         activity: Activity,
-        title: String,
-        message: String,
-        category: String,
+        title: String = "Berhasil Disimpan!",
+        message: String = "",
+        category: String = "",
         finishCaller: Boolean = true
     ) {
         val intent = Intent(activity, StatusSplashActivity::class.java).apply {
@@ -27,9 +27,9 @@ object StatusSplashHelper {
 
     fun showError(
         activity: Activity,
-        title: String,
-        message: String,
-        category: String
+        title: String = "Input Data Gagal!",
+        message: String = "",
+        category: String = ""
     ) {
         val intent = Intent(activity, StatusSplashActivity::class.java).apply {
             putExtra(StatusSplashActivity.EXTRA_STATUS, StatusSplashActivity.STATUS_FAILED)
@@ -41,4 +41,3 @@ object StatusSplashHelper {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 }
-

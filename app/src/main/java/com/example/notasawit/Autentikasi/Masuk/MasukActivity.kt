@@ -78,19 +78,33 @@ class MasukActivity : AppCompatActivity() {
 getJenisKegiatan()
         credentialManager = CredentialManager.create(this)
 
-        val showFingerprint = intent.getBooleanExtra("SHOW_FINGERPRINT", false)
-
-        if (showFingerprint) {
-            checkAndShowFingerprint()
-            binding.btnFingerprint.visibility = android.view.View.VISIBLE
-        } else {
-            binding.btnFingerprint.visibility = android.view.View.GONE
+        // Auto-fill Username akun terakhir agar petani tidak perlu mengetik ulang
+        val lastUsername = sharedPref.getString("last_username", "")?.ifEmpty { null }
+            ?: sharedPref.getString("username", "") ?: ""
+        if (lastUsername.isNotEmpty()) {
+            binding.etUsername.setText(lastUsername)
+            binding.etPin.requestFocus()
         }
 
-        binding.btnFingerprint.setOnClickListener {
-            if (showFingerprint) {
-                checkAndShowFingerprint()
+        val isRemembered = sharedPref.getBoolean("remember_me", true)
+        binding.cbRememberMe.isChecked = isRemembered
+
+        // Cek dukungan biometrik dan ketersediaan akun untuk login fingerprint
+        val biometricManager = BiometricManager.from(this)
+        val canUseBiometric = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
+        val hasSavedAccount = (sharedPref.getInt("petani_id", 0) > 0 || sharedPref.getInt("user_id", 0) > 0 || lastUsername.isNotEmpty())
+
+        if (canUseBiometric && hasSavedAccount) {
+            binding.btnFingerprint.visibility = View.VISIBLE
+            binding.btnFingerprint.setOnClickListener {
+                showBiometricPrompt()
             }
+        } else {
+            binding.btnFingerprint.visibility = View.GONE
+        }
+
+        binding.btnBantuanWa.setOnClickListener {
+            showBantuanLoginDialog()
         }
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
@@ -136,8 +150,16 @@ getJenisKegiatan()
 
                             if (loginResponse.success) {
 
-                                if(loginResponse.role == "petani"){
+                                val rememberMe = binding.cbRememberMe.isChecked
+                                if (loginResponse.role == "petani") {
                                     sharedPref.edit().apply {
+                                        putBoolean("is_logged_in", true)
+                                        putBoolean("remember_me", rememberMe)
+                                        if (rememberMe) {
+                                            putString("last_username", username)
+                                        } else {
+                                            remove("last_username")
+                                        }
                                         putString("role", loginResponse.role)
                                         putInt("petani_id", data?.petani_id ?: 0)
                                         putString("namaPetani", data?.petani_nama ?: "")
@@ -147,8 +169,15 @@ getJenisKegiatan()
                                         getLahan(data?.petani_id ?: 0)
                                         apply()
                                     }
-                                }else {
+                                } else {
                                     sharedPref.edit().apply {
+                                        putBoolean("is_logged_in", true)
+                                        putBoolean("remember_me", rememberMe)
+                                        if (rememberMe) {
+                                            putString("last_username", username)
+                                        } else {
+                                            remove("last_username")
+                                        }
                                         putString("role", "admin")
                                         putInt("user_id", data?.user_id ?: 0)
                                         putString("username", data?.user_username ?: "")
@@ -217,6 +246,32 @@ getJenisKegiatan()
         }
     }
 
+    private fun showBantuanLoginDialog() {
+        val currentUsername = binding.etUsername.text.toString().trim()
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Bantuan Masuk Akun")
+            .setMessage("Jika Anda lupa PIN atau mengalami kendala masuk ke akun SILAUSA, Anda dapat menghubungi Admin Desa/KUD atau melakukan reset PIN mandiri.")
+            .setPositiveButton("WhatsApp Admin") { _, _ ->
+                try {
+                    val pesan = if (currentUsername.isNotEmpty()) {
+                        "Halo Admin SILAUSA, saya petani dengan username $currentUsername mengalami kendala masuk akun. Mohon bantuannya."
+                    } else {
+                        "Halo Admin SILAUSA, saya petani mengalami kendala masuk akun SILAUSA. Mohon bantuannya."
+                    }
+                    val url = "https://api.whatsapp.com/send?text=${java.net.URLEncoder.encode(pesan, "UTF-8")}"
+                    val waIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
+                    startActivity(waIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Tidak dapat membuka WhatsApp", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Reset PIN Mandiri") { _, _ ->
+                startActivity(Intent(this, LupaPinActivity::class.java))
+            }
+            .setNeutralButton("Tutup", null)
+            .show()
+    }
+
     private fun checkAndShowFingerprint() {
         val biometricManager = BiometricManager.from(this)
 
@@ -242,6 +297,7 @@ getJenisKegiatan()
                     super.onAuthenticationSucceeded(result)
                     
                     val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+                    sharedPref.edit().putBoolean("is_logged_in", true).apply()
                     val role = sharedPref.getString("role", "petani")
                     val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
                     

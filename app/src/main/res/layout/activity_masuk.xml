@@ -173,24 +173,48 @@
             </FrameLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvLupaPin"
-            android:layout_width="wrap_content"
+        <!-- Opsi Ingat Saya & Lupa PIN -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="12dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="Lupa PIN?"
-            android:textColor="@color/agri_green_dark"
-            android:textSize="14sp" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbRememberMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Ingat Saya"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                app:buttonTint="@color/agri_green_dark" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvLupaPin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_semibold"
+                android:paddingVertical="8dp"
+                android:text="Lupa PIN?"
+                android:textColor="@color/agri_green_dark"
+                android:textSize="13sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/bg_button_primary"
             android:clickable="true"
             android:focusable="true"
@@ -271,7 +295,35 @@
                 android:indeterminateTint="@color/agri_green_dark" />
         </LinearLayout>
 
+        <!-- Bantuan Cepat untuk Petani yang Mengalami Kendala -->
+        <LinearLayout
+            android:id="@+id/btnBantuanWa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
 
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_help"
+                app:tint="@color/agri_green_dark" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Kendala Masuk? Hubungi Bantuan Admin"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/agri_green_dark"
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

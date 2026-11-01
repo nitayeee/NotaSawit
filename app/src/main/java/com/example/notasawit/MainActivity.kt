@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.notasawit.Admin.BaseAdminActivity
 import com.example.notasawit.Autentikasi.Masuk.MasukActivity
 import com.example.notasawit.databinding.ActivityMainBinding
 import kotlinx.coroutines.delay
@@ -175,15 +176,26 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
         val isFirstTime = sharedPref.getBoolean("is_first_time", true)
-        val role = sharedPref.getString("role", "")
+        val isLoggedIn = sharedPref.getBoolean("is_logged_in", false)
+        val role = sharedPref.getString("role", "") ?: ""
+        val petaniId = sharedPref.getInt("petani_id", 0)
+        val userId = sharedPref.getInt("user_id", 0)
 
-        val intent = if (isFirstTime) {
-            Intent(this@MainActivity, TutorialActivity::class.java)
-        } else {
-            Intent(this@MainActivity, MasukActivity::class.java).apply {
-                if (role == "petani" || role == "admin") {
-                    putExtra("SHOW_FINGERPRINT", true)
+        val intent = when {
+            isFirstTime -> {
+                Intent(this@MainActivity, TutorialActivity::class.java)
+            }
+            // AUTO-LOGIN: Jika user sudah pernah login dan sesi aktif, langsung masuk ke beranda tanpa repot login lagi
+            isLoggedIn && (petaniId > 0 || userId > 0 || role.isNotEmpty()) -> {
+                if (role == "admin") {
+                    Intent(this@MainActivity, BaseAdminActivity::class.java)
+                } else {
+                    Intent(this@MainActivity, BaseActivity::class.java)
                 }
+            }
+            else -> {
+                // Belum login atau pernah logout: Masuk ke halaman login
+                Intent(this@MainActivity, MasukActivity::class.java)
             }
         }
         startActivity(intent)

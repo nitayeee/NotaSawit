@@ -3,9 +3,6 @@ package com.example.notasawit.Utils
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -15,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.example.notasawit.R
 import com.example.notasawit.databinding.ActivityStatusSplashBinding
 
@@ -48,19 +46,44 @@ class StatusSplashActivity : AppCompatActivity() {
         }
 
         val status = intent.getStringExtra(EXTRA_STATUS) ?: STATUS_SUCCESS
-        val title = intent.getStringExtra(EXTRA_TITLE) ?: if (status == STATUS_SUCCESS) "Data Berhasil Disimpan!" else "Input Data Gagal!"
+        val title = intent.getStringExtra(EXTRA_TITLE)
         val message = intent.getStringExtra(EXTRA_MESSAGE) ?: ""
-        val category = intent.getStringExtra(EXTRA_CATEGORY) ?: "Data Sawit"
+        val category = intent.getStringExtra(EXTRA_CATEGORY) ?: ""
 
-        binding.tvStatusTitle.text = title
-        binding.tvStatusMessage.text = message
-        binding.tvCategoryBadge.text = category
+        if (status == STATUS_SUCCESS) {
+            setupSuccessUI(title)
+        } else {
+            setupFailedUI(title, message, category)
+        }
 
-        // Efek animasi masuk badge
-        binding.badgeContainer.scaleX = 0.8f
-        binding.badgeContainer.scaleY = 0.8f
-        binding.badgeContainer.alpha = 0f
-        binding.badgeContainer.animate()
+        binding.btnStatusAction.setOnClickListener {
+            finishWithFade()
+        }
+
+        binding.layoutRoot.setOnClickListener {
+            if (status == STATUS_SUCCESS) {
+                finishWithFade()
+            }
+        }
+    }
+
+    private fun setupSuccessUI(customTitle: String?) {
+        val greenColor = Color.parseColor("#1B4D2E")
+
+        binding.cardVideoSuccess.visibility = View.VISIBLE
+        binding.badgeErrorContainer.visibility = View.GONE
+
+        // Load animasi video sawit melompat gembira & memberi jempol HD
+        Glide.with(applicationContext)
+            .asDrawable()
+            .load(R.drawable.sawit_success_anim)
+            .into(binding.ivSuccessVideo)
+
+        // Efek animasi card video muncul membesar lembut
+        binding.cardVideoSuccess.scaleX = 0.9f
+        binding.cardVideoSuccess.scaleY = 0.9f
+        binding.cardVideoSuccess.alpha = 0f
+        binding.cardVideoSuccess.animate()
             .scaleX(1.0f)
             .scaleY(1.0f)
             .alpha(1.0f)
@@ -68,37 +91,22 @@ class StatusSplashActivity : AppCompatActivity() {
             .setInterpolator(DecelerateInterpolator())
             .start()
 
-        if (status == STATUS_SUCCESS) {
-            setupSuccessUI()
-        } else {
-            setupFailedUI()
-        }
-
-        binding.btnStatusAction.setOnClickListener {
-            finishWithFade()
-        }
-    }
-
-    private fun setupSuccessUI() {
-        val greenColor = Color.parseColor("#1B4D2E")
-        val softGreen = Color.parseColor("#E8ECE9")
-
+        // Sesuai permintaan pengguna: "Bikin aja berhasil disimpan gitu. Jangan banyak kali tulisan, bikin jelek"
+        binding.tvStatusTitle.text = customTitle?.ifEmpty { "Berhasil Disimpan!" } ?: "Berhasil Disimpan!"
         binding.tvStatusTitle.setTextColor(greenColor)
-        binding.badgeStatus.setBackgroundResource(R.drawable.bg_circle_success)
-        binding.ivStatusIcon.setImageResource(R.drawable.ic_check)
-        binding.ivStatusIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
 
-        binding.tvCategoryBadge.backgroundTintList = ColorStateList.valueOf(softGreen)
-        binding.tvCategoryBadge.setTextColor(greenColor)
+        // Sembunyikan pesan penjelas panjang dan chip agar tampilan bersih dan elegan
+        binding.tvCategoryBadge.visibility = View.GONE
+        binding.tvStatusMessage.visibility = View.GONE
 
         binding.btnStatusAction.text = "Selesai"
         binding.btnStatusAction.backgroundTintList = ColorStateList.valueOf(greenColor)
 
-        // Progress bar otomatis berjalan 2.2 detik lalu menutup sendiri
+        // Progress bar otomatis berjalan ~3.8 detik lalu menutup sendiri
         binding.progressAutoClose.visibility = View.VISIBLE
         binding.progressAutoClose.progress = 0
         progressAnimator = ObjectAnimator.ofInt(binding.progressAutoClose, "progress", 0, 100).apply {
-            duration = 2200
+            duration = 3800
             interpolator = DecelerateInterpolator()
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
@@ -109,17 +117,34 @@ class StatusSplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupFailedUI() {
+    private fun setupFailedUI(customTitle: String?, message: String, category: String) {
         val redColor = Color.parseColor("#D32F2F")
-        val softRed = Color.parseColor("#FFEBEE")
 
+        binding.cardVideoSuccess.visibility = View.GONE
+        binding.badgeErrorContainer.visibility = View.VISIBLE
+
+        binding.badgeErrorContainer.scaleX = 0.85f
+        binding.badgeErrorContainer.scaleY = 0.85f
+        binding.badgeErrorContainer.alpha = 0f
+        binding.badgeErrorContainer.animate()
+            .scaleX(1.0f)
+            .scaleY(1.0f)
+            .alpha(1.0f)
+            .setDuration(350)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+
+        binding.tvStatusTitle.text = customTitle?.ifEmpty { "Input Data Gagal!" } ?: "Input Data Gagal!"
         binding.tvStatusTitle.setTextColor(redColor)
-        binding.badgeStatus.setBackgroundResource(R.drawable.bg_circle_error)
-        binding.ivStatusIcon.setImageResource(R.drawable.ic_close)
-        binding.ivStatusIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
 
-        binding.tvCategoryBadge.backgroundTintList = ColorStateList.valueOf(softRed)
-        binding.tvCategoryBadge.setTextColor(redColor)
+        if (message.isNotEmpty()) {
+            binding.tvStatusMessage.text = message
+            binding.tvStatusMessage.visibility = View.VISIBLE
+        } else {
+            binding.tvStatusMessage.visibility = View.GONE
+        }
+
+        binding.tvCategoryBadge.visibility = View.GONE
 
         binding.btnStatusAction.text = "Periksa Kembali"
         binding.btnStatusAction.backgroundTintList = ColorStateList.valueOf(redColor)
@@ -140,4 +165,3 @@ class StatusSplashActivity : AppCompatActivity() {
         progressAnimator?.cancel()
     }
 }
-

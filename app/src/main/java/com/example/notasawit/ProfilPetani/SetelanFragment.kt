@@ -48,10 +48,21 @@ class SetelanFragment : Fragment() {
                 .setTitle("Konfirmasi Logout")
                 .setMessage("Apakah Anda yakin ingin keluar dari aplikasi?")
                 .setPositiveButton("OK") { dialogInterface, which ->
-                    // Hapus sesi / shared preferences
+                    // Ambil data username & remember me sebelum menghapus sesi login
                     val sharedPref = requireActivity().getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+                    val lastUsername = sharedPref.getString("last_username", "")?.ifEmpty { null }
+                        ?: sharedPref.getString("username", "") ?: ""
+                    val isRemembered = sharedPref.getBoolean("remember_me", true)
+
                     with(sharedPref.edit()) {
                         clear()
+                        putBoolean("is_logged_in", false)
+                        putBoolean("is_first_time", false)
+                        // Pertahankan username agar petani tidak perlu mengetik ulang saat login kembali
+                        if (isRemembered && lastUsername.isNotEmpty()) {
+                            putString("last_username", lastUsername)
+                            putBoolean("remember_me", true)
+                        }
                         apply()
                     }
                     
@@ -68,9 +79,8 @@ class SetelanFragment : Fragment() {
                 
             dialog.setOnShowListener {
                 dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)?.setTextColor(android.graphics.Color.parseColor("#1B4D2E"))
-                dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(android.graphics.Color.parseColor("#1B4D2E"))
+                dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE)?.setTextColor(android.graphics.Color.parseColor("#757575"))
             }
-            
             dialog.show()
         }
     }
