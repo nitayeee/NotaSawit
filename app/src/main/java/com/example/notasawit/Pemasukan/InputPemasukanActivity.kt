@@ -1,428 +1,429 @@
-package com.example.notasawit.Pemasukan
-
-import android.app.DatePickerDialog
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
-import android.content.ContentValues
-import android.provider.MediaStore
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.example.notasawit.R
-import com.example.notasawit.Room.AppDatabase
-import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
-import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
-import com.example.notasawit.Room.Lahan.LahanEntity
-import com.example.notasawit.Room.Produksi.ProduksiEntity
-import com.example.notasawit.Sync.SyncKegiatanRepository
-import com.example.notasawit.Sync.SyncProduksiRepository
-import com.example.notasawit.Sync.SyncWorker
-import com.example.notasawit.databinding.ActivityInputPemasukanBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
-class InputPemasukanActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityInputPemasukanBinding
-    private val listLahan = mutableListOf<LahanEntity>()
-    private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
-    private val sp_petaniId by lazy {
-        val id = sharedPref.getInt("petani_id", 0)
-        if (id != 0) id else sharedPref.getInt("user_id", 0)
-    }
-    private val selectedLahanIds = mutableListOf<Int>()
-    private val selectedLahanNames = mutableListOf<String>()
-    private var imageUri: Uri? = null
-    private var tempPhotoFile: File? = null
-    private lateinit var database: AppDatabase
-
-    // Pilih dari galeri
-    private val galleryLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-
-            uri?.let {
-
-                val localPath = copyImageToInternalStorage(it)
-
-                imageUri = Uri.fromFile(File(localPath))
-
-                binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageURI(imageUri)
-            }
-        }
-
-    // Ambil foto dari kamera
-    private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-            bitmap?.let {
-                val localPath = saveBitmapToInternalStorage(it)
-                imageUri = Uri.fromFile(File(localPath))
-                binding.imgNotaPreview.visibility = View.VISIBLE
-                binding.imgNotaPreview.setImageBitmap(it)
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        enableEdgeToEdge()
-
-        binding = ActivityInputPemasukanBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            v.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
-
-            insets
-        }
-        database = AppDatabase.getDatabase(this)
-
-        // Klik upload bukti nota
-        binding.cardUploadNota.setOnClickListener {
-            showImagePickerDialog()
-        }
-
-        loadLahan()
-        binding.etPilihLahan.setOnClickListener {
-            showLahanDialog()
-        }
-        binding.btnBack.setOnClickListener { finish() }
-
-        // Tombol simpan
-        binding.btnSimpan.setOnClickListener {
-
-            if (binding.imgNotaPreview.visibility == View.GONE) {
-
-                AlertDialog.Builder(this)
-                    .setTitle("Peringatan")
-                    .setMessage("Silakan upload bukti nota terlebih dahulu")
-                    .setPositiveButton("OK", null)
-                    .show()
-
-                return@setOnClickListener
-            }
-            
-            if (selectedLahanIds.isEmpty()) {
-                AlertDialog.Builder(this)
-                    .setTitle("Peringatan")
-                    .setMessage("Silakan pilih minimal 1 Lahan")
-                    .setPositiveButton("OK", null)
-                    .show()
-                return@setOnClickListener
-            }
-
-            if (binding.etBahan.text.toString().isEmpty() || binding.etHarga.text.toString().isEmpty() || binding.etTanggal.text.toString().isEmpty()) {
-                AlertDialog.Builder(this)
-                    .setTitle("Peringatan")
-                    .setMessage("Silakan lengkapi semua data (Tanggal, Jumlah, dan Harga)")
-                    .setPositiveButton("OK", null)
-                    .show()
-                return@setOnClickListener
-            }
-
-            lifecycleScope.launch {
-
-                val totalProduksiInput = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
-                val hargaTbsInput = binding.etHarga.text.toString().toDoubleOrNull() ?: 0.0
-                val totalPendapatanInput = totalProduksiInput * hargaTbsInput
-
-                val produksi = ProduksiEntity(
-                    produksi_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
-                    jumlah_tbs = totalProduksiInput.toInt(),
-                    harga_tbs = hargaTbsInput,
-                    total_pendapatan = totalPendapatanInput,
-                    petaniId = sp_petaniId,
-                    produksi_ket = binding.etCatatan.text.toString(),
-                    imagePath = imageUri?.toString(),
-                    isSynced = false
-                )
-                val produksiId = database.ProduksiDao().insert(produksi)
-
-                // Hitung produksi & pendapatan proporsional per-lahan
-                val lahanTerpilih = listLahan.filter { selectedLahanIds.contains(it.lahan_id) }
-                val totalLuasLahan = lahanTerpilih.sumOf { it.lahan_luas }
-                val countLahan = lahanTerpilih.size
-                val totalProduksi = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
-                val totalPendapatan = produksi.total_pendapatan
-                
-                val produksiPerHektar = if (totalLuasLahan > 0) totalProduksi / totalLuasLahan else 0.0
-                val pendapatanPerHektar = if (totalLuasLahan > 0) totalPendapatan / totalLuasLahan else 0.0
-
-                val produksiRata = if (countLahan > 0) totalProduksi / countLahan else 0.0
-                val pendapatanRata = if (countLahan > 0) totalPendapatan / countLahan else 0.0
-
-                var totalProduksiDihitung = 0.0
-                var totalPendapatanDihitung = 0.0
-
-                lahanTerpilih.forEachIndexed { index, lahan ->
-                    val produksiLahan: Double
-                    val pendapatanLahan: Double
-
-                    if (index == lahanTerpilih.lastIndex) {
-                        produksiLahan = totalProduksi - totalProduksiDihitung
-                        pendapatanLahan = totalPendapatan - totalPendapatanDihitung
-                    } else {
-                        if (totalLuasLahan > 0) {
-                            produksiLahan = lahan.lahan_luas * produksiPerHektar
-                            pendapatanLahan = lahan.lahan_luas * pendapatanPerHektar
-                        } else {
-                            produksiLahan = produksiRata
-                            pendapatanLahan = pendapatanRata
-                        }
-                    }
-
-                    totalProduksiDihitung += produksiLahan
-                    totalPendapatanDihitung += pendapatanLahan
-
-                    database.DetailProduksiDao().insert(
-                        DetailProduksiEntity(
-                            produksiId = produksiId.toInt(),
-                            lahanId  = lahan.lahan_id,
-                            jumlahProduksi = produksiLahan,
-                            subtotalPendapatan = pendapatanLahan
-                        )
-                    )
-                }
-                triggerDataSync()
-
-                com.example.notasawit.Utils.CustomAlert.showSuccess(
-                    this@InputPemasukanActivity,
-                    "Berhasil",
-                    "Data disimpan & siap disinkron"
-                )
-                Log.d("SYNC_IMAGE", "imagePath = ${produksi.imagePath}")
-
-                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                    finish()
-                }, 1500)
-
-            }
-
-        }
-
-
-        //Ambil ID Lahan
-
-
-        binding.etTanggal.setOnClickListener {
-            showDatePicker()
-        }
-    }
-
-    private fun showImagePickerDialog() {
-
-        val options = arrayOf(
-            "📷 Ambil Foto",
-            "🖼️ Pilih dari Galeri"
-        )
-
-        AlertDialog.Builder(this)
-            .setTitle("Pilih Bukti Nota")
-            .setItems(options) { _, which ->
-
-                when (which) {
-
-                    0 -> {
-                        cameraLauncher.launch(null)
-                    }
-
-                    1 -> {
-                        galleryLauncher.launch("image/*")
-                    }
-                }
-            }
-            .show()
-    }
-    private fun loadLahan() {
-        lifecycleScope.launch {
-            val currentPetaniId = sp_petaniId
-            val allLahan = database.LahanDao().getAllLahan()
-            val filteredLahan = if (currentPetaniId != 0) {
-                val list = allLahan.filter { it.petani_id == currentPetaniId }
-                if (list.isNotEmpty()) list else allLahan
-            } else {
-                allLahan
-            }
-
-            listLahan.clear()
-            listLahan.addAll(filteredLahan)
-        }
-    }
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, year, month, dayOfMonth ->
-                val selectedDate = Calendar.getInstance()
-                selectedDate.set(year, month, dayOfMonth)
-
-                // 1. Tampilan untuk USER di aplikasi (Tetap Bahasa Indonesia agar mudah dibaca)
-                val formatterUser = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
-                binding.etTanggal.setText(formatterUser.format(selectedDate.time))
-
-                // 2. Simpan format standar SERVER (yyyy-MM-dd) di tag/variabel tersembunyi
-                val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val tanggalStandard = formatterServer.format(selectedDate.time)
-
-                // Simpan tanggal standard ke dalam tag EditText agar bisa diambil nanti
-                binding.etTanggal.tag = tanggalStandard
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        datePickerDialog.show()
-    }
-    private fun saveBitmapToInternalStorage(bitmap: Bitmap): String {
-        val fileName = "nota_${System.currentTimeMillis()}.jpg"
-        val dir = File(filesDir, "nota_pemasukan")
-        if (!dir.exists()) {
-            dir.mkdirs()
-        }
-        val file = File(dir, fileName)
-        FileOutputStream(file).use { output ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output)
-        }
-        return file.absolutePath
-    }
-
-    private fun copyImageToInternalStorage(uri: Uri): String {
-
-        val fileName = "nota_${System.currentTimeMillis()}.jpg"
-
-        // Folder: files/nota/
-        val dir = File(filesDir, "nota_pemasukan")
-        if (!dir.exists()) {
-            dir.mkdirs()
-        }
-
-        // File tujuan
-        val file = File(dir, fileName)
-
-        contentResolver.openInputStream(uri)?.use { input ->
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        return file.absolutePath
-    }
-    private fun showLahanDialog() {
-
-        val items = listLahan.map { it.lahan_nama }.toTypedArray()
-        val checked = BooleanArray(items.size)
-
-        //menandai yang sudah dipilih
-        listLahan.forEachIndexed { index, lahan ->
-            checked[index] = selectedLahanIds.contains(lahan.lahan_id)
-        }
-
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Pilih Lahan")
-            .setMultiChoiceItems(items, checked) { _, which, isChecked ->
-
-                val lahan = listLahan[which]
-
-                if (isChecked) {
-
-                    selectedLahanIds.add(lahan.lahan_id)
-                    selectedLahanNames.add(lahan.lahan_nama)
-
-                } else {
-
-                    selectedLahanIds.remove(lahan.lahan_id)
-                    selectedLahanNames.remove(lahan.lahan_nama)
-
-                }
-
-            }
-            .setPositiveButton("Simpan") { _, _ ->
-
-                binding.chipGroupLahan.removeAllViews()
-
-                selectedLahanNames.forEach { nama ->
-
-                    val chip = com.google.android.material.chip.Chip(this)
-                    chip.text = nama
-                    chip.isCloseIconVisible = true
-
-                    chip.setOnCloseIconClickListener {
-
-                        val index = selectedLahanNames.indexOf(nama)
-
-                        if (index != -1) {
-                            selectedLahanNames.removeAt(index)
-                            selectedLahanIds.removeAt(index)
-                        }
-
-                        binding.chipGroupLahan.removeView(chip)
-                    }
-
-                    binding.chipGroupLahan.addView(chip)
-                }
-
-            }
-            .setNegativeButton("Batal", null)
-            .show()
-
-    }
-    private fun triggerDataSync() {
-        // 🔄 Eksekusi sinkronisasi langsung ke server di background coroutine
-        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val success = SyncProduksiRepository(applicationContext, database).syncProduksi()
-                Log.d("SYNC_DIRECT", "Produksi direct sync success: $success")
-            } catch (e: Exception) {
-                Log.e("SYNC_DIRECT", "Produksi direct sync failed, background worker will retry", e)
-            }
-        }
-
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>()
-            .setConstraints(constraints)
-            .build()
-
-        // 🔄 Ganti KEEP menjadi REPLACE
-        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-            "SyncProduksiWork",
-            ExistingWorkPolicy.REPLACE, // Mengganti antrean lama agar Worker langsung merespon data baru
-            syncRequest
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Saat aplikasi dibuka kembali, cek apakah ada data tertinggal yang perlu disinkronkan
-        triggerDataSync()
-    }
+package com.example.notasawit.Pemasukan
+
+import android.app.DatePickerDialog
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import android.content.ContentValues
+import android.provider.MediaStore
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.notasawit.R
+import com.example.notasawit.Room.AppDatabase
+import com.example.notasawit.Room.DetailKegiatan.DetailKegiatanEntity
+import com.example.notasawit.Room.DetailProduksi.DetailProduksiEntity
+import com.example.notasawit.Room.Lahan.LahanEntity
+import com.example.notasawit.Room.Produksi.ProduksiEntity
+import com.example.notasawit.Sync.SyncKegiatanRepository
+import com.example.notasawit.Sync.SyncProduksiRepository
+import com.example.notasawit.Sync.SyncWorker
+import com.example.notasawit.Utils.StatusSplashHelper
+import com.example.notasawit.databinding.ActivityInputPemasukanBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+
+class InputPemasukanActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityInputPemasukanBinding
+    private val listLahan = mutableListOf<LahanEntity>()
+    private val sharedPref by lazy { getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE) }
+    private val sp_petaniId by lazy {
+        val id = sharedPref.getInt("petani_id", 0)
+        if (id != 0) id else sharedPref.getInt("user_id", 0)
+    }
+    private val selectedLahanIds = mutableListOf<Int>()
+    private val selectedLahanNames = mutableListOf<String>()
+    private var imageUri: Uri? = null
+    private var tempPhotoFile: File? = null
+    private lateinit var database: AppDatabase
+
+    // Pilih dari galeri
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+
+            uri?.let {
+
+                val localPath = copyImageToInternalStorage(it)
+
+                imageUri = Uri.fromFile(File(localPath))
+
+                binding.imgNotaPreview.visibility = View.VISIBLE
+                binding.imgNotaPreview.setImageURI(imageUri)
+            }
+        }
+
+    // Ambil foto dari kamera
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+            bitmap?.let {
+                val localPath = saveBitmapToInternalStorage(it)
+                imageUri = Uri.fromFile(File(localPath))
+                binding.imgNotaPreview.visibility = View.VISIBLE
+                binding.imgNotaPreview.setImageBitmap(it)
+            }
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
+
+        binding = ActivityInputPemasukanBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            v.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+
+            insets
+        }
+        database = AppDatabase.getDatabase(this)
+
+        // Klik upload bukti nota
+        binding.cardUploadNota.setOnClickListener {
+            showImagePickerDialog()
+        }
+
+        loadLahan()
+        binding.etPilihLahan.setOnClickListener {
+            showLahanDialog()
+        }
+        binding.btnBack.setOnClickListener { finish() }
+
+        // Tombol simpan
+        binding.btnSimpan.setOnClickListener {
+
+            if (binding.imgNotaPreview.visibility == View.GONE) {
+                StatusSplashHelper.showError(
+                    this,
+                    "Bukti Nota Belum Diunggah!",
+                    "Silakan foto atau unggah bukti nota timbangan terlebih dahulu.",
+                    "Data Produksi"
+                )
+                return@setOnClickListener
+            }
+            
+            if (selectedLahanIds.isEmpty()) {
+                StatusSplashHelper.showError(
+                    this,
+                    "Lahan Belum Dipilih!",
+                    "Silakan pilih minimal 1 lokasi lahan untuk alokasi produksi.",
+                    "Data Produksi"
+                )
+                return@setOnClickListener
+            }
+
+            if (binding.etBahan.text.toString().isEmpty() || binding.etHarga.text.toString().isEmpty() || binding.etTanggal.text.toString().isEmpty()) {
+                StatusSplashHelper.showError(
+                    this,
+                    "Data Belum Lengkap!",
+                    "Silakan lengkapi tanggal, jumlah TBS, dan harga sebelum menyimpan.",
+                    "Data Produksi"
+                )
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+
+                val totalProduksiInput = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
+                val hargaTbsInput = binding.etHarga.text.toString().toDoubleOrNull() ?: 0.0
+                val totalPendapatanInput = totalProduksiInput * hargaTbsInput
+
+                val produksi = ProduksiEntity(
+                    produksi_tanggal = binding.etTanggal.tag?.toString() ?: binding.etTanggal.text.toString(),
+                    jumlah_tbs = totalProduksiInput.toInt(),
+                    harga_tbs = hargaTbsInput,
+                    total_pendapatan = totalPendapatanInput,
+                    petaniId = sp_petaniId,
+                    produksi_ket = binding.etCatatan.text.toString(),
+                    imagePath = imageUri?.toString(),
+                    isSynced = false
+                )
+                val produksiId = database.ProduksiDao().insert(produksi)
+
+                // Hitung produksi & pendapatan proporsional per-lahan
+                val lahanTerpilih = listLahan.filter { selectedLahanIds.contains(it.lahan_id) }
+                val totalLuasLahan = lahanTerpilih.sumOf { it.lahan_luas }
+                val countLahan = lahanTerpilih.size
+                val totalProduksi = binding.etBahan.text.toString().toDoubleOrNull() ?: 0.0
+                val totalPendapatan = produksi.total_pendapatan
+                
+                val produksiPerHektar = if (totalLuasLahan > 0) totalProduksi / totalLuasLahan else 0.0
+                val pendapatanPerHektar = if (totalLuasLahan > 0) totalPendapatan / totalLuasLahan else 0.0
+
+                val produksiRata = if (countLahan > 0) totalProduksi / countLahan else 0.0
+                val pendapatanRata = if (countLahan > 0) totalPendapatan / countLahan else 0.0
+
+                var totalProduksiDihitung = 0.0
+                var totalPendapatanDihitung = 0.0
+
+                lahanTerpilih.forEachIndexed { index, lahan ->
+                    val produksiLahan: Double
+                    val pendapatanLahan: Double
+
+                    if (index == lahanTerpilih.lastIndex) {
+                        produksiLahan = totalProduksi - totalProduksiDihitung
+                        pendapatanLahan = totalPendapatan - totalPendapatanDihitung
+                    } else {
+                        if (totalLuasLahan > 0) {
+                            produksiLahan = lahan.lahan_luas * produksiPerHektar
+                            pendapatanLahan = lahan.lahan_luas * pendapatanPerHektar
+                        } else {
+                            produksiLahan = produksiRata
+                            pendapatanLahan = pendapatanRata
+                        }
+                    }
+
+                    totalProduksiDihitung += produksiLahan
+                    totalPendapatanDihitung += pendapatanLahan
+
+                    database.DetailProduksiDao().insert(
+                        DetailProduksiEntity(
+                            produksiId = produksiId.toInt(),
+                            lahanId  = lahan.lahan_id,
+                            jumlahProduksi = produksiLahan,
+                            subtotalPendapatan = pendapatanLahan
+                        )
+                    )
+                }
+                triggerDataSync()
+
+                Log.d("SYNC_IMAGE", "imagePath = ${produksi.imagePath}")
+
+                StatusSplashHelper.showSuccess(
+                    this@InputPemasukanActivity,
+                    "Data Produksi Berhasil Disimpan!",
+                    "Data produksi TBS telah tersimpan dan siap disinkronkan ke server.",
+                    "Data Produksi",
+                    finishCaller = true
+                )
+
+            }
+
+        }
+
+
+        //Ambil ID Lahan
+
+
+        binding.etTanggal.setOnClickListener {
+            showDatePicker()
+        }
+    }
+
+    private fun showImagePickerDialog() {
+
+        val options = arrayOf(
+            "📷 Ambil Foto",
+            "🖼️ Pilih dari Galeri"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("Pilih Bukti Nota")
+            .setItems(options) { _, which ->
+
+                when (which) {
+
+                    0 -> {
+                        cameraLauncher.launch(null)
+                    }
+
+                    1 -> {
+                        galleryLauncher.launch("image/*")
+                    }
+                }
+            }
+            .show()
+    }
+    private fun loadLahan() {
+        lifecycleScope.launch {
+            val currentPetaniId = sp_petaniId
+            val allLahan = database.LahanDao().getAllLahan()
+            val filteredLahan = if (currentPetaniId != 0) {
+                val list = allLahan.filter { it.petani_id == currentPetaniId }
+                if (list.isNotEmpty()) list else allLahan
+            } else {
+                allLahan
+            }
+
+            listLahan.clear()
+            listLahan.addAll(filteredLahan)
+        }
+    }
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(year, month, dayOfMonth)
+
+                // 1. Tampilan untuk USER di aplikasi (Tetap Bahasa Indonesia agar mudah dibaca)
+                val formatterUser = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
+                binding.etTanggal.setText(formatterUser.format(selectedDate.time))
+
+                // 2. Simpan format standar SERVER (yyyy-MM-dd) di tag/variabel tersembunyi
+                val formatterServer = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val tanggalStandard = formatterServer.format(selectedDate.time)
+
+                // Simpan tanggal standard ke dalam tag EditText agar bisa diambil nanti
+                binding.etTanggal.tag = tanggalStandard
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+    private fun saveBitmapToInternalStorage(bitmap: Bitmap): String {
+        val fileName = "nota_${System.currentTimeMillis()}.jpg"
+        val dir = File(filesDir, "nota_pemasukan")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+        val file = File(dir, fileName)
+        FileOutputStream(file).use { output ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output)
+        }
+        return file.absolutePath
+    }
+
+    private fun copyImageToInternalStorage(uri: Uri): String {
+
+        val fileName = "nota_${System.currentTimeMillis()}.jpg"
+
+        // Folder: files/nota/
+        val dir = File(filesDir, "nota_pemasukan")
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
+
+        // File tujuan
+        val file = File(dir, fileName)
+
+        contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file.absolutePath
+    }
+    private fun showLahanDialog() {
+
+        val items = listLahan.map { it.lahan_nama }.toTypedArray()
+        val checked = BooleanArray(items.size)
+
+        //menandai yang sudah dipilih
+        listLahan.forEachIndexed { index, lahan ->
+            checked[index] = selectedLahanIds.contains(lahan.lahan_id)
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Pilih Lahan")
+            .setMultiChoiceItems(items, checked) { _, which, isChecked ->
+
+                val lahan = listLahan[which]
+
+                if (isChecked) {
+
+                    selectedLahanIds.add(lahan.lahan_id)
+                    selectedLahanNames.add(lahan.lahan_nama)
+
+                } else {
+
+                    selectedLahanIds.remove(lahan.lahan_id)
+                    selectedLahanNames.remove(lahan.lahan_nama)
+
+                }
+
+            }
+            .setPositiveButton("Simpan") { _, _ ->
+
+                binding.chipGroupLahan.removeAllViews()
+
+                selectedLahanNames.forEach { nama ->
+
+                    val chip = com.google.android.material.chip.Chip(this)
+                    chip.text = nama
+                    chip.isCloseIconVisible = true
+
+                    chip.setOnCloseIconClickListener {
+
+                        val index = selectedLahanNames.indexOf(nama)
+
+                        if (index != -1) {
+                            selectedLahanNames.removeAt(index)
+                            selectedLahanIds.removeAt(index)
+                        }
+
+                        binding.chipGroupLahan.removeView(chip)
+                    }
+
+                    binding.chipGroupLahan.addView(chip)
+                }
+
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+
+    }
+    private fun triggerDataSync() {
+        // 🔄 Eksekusi sinkronisasi langsung ke server di background coroutine
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val success = SyncProduksiRepository(applicationContext, database).syncProduksi()
+                Log.d("SYNC_DIRECT", "Produksi direct sync success: $success")
+            } catch (e: Exception) {
+                Log.e("SYNC_DIRECT", "Produksi direct sync failed, background worker will retry", e)
+            }
+        }
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        // 🔄 Ganti KEEP menjadi REPLACE
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "SyncProduksiWork",
+            ExistingWorkPolicy.REPLACE, // Mengganti antrean lama agar Worker langsung merespon data baru
+            syncRequest
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Saat aplikasi dibuka kembali, cek apakah ada data tertinggal yang perlu disinkronkan
+        triggerDataSync()
+    }
 }
