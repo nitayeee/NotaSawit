@@ -163,12 +163,14 @@ getJenisKegiatan()
 
                                 runOnUiThread {
                                     val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
-                                    val welcomeIntent = Intent(this@MasukActivity, WelcomeActivity::class.java).apply {
-                                        putExtra("EXTRA_NAME", nama ?: "")
-                                        putExtra("EXTRA_ROLE", loginResponse.role ?: "petani")
+                                    val targetIntent = if (loginResponse.role == "petani") {
+                                        Intent(this@MasukActivity, BaseActivity::class.java)
+                                    } else {
+                                        Intent(this@MasukActivity, BaseAdminActivity::class.java)
                                     }
-                                    startActivity(welcomeIntent)
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                    targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
+                                    targetIntent.putExtra("EXTRA_NAME", nama ?: "")
+                                    startActivity(targetIntent)
                                     finish()
                                 }
                             } else {
@@ -243,12 +245,14 @@ getJenisKegiatan()
                     val role = sharedPref.getString("role", "petani")
                     val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
                     
-                    val welcomeIntent = Intent(this@MasukActivity, WelcomeActivity::class.java).apply {
-                        putExtra("EXTRA_NAME", nama ?: "")
-                        putExtra("EXTRA_ROLE", role ?: "petani")
+                    val targetIntent = if (role == "admin") {
+                        Intent(this@MasukActivity, BaseAdminActivity::class.java)
+                    } else {
+                        Intent(this@MasukActivity, BaseActivity::class.java)
                     }
-                    startActivity(welcomeIntent)
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
+                    targetIntent.putExtra("EXTRA_NAME", nama ?: "")
+                    startActivity(targetIntent)
                     finish()
                 }
 

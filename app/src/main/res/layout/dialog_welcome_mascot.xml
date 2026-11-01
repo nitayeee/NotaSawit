@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialogRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <!-- Speech bubble / Salam di atas karakter -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardGreetingBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/ivMascot"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:id="@+id/tvGreetingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Halo, Petani Sawit! 👋"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="18sp"
+                android:textColor="#1B4D2E" />
+
+            <TextView
+                android:id="@+id/tvGreetingSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Selamat datang di SILAUSA"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="13sp"
+                android:textColor="#666666" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Karakter Sawit Melambai Tanpa Background (Transparan) -->
+    <ImageView
+        android:id="@+id/ivMascot"
+        android:layout_width="300dp"
+        android:layout_height="360dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/sawit_wave_transparent"
+        android:contentDescription="Karakter Sawit Melambai"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Hint ketuk untuk menutup -->
+    <TextView
+        android:id="@+id/tvDismissHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Ketuk di mana saja untuk lanjut"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:alpha="0.85"
+        app:layout_constraintTop_toBottomOf="@+id/ivMascot"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

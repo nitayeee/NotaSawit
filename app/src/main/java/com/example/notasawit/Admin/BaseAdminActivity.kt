@@ -1,5 +1,6 @@
 package com.example.notasawit.Admin
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,13 @@ class BaseAdminActivity : AppCompatActivity() {
         bottomNav.setPadding(0, 0, 0, 0)
         replaceFragment(BerandaAdminFragment())
         setupBottomNavListener()
+
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false)) {
+            val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val nama = intent.getStringExtra("EXTRA_NAME")
+                ?: sharedPref.getString("username", "Admin")
+            com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Admin")
+        }
     }
 
     private var isSelectingProgrammatically = false

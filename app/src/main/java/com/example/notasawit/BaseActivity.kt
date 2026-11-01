@@ -1,5 +1,6 @@
 package com.example.notasawit
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -35,6 +36,14 @@ class BaseActivity : AppCompatActivity() {
         replaceFragment(BerandaFragment())
         setupBottomNavListener()
         checkNotificationPermission()
+
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false)) {
+            val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val nama = intent.getStringExtra("EXTRA_NAME")
+                ?: sharedPref.getString("namaPetani", null)
+                ?: sharedPref.getString("username", "Petani Sawit")
+            com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Petani Sawit")
+        }
     }
 
     private fun checkNotificationPermission() {
