@@ -6,8 +6,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -25,26 +27,28 @@ object WelcomeMascotDialog {
         dialog.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            setDimAmount(0.6f) // Membuat homepage di belakang menggelap seperti popup
+            setDimAmount(0.6f) // Membuat tampilan homepage di latar belakang menggelap elegan
         }
 
         val tvGreetingTitle = dialog.findViewById<TextView>(R.id.tvGreetingTitle)
         val ivMascot = dialog.findViewById<ImageView>(R.id.ivMascot)
+        val cardPopup = dialog.findViewById<View>(R.id.cardPopup)
+        val btnMasuk = dialog.findViewById<Button>(R.id.btnMasuk)
         val dialogRoot = dialog.findViewById<ViewGroup>(R.id.dialogRoot)
 
-        tvGreetingTitle.text = "Halo, $userName! 👋"
+        tvGreetingTitle.text = "Halo, $userName!"
 
-        // Load animasi karakter sawit melambai tanpa background (transparan)
+        // Load animasi karakter sawit melambai HD dalam card
         Glide.with(activity.applicationContext)
             .asDrawable()
-            .load(R.drawable.sawit_wave_transparent)
+            .load(R.drawable.sawit_wave_card)
             .into(ivMascot)
 
-        // Efek animasi muncul halus
-        ivMascot.scaleX = 0.85f
-        ivMascot.scaleY = 0.85f
-        ivMascot.alpha = 0f
-        ivMascot.animate()
+        // Efek animasi card muncul lembut
+        cardPopup.scaleX = 0.85f
+        cardPopup.scaleY = 0.85f
+        cardPopup.alpha = 0f
+        cardPopup.animate()
             .scaleX(1.0f)
             .scaleY(1.0f)
             .alpha(1.0f)
@@ -59,10 +63,12 @@ object WelcomeMascotDialog {
             isDismissed = true
             handler.removeCallbacksAndMessages(null)
 
-            dialogRoot?.animate()
-                ?.alpha(0f)
-                ?.setDuration(250)
-                ?.withEndAction {
+            cardPopup.animate()
+                .scaleX(0.9f)
+                .scaleY(0.9f)
+                .alpha(0f)
+                .setDuration(220)
+                .withEndAction {
                     try {
                         if (!activity.isFinishing && !activity.isDestroyed && dialog.isShowing) {
                             dialog.dismiss()
@@ -71,11 +77,16 @@ object WelcomeMascotDialog {
                         e.printStackTrace()
                     }
                 }
-                ?.start()
+                .start()
         }
 
-        // Ketuk di mana saja pada layar untuk langsung menutup dan mulai beraktivitas
-        dialogRoot?.setOnClickListener {
+        // Tombol masuk ke beranda
+        btnMasuk.setOnClickListener {
+            dismissWithAnimation()
+        }
+
+        // Ketuk di luar card untuk langsung menutup
+        dialogRoot.setOnClickListener {
             dismissWithAnimation()
         }
 
@@ -83,10 +94,10 @@ object WelcomeMascotDialog {
             dismissWithAnimation()
         }
 
-        // Otomatis menutup setelah melambai sekitar 2.8 detik
+        // Otomatis menutup setelah melambai sekitar 3 detik
         handler.postDelayed({
             dismissWithAnimation()
-        }, 2800)
+        }, 3000)
 
         try {
             dialog.show()
@@ -95,4 +106,3 @@ object WelcomeMascotDialog {
         }
     }
 }
-
