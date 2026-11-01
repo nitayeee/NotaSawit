@@ -326,9 +326,13 @@
 
                     <!-- WHATSAPP / TELEPON -->
                     <LinearLayout
+                        android:id="@+id/btnKontakAdmin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal">
 
                         <com.google.android.material.card.MaterialCardView

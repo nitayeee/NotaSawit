@@ -248,17 +248,20 @@ getJenisKegiatan()
 
     private fun showBantuanLoginDialog() {
         val currentUsername = binding.etUsername.text.toString().trim()
+        val adminPhone = "6282285335295" // Nomor WhatsApp Resmi Layanan Admin SILAUSA
+
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Bantuan Masuk Akun")
-            .setMessage("Jika Anda lupa PIN atau mengalami kendala masuk ke akun SILAUSA, Anda dapat menghubungi Admin Desa/KUD atau melakukan reset PIN mandiri.")
-            .setPositiveButton("WhatsApp Admin") { _, _ ->
+            .setMessage("Jika Anda lupa PIN atau mengalami kendala masuk ke akun SILAUSA, Anda dapat langsung menghubungi Admin via WhatsApp (tanpa perlu simpan nomor) atau reset PIN mandiri.")
+            .setPositiveButton("Chat WhatsApp Admin") { _, _ ->
                 try {
                     val pesan = if (currentUsername.isNotEmpty()) {
                         "Halo Admin SILAUSA, saya petani dengan username $currentUsername mengalami kendala masuk akun. Mohon bantuannya."
                     } else {
                         "Halo Admin SILAUSA, saya petani mengalami kendala masuk akun SILAUSA. Mohon bantuannya."
                     }
-                    val url = "https://api.whatsapp.com/send?text=${java.net.URLEncoder.encode(pesan, "UTF-8")}"
+                    // Menggunakan parameter phone agar langsung masuk ke roomchat nomor admin tanpa harus menyimpan kontak
+                    val url = "https://api.whatsapp.com/send?phone=$adminPhone&text=${java.net.URLEncoder.encode(pesan, "UTF-8")}"
                     val waIntent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
                     startActivity(waIntent)
                 } catch (e: Exception) {
