@@ -29,7 +29,7 @@ object AdminDesaHelper {
         7 to AdminContact("Budi Santosos", "Kiab Jaya 2", 7, "6282285335295"),
         8 to AdminContact("M Ikhsan", "Langgam", 8, "6282285335295"),
         9 to AdminContact("Admin Muda Setia", "Muda Setia", 9, "6282285335295"),
-        10 to AdminContact("Romusa", "Beringin Indah", 10, "6282285335295"),
+        10 to AdminContact("Romusa", "Beringin Indah", 10, "6285364615887"),
         11 to AdminContact("Seventeen", "Dundangan", 11, "6282285335295"),
         12 to AdminContact("Aulia Aprilianti", "Sialang Indah", 12, "6282285335295"),
         19 to AdminContact("Dhini Handayani", "Kiab Jaya", 19, "6282285335295")

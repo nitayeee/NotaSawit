@@ -127,7 +127,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
                                     if (profilUrl.isNotEmpty() && profilUrl != "null") {
                                         binding.imgFotoProfil.visibility = android.view.View.VISIBLE
                                         val fullUrl = if (!profilUrl.startsWith("http")) {
-                                            "http://160.187.144.157/storage/$profilUrl"
+                                            "https://notasawit.pocari.id/storage/$profilUrl"
                                         } else {
                                             profilUrl
                                         }

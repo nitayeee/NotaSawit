@@ -53,15 +53,30 @@ class SetelanFragment : Fragment() {
                     val lastUsername = sharedPref.getString("last_username", "")?.ifEmpty { null }
                         ?: sharedPref.getString("username", "") ?: ""
                     val isRemembered = sharedPref.getBoolean("remember_me", true)
+                    val savedPin = sharedPref.getString("saved_pin", "") ?: ""
+                    val role = sharedPref.getString("role", "") ?: ""
+                    val namaPetani = sharedPref.getString("namaPetani", "") ?: ""
+                    val petaniId = sharedPref.getInt("petani_id", 0)
+                    val userId = sharedPref.getInt("user_id", 0)
+                    val desaPetani = sharedPref.getInt("desaPetani", 0)
+                    val profilPetani = sharedPref.getString("profilPetani", "") ?: ""
 
                     with(sharedPref.edit()) {
                         clear()
                         putBoolean("is_logged_in", false)
                         putBoolean("is_first_time", false)
-                        // Pertahankan username agar petani tidak perlu mengetik ulang saat login kembali
+                        // Pertahankan username dan data profil agar login biometrik & remember me tetap berfungsi lancar
                         if (isRemembered && lastUsername.isNotEmpty()) {
                             putString("last_username", lastUsername)
+                            putString("username", lastUsername)
                             putBoolean("remember_me", true)
+                            if (savedPin.isNotEmpty()) putString("saved_pin", savedPin)
+                            if (role.isNotEmpty()) putString("role", role)
+                            if (namaPetani.isNotEmpty()) putString("namaPetani", namaPetani)
+                            if (petaniId > 0) putInt("petani_id", petaniId)
+                            if (userId > 0) putInt("user_id", userId)
+                            if (desaPetani > 0) putInt("desaPetani", desaPetani)
+                            if (profilPetani.isNotEmpty()) putString("profilPetani", profilPetani)
                         }
                         apply()
                     }

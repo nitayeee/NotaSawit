@@ -92,9 +92,10 @@ getJenisKegiatan()
         binding.cbRememberMe.isChecked = isRemembered
 
         // Cek dukungan biometrik dan ketersediaan akun untuk login fingerprint
+        val savedPin = sharedPref.getString("saved_pin", "") ?: ""
         val biometricManager = BiometricManager.from(this)
         val canUseBiometric = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
-        val hasSavedAccount = (sharedPref.getInt("petani_id", 0) > 0 || sharedPref.getInt("user_id", 0) > 0 || lastUsername.isNotEmpty())
+        val hasSavedAccount = (sharedPref.getInt("petani_id", 0) > 0 || sharedPref.getInt("user_id", 0) > 0 || (lastUsername.isNotEmpty() && savedPin.isNotEmpty()))
 
         if (canUseBiometric && hasSavedAccount) {
             binding.btnFingerprint.visibility = View.VISIBLE
@@ -111,132 +112,7 @@ getJenisKegiatan()
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
             val pin = binding.etPin.text.toString()
-            PetaniApi.login(
-                username,
-                pin,
-                object : Callback {
-
-                    override fun onFailure(
-                        call: Call,
-                        e: IOException
-                    ) {
-
-                    }
-                    override fun onResponse(
-                        call: Call,
-                        response: Response
-                    ) {
-
-                        val json = response.body?.string()
-
-                        Log.d("LOGIN_RESPONSE", json ?: "NULL")
-
-                        if (json.isNullOrEmpty()) {
-                            return
-                        }
-
-                        try {
-
-                            val loginResponse =
-                                Gson().fromJson(
-                                    json,
-                                    LoginResponse::class.java
-                                )
-
-                            val data = loginResponse.data
-
-                            val sharedPref = getSharedPreferences(
-                                "NOTASAWIT_PREF",
-                                MODE_PRIVATE
-                            )
-
-                            if (loginResponse.success) {
-
-                                val rememberMe = binding.cbRememberMe.isChecked
-                                if (loginResponse.role == "petani") {
-                                    sharedPref.edit().apply {
-                                        putBoolean("is_logged_in", true)
-                                        putBoolean("remember_me", rememberMe)
-                                        if (rememberMe) {
-                                            putString("last_username", username)
-                                        } else {
-                                            remove("last_username")
-                                        }
-                                        putString("role", loginResponse.role)
-                                        putInt("petani_id", data?.petani_id ?: 0)
-                                        putString("namaPetani", data?.petani_nama ?: "")
-                                        putString("username", data?.petani_username ?: "")
-                                        putString("profilPetani", data?.petani_profil ?: "")
-                                        putInt("desaPetani", data?.desa_id ?: 0)
-                                        getLahan(data?.petani_id ?: 0)
-                                        apply()
-                                    }
-                                } else {
-                                    sharedPref.edit().apply {
-                                        putBoolean("is_logged_in", true)
-                                        putBoolean("remember_me", rememberMe)
-                                        if (rememberMe) {
-                                            putString("last_username", username)
-                                        } else {
-                                            remove("last_username")
-                                        }
-                                        putString("role", "admin")
-                                        putInt("user_id", data?.user_id ?: 0)
-                                        putString("username", data?.user_username ?: "")
-                                        putString("user_role", data?.user_role ?: "")
-                                        putInt("admin_desa_id", data?.desa_id ?: 0)
-                                        apply()
-                                    }
-                                }
-
-                                getDesa()
-                                getAdminsAndPetani()
-
-                                runOnUiThread {
-                                    val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
-                                    val targetIntent = if (loginResponse.role == "petani") {
-                                        Intent(this@MasukActivity, BaseActivity::class.java)
-                                    } else {
-                                        Intent(this@MasukActivity, BaseAdminActivity::class.java)
-                                    }
-                                    targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
-                                    targetIntent.putExtra("EXTRA_NAME", nama ?: "")
-                                    startActivity(targetIntent)
-                                    finish()
-                                }
-                            } else {
-                                runOnUiThread {
-                                    com.example.notasawit.Utils.CustomAlert.showError(
-                                        this@MasukActivity,
-                                        "Gagal",
-                                        loginResponse.message ?: "Email atau password salah"
-                                    )
-                                }
-                            }
-
-                        } catch (e: Exception) {
-                            Log.e("LOGIN_ERROR", "Response: $json")
-                            Log.e("LOGIN_ERROR", e.toString())
-
-                            runOnUiThread {
-                                com.example.notasawit.Utils.CustomAlert.showError(
-                                    this@MasukActivity,
-                                    "Error",
-                                    "Format response tidak sesuai"
-                                )
-                            }
-                        }
-                    }
-                }
-            )
-//            getDesa()
-//            getLahan()
-//            startActivity(
-//                                        Intent(
-//                                           this@MasukActivity,
-//                                            BaseActivity::class.java
-//                                       ))
-
+            performLogin(username, pin, isBiometric = false)
         }
         
         binding.tvLupaPin.setOnClickListener {
@@ -392,6 +268,175 @@ getJenisKegiatan()
     }
 
 
+    private fun setLoginLoadingState(isLoading: Boolean) {
+        runOnUiThread {
+            if (isLoading) {
+                binding.btnLogin.isEnabled = false
+                binding.pbLogin.visibility = View.VISIBLE
+                binding.tvBtnLogin.visibility = View.GONE
+            } else {
+                binding.btnLogin.isEnabled = true
+                binding.pbLogin.visibility = View.GONE
+                binding.tvBtnLogin.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun performLogin(username: String, pin: String, isBiometric: Boolean = false) {
+        val cleanUsername = username.trim()
+        val cleanPin = pin.trim()
+
+        if (cleanUsername.isEmpty()) {
+            com.example.notasawit.Utils.CustomAlert.showError(this, "Peringatan", "Harap masukkan username Anda")
+            return
+        }
+        if (cleanPin.isEmpty()) {
+            com.example.notasawit.Utils.CustomAlert.showError(this, "Peringatan", "Harap masukkan PIN Anda")
+            return
+        }
+
+        setLoginLoadingState(true)
+
+        PetaniApi.login(
+            cleanUsername,
+            cleanPin,
+            object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        setLoginLoadingState(false)
+                        val sharedPref = getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
+                        val petaniId = sharedPref.getInt("petani_id", 0)
+                        val role = sharedPref.getString("role", "petani") ?: "petani"
+
+                        // Jika login biometrik dan offline, gunakan data cache lokal
+                        if (isBiometric && (petaniId > 0 || role == "admin")) {
+                            sharedPref.edit().putBoolean("is_logged_in", true).apply()
+                            val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
+                            val targetIntent = if (role == "admin") {
+                                Intent(this@MasukActivity, BaseAdminActivity::class.java)
+                            } else {
+                                Intent(this@MasukActivity, BaseActivity::class.java)
+                            }
+                            targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
+                            targetIntent.putExtra("EXTRA_NAME", nama ?: "")
+                            startActivity(targetIntent)
+                            finish()
+                        } else {
+                            com.example.notasawit.Utils.CustomAlert.showError(
+                                this@MasukActivity,
+                                "Gagal Terhubung",
+                                "Tidak dapat terhubung ke server. Periksa koneksi internet Anda."
+                            )
+                        }
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    val json = response.body?.string()
+                    Log.d("LOGIN_RESPONSE", json ?: "NULL")
+
+                    runOnUiThread {
+                        setLoginLoadingState(false)
+                    }
+
+                    if (json.isNullOrEmpty()) {
+                        runOnUiThread {
+                            com.example.notasawit.Utils.CustomAlert.showError(
+                                this@MasukActivity,
+                                "Gagal",
+                                "Tidak ada respon dari server"
+                            )
+                        }
+                        return
+                    }
+
+                    try {
+                        val loginResponse = Gson().fromJson(json, LoginResponse::class.java)
+                        val data = loginResponse.data
+                        val sharedPref = getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
+
+                        if (loginResponse.success) {
+                            val rememberMe = binding.cbRememberMe.isChecked
+                            with(sharedPref.edit()) {
+                                putBoolean("is_logged_in", true)
+                                putBoolean("remember_me", rememberMe)
+                                if (rememberMe) {
+                                    putString("last_username", cleanUsername)
+                                    putString("saved_pin", cleanPin)
+                                } else {
+                                    remove("last_username")
+                                    remove("saved_pin")
+                                }
+
+                                if (loginResponse.role == "petani") {
+                                    putString("role", loginResponse.role)
+                                    putInt("petani_id", data?.petani_id ?: 0)
+                                    putString("namaPetani", data?.petani_nama ?: "")
+                                    putString("username", data?.petani_username ?: "")
+                                    putString("profilPetani", data?.petani_profil ?: "")
+                                    putInt("desaPetani", data?.desa_id ?: 0)
+                                } else {
+                                    putString("role", "admin")
+                                    putInt("user_id", data?.user_id ?: 0)
+                                    putString("username", data?.user_username ?: "")
+                                    putString("user_role", data?.user_role ?: "")
+                                    putInt("admin_desa_id", data?.desa_id ?: 0)
+                                }
+                                apply()
+                            }
+
+                            if (loginResponse.role == "petani") {
+                                getLahan(data?.petani_id ?: 0)
+                            }
+                            getDesa()
+                            getAdminsAndPetani()
+
+                            runOnUiThread {
+                                val nama = if (loginResponse.role == "petani") data?.petani_nama else data?.user_username
+                                val targetIntent = if (loginResponse.role == "petani") {
+                                    Intent(this@MasukActivity, BaseActivity::class.java)
+                                } else {
+                                    Intent(this@MasukActivity, BaseAdminActivity::class.java)
+                                }
+                                targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
+                                targetIntent.putExtra("EXTRA_NAME", nama ?: "")
+                                startActivity(targetIntent)
+                                finish()
+                            }
+                        } else {
+                            val errorMessage = when {
+                                json.contains("Bcrypt algorithm", ignoreCase = true) ->
+                                    "Format PIN akun ini perlu diperbarui oleh Admin. Silakan hubungi Admin Desa via WhatsApp."
+                                else -> loginResponse.message ?: "Username atau PIN salah"
+                            }
+                            runOnUiThread {
+                                com.example.notasawit.Utils.CustomAlert.showError(
+                                    this@MasukActivity,
+                                    "Gagal Masuk",
+                                    errorMessage
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("LOGIN_ERROR", "Response: $json", e)
+                        val errorMessage = if (json.contains("Bcrypt algorithm", ignoreCase = true)) {
+                            "Format PIN akun ini perlu diperbarui oleh Admin. Silakan hubungi Admin Desa via WhatsApp."
+                        } else {
+                            "Terjadi kesalahan saat memproses login. Coba lagi beberapa saat lagi."
+                        }
+                        runOnUiThread {
+                            com.example.notasawit.Utils.CustomAlert.showError(
+                                this@MasukActivity,
+                                "Error",
+                                errorMessage
+                            )
+                        }
+                    }
+                }
+            }
+        )
+    }
+
     private fun showBiometricPrompt() {
         val executor = ContextCompat.getMainExecutor(this)
 
@@ -399,27 +444,41 @@ getJenisKegiatan()
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    
+
                     val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
-                    sharedPref.edit().putBoolean("is_logged_in", true).apply()
-                    val role = sharedPref.getString("role", "petani")
-                    val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
-                    
-                    val targetIntent = if (role == "admin") {
-                        Intent(this@MasukActivity, BaseAdminActivity::class.java)
+                    val lastUser = sharedPref.getString("last_username", "")?.ifEmpty { null }
+                        ?: sharedPref.getString("username", "") ?: ""
+                    val savedPin = sharedPref.getString("saved_pin", "") ?: ""
+                    val petaniId = sharedPref.getInt("petani_id", 0)
+                    val userId = sharedPref.getInt("user_id", 0)
+                    val role = sharedPref.getString("role", "petani") ?: "petani"
+
+                    if (lastUser.isNotEmpty() && savedPin.isNotEmpty()) {
+                        binding.etUsername.setText(lastUser)
+                        binding.etPin.setText(savedPin)
+                        performLogin(lastUser, savedPin, isBiometric = true)
+                    } else if (petaniId > 0 || userId > 0) {
+                        sharedPref.edit().putBoolean("is_logged_in", true).apply()
+                        val nama = sharedPref.getString("namaPetani", sharedPref.getString("username", "Petani Sawit"))
+                        val targetIntent = if (role == "admin") {
+                            Intent(this@MasukActivity, BaseAdminActivity::class.java)
+                        } else {
+                            Intent(this@MasukActivity, BaseActivity::class.java)
+                        }
+                        targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
+                        targetIntent.putExtra("EXTRA_NAME", nama ?: "")
+                        startActivity(targetIntent)
+                        finish()
                     } else {
-                        Intent(this@MasukActivity, BaseActivity::class.java)
+                        Toast.makeText(this@MasukActivity, "Silakan login menggunakan PIN terlebih dahulu", Toast.LENGTH_SHORT).show()
                     }
-                    targetIntent.putExtra("SHOW_WELCOME_MASCOT", true)
-                    targetIntent.putExtra("EXTRA_NAME", nama ?: "")
-                    startActivity(targetIntent)
-                    finish()
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    // Jika user menekan tombol "Batal", biarkan mereka pakai PIN
-                    Toast.makeText(this@MasukActivity, "Silakan masukkan PIN Anda", Toast.LENGTH_SHORT).show()
+                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        Toast.makeText(this@MasukActivity, "Autentikasi sidik jari dibatalkan", Toast.LENGTH_SHORT).show()
+                    }
                 }
             })
 

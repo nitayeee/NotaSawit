@@ -42,7 +42,11 @@ class BaseAdminActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val nama = intent.getStringExtra("EXTRA_NAME")
                 ?: sharedPref.getString("username", "Admin")
-            com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Admin")
+            try {
+                com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Admin")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

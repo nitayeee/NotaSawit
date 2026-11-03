@@ -155,7 +155,7 @@ class BerandaFragment : Fragment() {
             binding.tvInitial.visibility = View.GONE
             binding.imgProfile.visibility = View.VISIBLE
             val fullUrl = if (!fotoProfil.startsWith("http")) {
-                "http://160.187.144.157/storage/$fotoProfil"
+                "https://notasawit.pocari.id/storage/$fotoProfil"
             } else {
                 fotoProfil
             }
@@ -167,17 +167,7 @@ class BerandaFragment : Fragment() {
 
 
     fun getInitials(name: String): String {
-        val words = name.trim().split("\\s+".toRegex())
-
-        return when {
-            words.size >= 2 ->
-                "${words.first()[0]}${words.last()[0]}".uppercase()
-
-            words.isNotEmpty() ->
-                words[0][0].toString().uppercase()
-
-            else -> "?"
-        }
+        return com.example.notasawit.Utils.AvatarHelper.getInitials(name)
     }
 
     private fun loadPetaniSummary(petaniId: Int) {

@@ -73,10 +73,10 @@ object AvatarHelper {
         if (!cleanPath.isNullOrEmpty() && cleanPath != "null") {
             val fullUrl = when {
                 cleanPath.startsWith("http") -> cleanPath
-                cleanPath.startsWith("storage/") -> "http://notasawit.pocari.id/$cleanPath"
-                cleanPath.startsWith("profil/") -> "http://notasawit.pocari.id/storage/$cleanPath"
-                cleanPath.startsWith("/") -> "http://notasawit.pocari.id/storage$cleanPath"
-                else -> "http://notasawit.pocari.id/storage/profil/$cleanPath"
+                cleanPath.startsWith("storage/") -> "https://notasawit.pocari.id/$cleanPath"
+                cleanPath.startsWith("profil/") -> "https://notasawit.pocari.id/storage/$cleanPath"
+                cleanPath.startsWith("/") -> "https://notasawit.pocari.id/storage$cleanPath"
+                else -> "https://notasawit.pocari.id/storage/profil/$cleanPath"
             }
 
             imageView.visibility = View.VISIBLE

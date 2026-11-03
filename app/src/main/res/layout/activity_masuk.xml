@@ -220,7 +220,16 @@
             android:focusable="true"
             android:gravity="center">
 
+            <ProgressBar
+                android:id="@+id/pb_login"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone" />
+
             <TextView
+                android:id="@+id/tv_btn_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_medium"

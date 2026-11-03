@@ -42,7 +42,11 @@ class BaseActivity : AppCompatActivity() {
             val nama = intent.getStringExtra("EXTRA_NAME")
                 ?: sharedPref.getString("namaPetani", null)
                 ?: sharedPref.getString("username", "Petani Sawit")
-            com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Petani Sawit")
+            try {
+                com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Petani Sawit")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

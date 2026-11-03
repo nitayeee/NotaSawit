@@ -175,10 +175,10 @@ class RiwayatPengeluaranActivity : AppCompatActivity() {
         val rawUrl = (data.biaya_bukti_url ?: data.biaya_bukti ?: "").trim()
         val fotoUrl = when {
             rawUrl.startsWith("http") -> rawUrl
-            rawUrl.startsWith("storage/") -> "http://notasawit.pocari.id/$rawUrl"
-            rawUrl.startsWith("biaya/") -> "http://notasawit.pocari.id/storage/$rawUrl"
-            rawUrl.startsWith("/") -> "http://notasawit.pocari.id/storage$rawUrl"
-            rawUrl.isNotEmpty() && rawUrl != "null" -> "http://notasawit.pocari.id/storage/biaya/$rawUrl"
+            rawUrl.startsWith("storage/") -> "https://notasawit.pocari.id/$rawUrl"
+            rawUrl.startsWith("biaya/") -> "https://notasawit.pocari.id/storage/$rawUrl"
+            rawUrl.startsWith("/") -> "https://notasawit.pocari.id/storage$rawUrl"
+            rawUrl.isNotEmpty() && rawUrl != "null" -> "https://notasawit.pocari.id/storage/biaya/$rawUrl"
             else -> ""
         }
 

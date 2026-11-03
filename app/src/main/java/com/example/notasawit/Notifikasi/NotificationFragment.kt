@@ -293,7 +293,7 @@ class NotificationFragment : Fragment() {
             "audit" -> {
                 val fileName = item.data_url
                 if (!fileName.isNullOrEmpty() && fileName != "null") {
-                    val url = "http://160.187.144.157/storage/$fileName"
+                    val url = "https://notasawit.pocari.id/storage/$fileName"
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(url)
                     startActivity(intent)

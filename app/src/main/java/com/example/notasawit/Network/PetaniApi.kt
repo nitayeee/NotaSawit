@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream
 
 object PetaniApi {
 
-    private const val BASE_URL = "http://notasawit.pocari.id/api"
+    private const val BASE_URL = "https://notasawit.pocari.id/api"
 
     fun registerPetani(
         nama: String,
