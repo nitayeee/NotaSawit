@@ -44,6 +44,9 @@
             android:name=".RiwayatKegiatan.RiwayatKegiatanActivity"
             android:exported="false" />
         <activity
+            android:name=".Admin.Petani.DaftarPetaniAdminActivity"
+            android:exported="false" />
+        <activity
             android:name=".Admin.PetaLahan.PetaLahanActivity"
             android:exported="false" />
         <activity

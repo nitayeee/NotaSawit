@@ -59,6 +59,10 @@ class BerandaAdminFragment : Fragment() {
             refreshAllData()
         }
 
+        binding.cardJumlahPetani.setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.Petani.DaftarPetaniAdminActivity::class.java))
+        }
+
         binding.cardHargaTbs.setOnClickListener {
             startActivity(android.content.Intent(requireContext(), com.example.notasawit.Admin.HargaTbs.RiwayatHargaTbsActivity::class.java))
         }
