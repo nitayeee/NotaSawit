@@ -41,6 +41,9 @@
         </service>
 
         <activity
+            android:name=".Home.Panen.GrafikPanenActivity"
+            android:exported="false" />
+        <activity
             android:name=".RiwayatKegiatan.RiwayatKegiatanActivity"
             android:exported="false" />
         <activity

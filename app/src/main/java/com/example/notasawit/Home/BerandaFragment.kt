@@ -29,6 +29,7 @@ import java.io.IOException
 import org.json.JSONObject
 import com.example.notasawit.Network.PetaniApi
 import com.example.notasawit.Room.AppDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BerandaFragment : Fragment() {
@@ -95,6 +96,15 @@ class BerandaFragment : Fragment() {
             )
         }
         
+        binding.cardTotalPanen.setOnClickListener {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    com.example.notasawit.Home.Panen.GrafikPanenActivity::class.java
+                )
+            )
+        }
+
         binding.cardHargaTbs.setOnClickListener {
             startActivity(
                 Intent(
@@ -126,6 +136,7 @@ class BerandaFragment : Fragment() {
         val petaniId = sharedPref.getInt("petani_id", -1)
         if (petaniId != -1) {
             loadPetaniSummary(petaniId)
+            loadTotalPanenBulanan(petaniId)
             checkTahunTanamLahan(petaniId)
         }
         
@@ -139,6 +150,7 @@ class BerandaFragment : Fragment() {
         updateProfileUI()
         val petaniId = sharedPref.getInt("petani_id", -1)
         if (petaniId != -1) {
+            loadTotalPanenBulanan(petaniId)
             checkTahunTanamLahan(petaniId)
         }
     }
@@ -518,6 +530,149 @@ class BerandaFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun loadTotalPanenBulanan(petaniId: Int) {
+        if (_binding == null) return
+
+        val calendar = java.util.Calendar.getInstance()
+        val currentYear = calendar.get(java.util.Calendar.YEAR)
+        val currentMonth = calendar.get(java.util.Calendar.MONTH) + 1
+        val currentMonthKey = String.format(java.util.Locale.US, "%04d-%02d", currentYear, currentMonth)
+
+        val calPrev = java.util.Calendar.getInstance().apply { add(java.util.Calendar.MONTH, -1) }
+        val prevYear = calPrev.get(java.util.Calendar.YEAR)
+        val prevMonth = calPrev.get(java.util.Calendar.MONTH) + 1
+        val prevMonthKey = String.format(java.util.Locale.US, "%04d-%02d", prevYear, prevMonth)
+
+        val monthFormat = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale("id", "ID"))
+        binding.tvBulanPanen.text = monthFormat.format(calendar.time)
+
+        // Tampilkan cache cepat dari SharedPreferences jika ada
+        val cachedKg = sharedPref.getFloat("cached_panen_bulan_ini", -1f)
+        if (cachedKg >= 0f) {
+            binding.tvTotalPanen.text = formatPanenWeight(cachedKg.toDouble())
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            // 1. Ambil data lokal yang belum disinkron dari Room
+            val localUnsynced = try {
+                database.ProduksiDao().getAll()
+            } catch (e: Exception) {
+                emptyList()
+            }
+
+            var localBulanIni = 0.0
+            var localBulanLalu = 0.0
+
+            localUnsynced.forEach {
+                val tgl = it.produksi_tanggal
+                if (tgl.startsWith(currentMonthKey)) {
+                    localBulanIni += it.jumlah_tbs
+                } else if (tgl.startsWith(prevMonthKey)) {
+                    localBulanLalu += it.jumlah_tbs
+                }
+            }
+
+            // 2. Ambil data riwayat pemasukan produksi dari API
+            com.example.notasawit.Network.PetaniApi.getRiwayatKeuangan(
+                petaniId = petaniId,
+                bulan = null,
+                tahun = null,
+                lahanId = null,
+                tipe = "pemasukan",
+                callback = object : okhttp3.Callback {
+                    override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                        if (!isAdded || _binding == null) return
+                        requireActivity().runOnUiThread {
+                            updateTotalPanenUI(localBulanIni, localBulanLalu)
+                        }
+                    }
+
+                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                        if (!isAdded || _binding == null) return
+                        val body = response.body?.string() ?: ""
+                        var apiBulanIni = 0.0
+                        var apiBulanLalu = 0.0
+
+                        try {
+                            val json = org.json.JSONObject(body)
+                            val data = json.optJSONArray("data")
+                            if (data != null) {
+                                for (i in 0 until data.length()) {
+                                    val item = data.optJSONObject(i) ?: continue
+                                    val tgl = item.optString("tanggal", "")
+                                    val jumlah = when {
+                                        item.has("jumlah_tbs") && !item.isNull("jumlah_tbs") -> {
+                                            item.optString("jumlah_tbs").toDoubleOrNull() ?: item.optDouble("jumlah_tbs", 0.0)
+                                        }
+                                        item.has("jumlah") && !item.isNull("jumlah") -> {
+                                            item.optString("jumlah").toDoubleOrNull() ?: item.optDouble("jumlah", 0.0)
+                                        }
+                                        else -> 0.0
+                                    }
+
+                                    if (tgl.startsWith(currentMonthKey)) {
+                                        apiBulanIni += jumlah
+                                    } else if (tgl.startsWith(prevMonthKey)) {
+                                        apiBulanLalu += jumlah
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("BERANDA_PANEN", "Error parsing panen: ${e.message}")
+                        }
+
+                        val totalIni = apiBulanIni + localBulanIni
+                        val totalLalu = apiBulanLalu + localBulanLalu
+
+                        sharedPref.edit().putFloat("cached_panen_bulan_ini", totalIni.toFloat()).apply()
+
+                        if (isAdded && _binding != null) {
+                            requireActivity().runOnUiThread {
+                                updateTotalPanenUI(totalIni, totalLalu)
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun updateTotalPanenUI(totalBulanIni: Double, totalBulanLalu: Double) {
+        if (_binding == null) return
+        binding.tvTotalPanen.text = formatPanenWeight(totalBulanIni)
+
+        if (totalBulanLalu > 0.0) {
+            val diff = ((totalBulanIni - totalBulanLalu) / totalBulanLalu) * 100.0
+            if (diff > 0.0) {
+                binding.tvPerbandinganPanen.text = "↑ +${String.format(java.util.Locale("id", "ID"), "%.0f", diff)}% dari bulan lalu"
+                binding.tvPerbandinganPanen.setTextColor(Color.parseColor("#D1FAE5"))
+            } else if (diff < 0.0) {
+                binding.tvPerbandinganPanen.text = "↓ ${String.format(java.util.Locale("id", "ID"), "%.0f", diff)}% dari bulan lalu"
+                binding.tvPerbandinganPanen.setTextColor(Color.parseColor("#FED7AA"))
+            } else {
+                binding.tvPerbandinganPanen.text = "Stabil dari bulan lalu"
+                binding.tvPerbandinganPanen.setTextColor(Color.parseColor("#D1FAE5"))
+            }
+        } else {
+            if (totalBulanIni > 0.0) {
+                binding.tvPerbandinganPanen.text = "↑ Panen tercatat bulan ini"
+                binding.tvPerbandinganPanen.setTextColor(Color.parseColor("#D1FAE5"))
+            } else {
+                binding.tvPerbandinganPanen.text = "Belum ada catatan panen bulan ini"
+                binding.tvPerbandinganPanen.setTextColor(Color.parseColor("#E2E8F0"))
+            }
+        }
+    }
+
+    private fun formatPanenWeight(kg: Double): String {
+        val df = java.text.DecimalFormat("#,##0.#", java.text.DecimalFormatSymbols(java.util.Locale("id", "ID")))
+        return if (kg >= 1000.0) {
+            "${df.format(kg / 1000.0)} Ton"
+        } else {
+            "${df.format(kg)} Kg"
+        }
     }
 
     override fun onDestroyView() {
