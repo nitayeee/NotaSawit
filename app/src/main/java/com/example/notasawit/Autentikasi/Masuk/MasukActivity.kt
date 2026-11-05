@@ -118,6 +118,10 @@ getJenisKegiatan()
         binding.btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
         }
+
+        binding.navToDaftar.setOnClickListener {
+            startActivity(Intent(this@MasukActivity, DaftarActivity::class.java))
+        }
     }
 
     private fun showBantuanLoginDialog() {

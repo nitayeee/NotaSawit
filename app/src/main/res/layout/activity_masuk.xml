@@ -287,13 +287,42 @@
                 android:indeterminateTint="@color/agri_green_dark" />
         </LinearLayout>
 
+        <!-- Opsi Daftar Akun Baru -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Belum punya akun? "
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/nav_to_daftar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingVertical="4dp"
+                android:text="Daftar"
+                android:textColor="@color/agri_green_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+
         <!-- Bantuan Cepat untuk Petani yang Mengalami Kendala -->
         <LinearLayout
             android:id="@+id/btnBantuanWa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="12dp"
             android:orientation="horizontal"
             android:gravity="center"
             android:clickable="true"
