@@ -115,6 +115,21 @@ getJenisKegiatan()
             showPilihanMasuk()
         }
 
+        var isPinVisible = false
+        binding.btnTogglePin.setOnClickListener {
+            isPinVisible = !isPinVisible
+            val currentTypeface = binding.etPin.typeface
+            if (isPinVisible) {
+                binding.etPin.transformationMethod = null
+                binding.btnTogglePin.setImageResource(R.drawable.ic_visibility_off)
+            } else {
+                binding.etPin.transformationMethod = android.text.method.PasswordTransformationMethod.getInstance()
+                binding.btnTogglePin.setImageResource(R.drawable.ic_visibility)
+            }
+            binding.etPin.typeface = currentTypeface
+            binding.etPin.text?.let { binding.etPin.setSelection(it.length) }
+        }
+
         binding.btnBantuanWa.setOnClickListener {
             showBantuanLoginDialog()
         }
@@ -152,6 +167,7 @@ getJenisKegiatan()
     private fun showFormLogin() {
         binding.layoutPilihanMasuk.visibility = View.GONE
         binding.layoutFormLogin.visibility = View.VISIBLE
+        binding.btnBackToPilihan.visibility = View.VISIBLE
         binding.main.smoothScrollTo(0, 0)
         if (binding.etUsername.text.isNullOrEmpty()) {
             binding.etUsername.requestFocus()
@@ -165,6 +181,7 @@ getJenisKegiatan()
         currentFocus?.let { imm?.hideSoftInputFromWindow(it.windowToken, 0) }
 
         binding.layoutFormLogin.visibility = View.GONE
+        binding.btnBackToPilihan.visibility = View.GONE
         binding.layoutPilihanMasuk.visibility = View.VISIBLE
         binding.main.smoothScrollTo(0, 0)
     }
