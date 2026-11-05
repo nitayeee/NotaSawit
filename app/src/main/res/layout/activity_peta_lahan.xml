@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F8F9FA"
-    android:fitsSystemWindows="true"
+    android:id="@+id/main"
     tools:context=".Admin.PetaLahan.PetaLahanActivity">
 
     <!-- 1. TOOLBAR (SAMA SEPERTI AUDIT INTERNAL & KUNJUNGAN LAHAN) -->

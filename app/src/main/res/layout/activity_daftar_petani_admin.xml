@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F8F9FA"
-    android:fitsSystemWindows="true">
+    android:id="@+id/main">
 
     <!-- 1. TOOLBAR -->
     <LinearLayout
