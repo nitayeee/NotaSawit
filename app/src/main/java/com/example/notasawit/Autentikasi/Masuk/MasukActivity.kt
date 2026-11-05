@@ -3,6 +3,7 @@ package com.example.notasawit.Autentikasi.Masuk
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -106,9 +107,22 @@ getJenisKegiatan()
             binding.btnFingerprint.visibility = View.GONE
         }
 
+        binding.btnPilihUsernamePin.setOnClickListener {
+            showFormLogin()
+        }
+
+        binding.btnBackToPilihan.setOnClickListener {
+            showPilihanMasuk()
+        }
+
         binding.btnBantuanWa.setOnClickListener {
             showBantuanLoginDialog()
         }
+
+        binding.btnBantuanWaForm.setOnClickListener {
+            showBantuanLoginDialog()
+        }
+
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
             val pin = binding.etPin.text.toString()
@@ -122,6 +136,37 @@ getJenisKegiatan()
         binding.navToDaftar.setOnClickListener {
             startActivity(Intent(this@MasukActivity, DaftarActivity::class.java))
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.layoutFormLogin.visibility == View.VISIBLE) {
+                    showPilihanMasuk()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+    }
+
+    private fun showFormLogin() {
+        binding.layoutPilihanMasuk.visibility = View.GONE
+        binding.layoutFormLogin.visibility = View.VISIBLE
+        binding.main.smoothScrollTo(0, 0)
+        if (binding.etUsername.text.isNullOrEmpty()) {
+            binding.etUsername.requestFocus()
+        } else {
+            binding.etPin.requestFocus()
+        }
+    }
+
+    private fun showPilihanMasuk() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
+        currentFocus?.let { imm?.hideSoftInputFromWindow(it.windowToken, 0) }
+
+        binding.layoutFormLogin.visibility = View.GONE
+        binding.layoutPilihanMasuk.visibility = View.VISIBLE
+        binding.main.smoothScrollTo(0, 0)
     }
 
     private fun showBantuanLoginDialog() {
