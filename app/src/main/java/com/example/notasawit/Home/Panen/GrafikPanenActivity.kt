@@ -108,11 +108,8 @@ class GrafikPanenActivity : AppCompatActivity() {
     private fun setupUI() {
         binding.btnBack.setOnClickListener { finish() }
 
-        // Inisialisasi daftar tahun sementara
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-        availableYears.clear()
-        availableYears.addAll(listOf(currentYear, currentYear - 1, currentYear - 2))
-        updateYearSpinner()
+        // Inisialisasi daftar tahun (menyediakan tahun sekarang, tahun depan, dan tahun-tahun sebelumnya)
+        populateAvailableYears()
 
         // Inisialisasi daftar lahan
         lahanList.clear()
@@ -190,6 +187,22 @@ class GrafikPanenActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun populateAvailableYears(yearsFound: List<Int> = emptyList()) {
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val minYear = 2020 // Sediakan pilihan tahun ke belakang hingga 2020
+        val maxYear = currentYear + 1 // dan tahun depan
+
+        val yearsSet = sortedSetOf<Int>(Comparator.reverseOrder())
+        for (y in maxYear downTo minYear) {
+            yearsSet.add(y)
+        }
+        yearsSet.addAll(yearsFound)
+
+        availableYears.clear()
+        availableYears.addAll(yearsSet)
+        updateYearSpinner()
     }
 
     private fun updateYearSpinner() {
@@ -330,22 +343,13 @@ class GrafikPanenActivity : AppCompatActivity() {
                             allProduksiList.addAll(serverRecords)
                             allProduksiList.addAll(localRecords)
 
-                            // Kumpulkan semua tahun unik yang terdapat di data
+                            // Kumpulkan semua tahun unik yang terdapat di data dan perbarui spinner tahun
                             val yearsFound = allProduksiList.mapNotNull {
                                 val parts = it.tanggal.split("-")
-                                if (parts.size >= 1) parts[0].toIntOrNull() else null
-                            }.distinct().sortedDescending().toMutableList()
+                                if (parts.isNotEmpty()) parts[0].toIntOrNull() else null
+                            }.distinct()
 
-                            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-                            if (!yearsFound.contains(currentYear)) {
-                                yearsFound.add(0, currentYear)
-                            }
-
-                            if (yearsFound.isNotEmpty()) {
-                                availableYears.clear()
-                                availableYears.addAll(yearsFound)
-                                updateYearSpinner()
-                            }
+                            populateAvailableYears(yearsFound)
 
                             processAndDisplayData()
                         }

@@ -110,22 +110,87 @@ object CustomAlert {
         animator.interpolator = DecelerateInterpolator()
         animator.start()
 
-        // Hilang otomatis setelah 3 detik
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (alertView.parent != null) {
-                val outHeight = if (alertView.height > 0) alertView.height.toFloat() else alertView.measuredHeight.toFloat()
+        val handler = Handler(Looper.getMainLooper())
+        var isDismissing = false
+
+        val dismissAlert: (Long) -> Unit = { duration ->
+            if (!isDismissing && alertView.parent != null) {
+                isDismissing = true
+                handler.removeCallbacksAndMessages(null)
+                val outHeight = if (alertView.height > 0) alertView.height.toFloat() + 100f else (alertHeight + 100f)
                 val animatorOut = ObjectAnimator.ofFloat(alertView, View.TRANSLATION_Y, -outHeight)
-                animatorOut.duration = 400
+                animatorOut.duration = duration
                 animatorOut.interpolator = DecelerateInterpolator()
                 animatorOut.addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
-                        rootView.removeView(alertView)
+                        if (alertView.parent != null) {
+                            rootView.removeView(alertView)
+                        }
                     }
                 })
                 animatorOut.start()
             }
-        }, 3000)
+        }
+
+        val autoDismissRunnable = Runnable {
+            dismissAlert(350)
+        }
+
+        // Hilang otomatis setelah 3.5 detik
+        handler.postDelayed(autoDismissRunnable, 3500)
+
+        // Fitur Swipe Up to Dismiss: geser ke atas untuk menutup alert seketika
+        var downY = 0f
+        var startTranslationY = 0f
+        val density = activity.resources.displayMetrics.density
+        val dismissThreshold = -20f * density // geser minimal ~20dp ke atas
+
+        val swipeTouchListener = View.OnTouchListener { v, event ->
+            when (event.actionMasked) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    downY = event.rawY
+                    startTranslationY = alertView.translationY
+                    handler.removeCallbacks(autoDismissRunnable)
+                    true
+                }
+                android.view.MotionEvent.ACTION_MOVE -> {
+                    val deltaY = event.rawY - downY
+                    if (deltaY < 0f) {
+                        // Menggeser ke atas
+                        alertView.translationY = startTranslationY + deltaY
+                    } else {
+                        // Efek elastis / resistance jika ditarik ke bawah
+                        alertView.translationY = startTranslationY + (deltaY * 0.15f)
+                    }
+                    true
+                }
+                android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
+                    val deltaY = event.rawY - downY
+                    if (deltaY < dismissThreshold) {
+                        // Pengguna menggeser ke atas -> dismiss alert dengan animasi slide up
+                        dismissAlert(250)
+                    } else {
+                        // Geseran belum cukup atau dibatalkan -> kembalikan ke posisi awal
+                        ObjectAnimator.ofFloat(alertView, View.TRANSLATION_Y, 0f).apply {
+                            duration = 200
+                            interpolator = DecelerateInterpolator()
+                            start()
+                        }
+                        // Jadwalkan auto-dismiss kembali
+                        handler.postDelayed(autoDismissRunnable, 2500)
+                    }
+                    v.performClick()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        container.isClickable = true
+        container.isFocusable = true
+        container.setOnTouchListener(swipeTouchListener)
+        alertView.setOnTouchListener(swipeTouchListener)
     }
 
     fun showImagePreview(context: android.content.Context, imageUrl: String?) {
