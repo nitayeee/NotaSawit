@@ -148,6 +148,10 @@ getJenisKegiatan()
             signInWithGoogle()
         }
 
+        binding.btnGoogleSignInForm.setOnClickListener {
+            signInWithGoogle()
+        }
+
         binding.navToDaftar.setOnClickListener {
             startActivity(Intent(this@MasukActivity, DaftarActivity::class.java))
         }
@@ -562,11 +566,21 @@ getJenisKegiatan()
                 binding.ivGoogleIcon.visibility = View.GONE
                 binding.tvGoogleText.visibility = View.GONE
                 binding.btnGoogleSignIn.isEnabled = false
+
+                binding.pbGoogleLoadingForm.visibility = View.VISIBLE
+                binding.ivGoogleIconForm.visibility = View.GONE
+                binding.tvGoogleTextForm.visibility = View.GONE
+                binding.btnGoogleSignInForm.isEnabled = false
             } else {
                 binding.pbGoogleLoading.visibility = View.GONE
                 binding.ivGoogleIcon.visibility = View.VISIBLE
                 binding.tvGoogleText.visibility = View.VISIBLE
                 binding.btnGoogleSignIn.isEnabled = true
+
+                binding.pbGoogleLoadingForm.visibility = View.GONE
+                binding.ivGoogleIconForm.visibility = View.VISIBLE
+                binding.tvGoogleTextForm.visibility = View.VISIBLE
+                binding.btnGoogleSignInForm.isEnabled = true
             }
         }
     }
