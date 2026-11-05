@@ -1,7 +1,6 @@
 package com.example.notasawit.Utils
 
 import android.app.Activity
-import android.content.Intent
 
 object StatusSplashHelper {
 
@@ -12,14 +11,13 @@ object StatusSplashHelper {
         category: String = "",
         finishCaller: Boolean = true
     ) {
-        val intent = Intent(activity, StatusSplashActivity::class.java).apply {
-            putExtra(StatusSplashActivity.EXTRA_STATUS, StatusSplashActivity.STATUS_SUCCESS)
-            putExtra(StatusSplashActivity.EXTRA_TITLE, title)
-            putExtra(StatusSplashActivity.EXTRA_MESSAGE, message)
-            putExtra(StatusSplashActivity.EXTRA_CATEGORY, category)
+        val alertTitle = if (title.contains("Berhasil", ignoreCase = true)) "Berhasil" else title
+        val alertMessage = when {
+            message.isNotEmpty() -> message
+            title.isNotEmpty() -> title
+            else -> "Data berhasil disimpan"
         }
-        activity.startActivity(intent)
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        CustomAlert.setPendingSuccess(activity, alertTitle, alertMessage)
         if (finishCaller) {
             activity.finish()
         }
@@ -27,17 +25,16 @@ object StatusSplashHelper {
 
     fun showError(
         activity: Activity,
-        title: String = "Input Data Gagal!",
+        title: String = "Peringatan",
         message: String = "",
         category: String = ""
     ) {
-        val intent = Intent(activity, StatusSplashActivity::class.java).apply {
-            putExtra(StatusSplashActivity.EXTRA_STATUS, StatusSplashActivity.STATUS_FAILED)
-            putExtra(StatusSplashActivity.EXTRA_TITLE, title)
-            putExtra(StatusSplashActivity.EXTRA_MESSAGE, message)
-            putExtra(StatusSplashActivity.EXTRA_CATEGORY, category)
+        val alertTitle = when {
+            title.contains("Gagal", ignoreCase = true) -> "Gagal"
+            title.contains("Peringatan", ignoreCase = true) -> "Peringatan"
+            else -> "Peringatan"
         }
-        activity.startActivity(intent)
-        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        val alertMsg = if (message.isNotEmpty()) message else title
+        CustomAlert.showError(activity, alertTitle, alertMsg)
     }
 }

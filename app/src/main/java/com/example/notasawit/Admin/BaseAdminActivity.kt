@@ -38,17 +38,21 @@ class BaseAdminActivity : AppCompatActivity() {
         replaceFragment(BerandaAdminFragment())
         setupBottomNavListener()
 
-        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false)) {
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false) || intent.getBooleanExtra("SHOW_LOGIN_ALERT", false)) {
             val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val nama = intent.getStringExtra("EXTRA_NAME")
                 ?: sharedPref.getString("username", "Admin")
-            try {
-                com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Admin")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            intent.removeExtra("SHOW_WELCOME_MASCOT")
+            intent.removeExtra("SHOW_LOGIN_ALERT")
+            com.example.notasawit.Utils.CustomAlert.setPendingSuccess(
+                this,
+                "Berhasil",
+                "Selamat datang, ${nama ?: "Admin"}"
+            )
         }
     }
+
+
 
     private var isSelectingProgrammatically = false
 
@@ -100,6 +104,22 @@ class BaseAdminActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         syncBottomNavSelection()
+        com.example.notasawit.Utils.CustomAlert.checkAndShowPendingAlert(this)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false) || intent.getBooleanExtra("SHOW_LOGIN_ALERT", false)) {
+            val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val nama = intent.getStringExtra("EXTRA_NAME")
+                ?: sharedPref.getString("username", "Admin")
+            com.example.notasawit.Utils.CustomAlert.setPendingSuccess(
+                this,
+                "Berhasil",
+                "Selamat datang, ${nama ?: "Admin"}"
+            )
+        }
     }
 
     private fun syncBottomNavSelection() {

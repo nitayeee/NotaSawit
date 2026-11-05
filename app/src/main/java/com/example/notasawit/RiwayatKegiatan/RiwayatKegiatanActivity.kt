@@ -497,5 +497,6 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadData()
+        com.example.notasawit.Utils.CustomAlert.checkAndShowPendingAlert(this)
     }
 }

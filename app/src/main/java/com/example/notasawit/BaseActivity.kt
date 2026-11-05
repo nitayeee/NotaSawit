@@ -37,18 +37,22 @@ class BaseActivity : AppCompatActivity() {
         setupBottomNavListener()
         checkNotificationPermission()
 
-        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false)) {
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false) || intent.getBooleanExtra("SHOW_LOGIN_ALERT", false)) {
             val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
             val nama = intent.getStringExtra("EXTRA_NAME")
                 ?: sharedPref.getString("namaPetani", null)
                 ?: sharedPref.getString("username", "Petani Sawit")
-            try {
-                com.example.notasawit.Utils.WelcomeMascotDialog.show(this, nama ?: "Petani Sawit")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            intent.removeExtra("SHOW_WELCOME_MASCOT")
+            intent.removeExtra("SHOW_LOGIN_ALERT")
+            com.example.notasawit.Utils.CustomAlert.setPendingSuccess(
+                this,
+                "Berhasil",
+                "Selamat datang, ${nama ?: "Petani Sawit"}"
+            )
         }
     }
+
+
 
     private fun checkNotificationPermission() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -102,6 +106,23 @@ class BaseActivity : AppCompatActivity() {
         super.onResume()
         syncBottomNavSelection()
         checkUnreadNotifications()
+        com.example.notasawit.Utils.CustomAlert.checkAndShowPendingAlert(this)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra("SHOW_WELCOME_MASCOT", false) || intent.getBooleanExtra("SHOW_LOGIN_ALERT", false)) {
+            val sharedPref = getSharedPreferences("NOTASAWIT_PREF", Context.MODE_PRIVATE)
+            val nama = intent.getStringExtra("EXTRA_NAME")
+                ?: sharedPref.getString("namaPetani", null)
+                ?: sharedPref.getString("username", "Petani Sawit")
+            com.example.notasawit.Utils.CustomAlert.setPendingSuccess(
+                this,
+                "Berhasil",
+                "Selamat datang, ${nama ?: "Petani Sawit"}"
+            )
+        }
     }
 
     private fun syncBottomNavSelection() {

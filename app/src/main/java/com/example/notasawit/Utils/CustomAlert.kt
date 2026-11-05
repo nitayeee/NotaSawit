@@ -18,6 +18,32 @@ import com.example.notasawit.R
 
 object CustomAlert {
 
+    private const val PREF_ALERT = "NOTASAWIT_ALERT_PREF"
+    private const val KEY_PENDING_TITLE = "pending_title"
+    private const val KEY_PENDING_MESSAGE = "pending_message"
+
+    fun setPendingSuccess(context: android.content.Context, title: String, message: String) {
+        val pref = context.getSharedPreferences(PREF_ALERT, android.content.Context.MODE_PRIVATE)
+        pref.edit()
+            .putString(KEY_PENDING_TITLE, title)
+            .putString(KEY_PENDING_MESSAGE, message)
+            .apply()
+    }
+
+    fun checkAndShowPendingAlert(activity: Activity) {
+        val pref = activity.getSharedPreferences(PREF_ALERT, android.content.Context.MODE_PRIVATE)
+        val title = pref.getString(KEY_PENDING_TITLE, null)
+        val message = pref.getString(KEY_PENDING_MESSAGE, null)
+        if (!title.isNullOrEmpty() && !message.isNullOrEmpty()) {
+            pref.edit().clear().apply()
+            activity.window?.decorView?.postDelayed({
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    showSuccess(activity, title, message)
+                }
+            }, 300)
+        }
+    }
+
     fun showSuccess(activity: Activity, title: String, message: String) {
         showAlert(activity, title, message, true)
     }
@@ -27,7 +53,7 @@ object CustomAlert {
     }
 
     private fun showAlert(activity: Activity, title: String, message: String, isSuccess: Boolean) {
-        val rootView = activity.findViewById<ViewGroup>(android.R.id.content)
+        val rootView = activity.findViewById<ViewGroup>(android.R.id.content) ?: return
         
         // Cek jika sudah ada alert, hapus dulu agar tidak tumpuk
         val existingAlert = rootView.findViewWithTag<View>("custom_alert_tag")
@@ -67,11 +93,13 @@ object CustomAlert {
         alertView.translationZ = 100f
 
         // Ukur view untuk mendapatkan tinggi yang akurat sebelum layout selesai
+        val screenWidth = if (rootView.width > 0) rootView.width else activity.resources.displayMetrics.widthPixels
         alertView.measure(
-            View.MeasureSpec.makeMeasureSpec(rootView.width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(screenWidth, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
-        val alertHeight = alertView.measuredHeight.toFloat()
+        val measuredH = alertView.measuredHeight.toFloat()
+        val alertHeight = if (measuredH > 0f) measuredH else (120f * activity.resources.displayMetrics.density)
 
         // Set posisi awal di luar layar atas
         alertView.translationY = -alertHeight
