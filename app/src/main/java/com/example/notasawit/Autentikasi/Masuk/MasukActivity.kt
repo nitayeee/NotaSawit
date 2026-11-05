@@ -114,10 +114,6 @@ getJenisKegiatan()
             val pin = binding.etPin.text.toString()
             performLogin(username, pin, isBiometric = false)
         }
-        
-        binding.tvLupaPin.setOnClickListener {
-            startActivity(Intent(this@MasukActivity, LupaPinActivity::class.java))
-        }
 
         binding.btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
@@ -586,14 +582,11 @@ getJenisKegiatan()
     ) {
         PetaniApi.getAllPetani(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                setGoogleLoadingState(false)
-                runOnUiThread {
-                    Toast.makeText(this@MasukActivity, "Gagal mengecek email: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+                checkAdminEmailOrRegister(email, nama)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                var emailExists = false
+                var matchedPetani: org.json.JSONObject? = null
                 if (response.isSuccessful) {
                     val body = response.body?.string()
                     if (body != null) {
@@ -602,8 +595,51 @@ getJenisKegiatan()
                             val dataArray = jsonObject.getJSONArray("data")
                             for (i in 0 until dataArray.length()) {
                                 val item = dataArray.getJSONObject(i)
-                                if (item.has("petani_email") && item.getString("petani_email") == email) {
-                                    emailExists = true
+                                if (item.has("petani_email") && item.getString("petani_email").trim().equals(email.trim(), ignoreCase = true)) {
+                                    matchedPetani = item
+                                    break
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+
+                if (matchedPetani != null) {
+                    setGoogleLoadingState(false)
+                    runOnUiThread {
+                        loginAsPetaniGoogle(matchedPetani, nama)
+                    }
+                } else {
+                    // Cek apakah akun adalah Admin
+                    checkAdminEmailOrRegister(email, nama)
+                }
+            }
+        })
+    }
+
+    private fun checkAdminEmailOrRegister(email: String, nama: String) {
+        PetaniApi.getAdmins(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                setGoogleLoadingState(false)
+                runOnUiThread {
+                    proceedToRegistration(email, nama)
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                var matchedAdmin: org.json.JSONObject? = null
+                if (response.isSuccessful) {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        try {
+                            val jsonObject = org.json.JSONObject(body)
+                            val dataArray = jsonObject.getJSONArray("data")
+                            for (i in 0 until dataArray.length()) {
+                                val item = dataArray.getJSONObject(i)
+                                if (item.has("user_email") && item.getString("user_email").trim().equals(email.trim(), ignoreCase = true)) {
+                                    matchedAdmin = item
                                     break
                                 }
                             }
@@ -614,41 +650,112 @@ getJenisKegiatan()
                 }
 
                 setGoogleLoadingState(false)
-
                 runOnUiThread {
-                    if (emailExists) {
-                        // Jika sudah terdaftar, muncul alert
-                        android.app.AlertDialog.Builder(this@MasukActivity)
-                            .setTitle("Akun Sudah Terdaftar")
-                            .setMessage("Email dari akun Google ini sudah terdaftar. Silakan login menggunakan Username dan PIN Anda.")
-                            .setPositiveButton("OK", null)
-                            .show()
+                    if (matchedAdmin != null) {
+                        loginAsAdminGoogle(matchedAdmin, nama)
                     } else {
-                        // Jika belum terdaftar, lanjut ke DataDiriActivity
-                        sharedPref.edit()
-                            .putBoolean("is_login", true)
-                            .putBoolean("sudah_pernah_login", true)
-                            .putString("namaPetani", nama)
-                            .putString("emailPetani", email)
-                            .apply()
-
-                        Toast.makeText(
-                            this@MasukActivity,
-                            "Melanjutkan pendaftaran...",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        startActivity(
-                            Intent(
-                                this@MasukActivity,
-                                DataDiriActivity::class.java
-                            )
-                        )
-                        finish()
+                        proceedToRegistration(email, nama)
                     }
                 }
             }
         })
+    }
+
+    private fun loginAsPetaniGoogle(item: org.json.JSONObject, defaultNama: String) {
+        val sharedPref = getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
+        val rememberMe = binding.cbRememberMe.isChecked
+        val petaniUsername = item.optString("petani_username", "")
+        val petaniNama = item.optString("petani_nama", defaultNama)
+        val petaniId = item.optInt("petani_id", 0)
+        val desaId = item.optInt("desa_id", 0)
+        val profil = item.optString("petani_profil", "")
+        val pin = item.optString("petani_pin", "")
+
+        with(sharedPref.edit()) {
+            putBoolean("is_logged_in", true)
+            putBoolean("remember_me", rememberMe)
+            if (rememberMe) {
+                if (petaniUsername.isNotEmpty()) putString("last_username", petaniUsername)
+                if (pin.isNotEmpty()) putString("saved_pin", pin)
+            }
+
+            putString("role", "petani")
+            putInt("petani_id", petaniId)
+            putString("namaPetani", petaniNama)
+            putString("username", petaniUsername)
+            putString("profilPetani", profil)
+            putInt("desaPetani", desaId)
+            apply()
+        }
+
+        if (petaniId > 0) {
+            getLahan(petaniId)
+        }
+        getDesa()
+        getAdminsAndPetani()
+
+        val targetIntent = Intent(this@MasukActivity, BaseActivity::class.java).apply {
+            putExtra("SHOW_WELCOME_MASCOT", true)
+            putExtra("SHOW_LOGIN_ALERT", true)
+            putExtra("EXTRA_NAME", petaniNama)
+        }
+        startActivity(targetIntent)
+        finish()
+    }
+
+    private fun loginAsAdminGoogle(item: org.json.JSONObject, defaultNama: String) {
+        val sharedPref = getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
+        val rememberMe = binding.cbRememberMe.isChecked
+        val adminUsername = item.optString("user_username", "")
+        val adminNama = item.optString("user_nama", defaultNama)
+
+        with(sharedPref.edit()) {
+            putBoolean("is_logged_in", true)
+            putBoolean("remember_me", rememberMe)
+            if (rememberMe && adminUsername.isNotEmpty()) {
+                putString("last_username", adminUsername)
+            }
+            putString("role", "admin")
+            putInt("user_id", item.optInt("user_id", 0))
+            putString("username", adminUsername)
+            putString("user_role", item.optString("user_role", "admin"))
+            putInt("admin_desa_id", item.optInt("desa_id", 0))
+            apply()
+        }
+
+        getDesa()
+        getAdminsAndPetani()
+
+        val targetIntent = Intent(this@MasukActivity, BaseAdminActivity::class.java).apply {
+            putExtra("SHOW_WELCOME_MASCOT", true)
+            putExtra("SHOW_LOGIN_ALERT", true)
+            putExtra("EXTRA_NAME", adminNama)
+        }
+        startActivity(targetIntent)
+        finish()
+    }
+
+    private fun proceedToRegistration(email: String, nama: String) {
+        sharedPref.edit()
+            .putBoolean("is_login", true)
+            .putBoolean("sudah_pernah_login", true)
+            .putString("namaPetani", nama)
+            .putString("emailPetani", email)
+            .apply()
+
+        Toast.makeText(
+            this@MasukActivity,
+            "Akun belum terdaftar. Melanjutkan pendaftaran...",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        startActivity(
+            Intent(
+                this@MasukActivity,
+                DataDiriActivity::class.java
+            )
+        )
+        finish()
     }
     private fun getDesa(){
         PetaniApi.getDesa(object : Callback {
