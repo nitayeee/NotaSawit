@@ -559,6 +559,35 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
+                <!-- Link Belum Punya Akun? Daftar di Form -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="Belum punya akun? "
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/nav_to_daftar_form"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/poppins_bold"
+                        android:padding="4dp"
+                        android:text="Daftar"
+                        android:textColor="@color/agri_green_dark"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
                 <!-- Bantuan WhatsApp di Form -->
                 <LinearLayout
                     android:id="@+id/btnBantuanWaForm"

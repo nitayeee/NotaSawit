@@ -145,15 +145,19 @@ getJenisKegiatan()
         }
 
         binding.btnGoogleSignIn.setOnClickListener {
-            signInWithGoogle()
+            authenticateWithGoogle(isRegistration = false)
         }
 
         binding.btnGoogleSignInForm.setOnClickListener {
-            signInWithGoogle()
+            authenticateWithGoogle(isRegistration = false)
         }
 
         binding.navToDaftar.setOnClickListener {
-            startActivity(Intent(this@MasukActivity, DaftarActivity::class.java))
+            authenticateWithGoogle(isRegistration = true)
+        }
+
+        binding.navToDaftarForm.setOnClickListener {
+            authenticateWithGoogle(isRegistration = true)
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -585,7 +589,7 @@ getJenisKegiatan()
         }
     }
 
-    private fun signInWithGoogle() {
+    private fun authenticateWithGoogle(isRegistration: Boolean) {
         setGoogleLoadingState(true)
 
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -600,69 +604,55 @@ getJenisKegiatan()
             .build()
 
         lifecycleScope.launch {
-
             try {
-
                 val result = credentialManager.getCredential(
                     context = this@MasukActivity,
                     request = request
                 )
-
-                handleSignIn(result)
-
+                handleGoogleSignInResult(result, isRegistration)
             } catch (e: Exception) {
                 e.printStackTrace()
                 setGoogleLoadingState(false)
-
+                val msg = if (isRegistration) "Pendaftaran Google dibatalkan / gagal" else "Login Google dibatalkan / gagal"
                 Toast.makeText(
                     this@MasukActivity,
-                    "Login Google gagal",
+                    msg,
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
     }
-    private fun handleSignIn(
-        result: GetCredentialResponse
+
+    private fun handleGoogleSignInResult(
+        result: GetCredentialResponse,
+        isRegistration: Boolean
     ) {
-
         val credential = result.credential
-
         if (
             credential is CustomCredential &&
             credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
         ) {
-
             val googleCredential =
-                GoogleIdTokenCredential.createFrom(
-                    credential.data
-                )
-
+                GoogleIdTokenCredential.createFrom(credential.data)
             val idToken = googleCredential.idToken
-
-            val nama = googleCredential.displayName
+            val nama = googleCredential.displayName ?: ""
             val email = googleCredential.id
 
-            Log.d("GOOGLE", "Nama: $nama")
-            Log.d("GOOGLE", "Email: $email")
-
-            sendTokenToServer(
-                idToken,
-                nama ?: "",
-                email
-            )
+            Log.d("GOOGLE", "Nama: $nama, Email: $email, isRegistration: $isRegistration")
+            checkGoogleAccountWithServer(nama, email, isRegistration)
         } else {
             setGoogleLoadingState(false)
         }
     }
-    private fun sendTokenToServer(
-        idToken: String,
+
+    private fun checkGoogleAccountWithServer(
         nama: String,
-        email: String
+        email: String,
+        isRegistration: Boolean
     ) {
         PetaniApi.getAllPetani(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                checkAdminEmailOrRegister(email, nama)
+                checkAdminAndProcess(email, nama, isRegistration)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -689,22 +679,36 @@ getJenisKegiatan()
                 if (matchedPetani != null) {
                     setGoogleLoadingState(false)
                     runOnUiThread {
-                        loginAsPetaniGoogle(matchedPetani, nama)
+                        if (isRegistration) {
+                            // Saat Daftar, tetapi email SUDAH terdaftar di database
+                            android.app.AlertDialog.Builder(this@MasukActivity)
+                                .setTitle("Akun Sudah Terdaftar")
+                                .setMessage("Email dari akun Google ini sudah terdaftar. Silakan login menggunakan Username dan PIN Anda.")
+                                .setPositiveButton("OK", null)
+                                .show()
+                        } else {
+                            // Saat Login -> langsung masuk sebagai petani
+                            loginAsPetaniGoogle(matchedPetani, nama)
+                        }
                     }
                 } else {
                     // Cek apakah akun adalah Admin
-                    checkAdminEmailOrRegister(email, nama)
+                    checkAdminAndProcess(email, nama, isRegistration)
                 }
             }
         })
     }
 
-    private fun checkAdminEmailOrRegister(email: String, nama: String) {
+    private fun checkAdminAndProcess(email: String, nama: String, isRegistration: Boolean) {
         PetaniApi.getAdmins(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 setGoogleLoadingState(false)
                 runOnUiThread {
-                    proceedToRegistration(email, nama)
+                    if (isRegistration) {
+                        proceedToRegistration(email, nama)
+                    } else {
+                        showBelumTerdaftarDialog(email, nama)
+                    }
                 }
             }
 
@@ -732,13 +736,38 @@ getJenisKegiatan()
                 setGoogleLoadingState(false)
                 runOnUiThread {
                     if (matchedAdmin != null) {
-                        loginAsAdminGoogle(matchedAdmin, nama)
+                        if (isRegistration) {
+                            android.app.AlertDialog.Builder(this@MasukActivity)
+                                .setTitle("Akun Sudah Terdaftar")
+                                .setMessage("Email dari akun Google ini sudah terdaftar sebagai Admin. Silakan login menggunakan Username dan PIN Anda.")
+                                .setPositiveButton("OK", null)
+                                .show()
+                        } else {
+                            loginAsAdminGoogle(matchedAdmin, nama)
+                        }
                     } else {
-                        proceedToRegistration(email, nama)
+                        // Akun belum terdaftar di Petani maupun Admin
+                        if (isRegistration) {
+                            // Alur pendaftaran: lanjut ke Data Diri (Data Diri 1, 2, dst)
+                            proceedToRegistration(email, nama)
+                        } else {
+                            showBelumTerdaftarDialog(email, nama)
+                        }
                     }
                 }
             }
         })
+    }
+
+    private fun showBelumTerdaftarDialog(email: String, nama: String) {
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Akun Belum Terdaftar")
+            .setMessage("Email ($email) belum terdaftar di SILAUSA. Silakan lakukan pendaftaran terlebih dahulu.")
+            .setPositiveButton("Daftar Sekarang") { _, _ ->
+                proceedToRegistration(email, nama)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 
     private fun loginAsPetaniGoogle(item: org.json.JSONObject, defaultNama: String) {
