@@ -14,21 +14,21 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#FFFFFF"
-        android:elevation="4dp"
+        android:elevation="3dp"
         android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:padding="6dp"
             android:src="@drawable/ic_arrow_left"
             app:tint="@color/agri_green_dark"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:contentDescription="Back"
+            android:contentDescription="Kembali"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -36,19 +36,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Lahan"
+            android:text="Kelola Lahan"
             android:textColor="@color/agri_green_dark"
             android:textSize="18sp"
+            android:fontFamily="@font/poppins_bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" android:fontFamily="@font/poppins_bold" />
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:overScrollMode="never"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -56,49 +58,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="16dp">
 
-            <!-- Form Card -->
-            <androidx.cardview.widget.CardView
+            <!-- Card 1: Pilih Lahan -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPilihLahan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="14dp"
                 app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
                 app:cardBackgroundColor="#FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Informasi Lahan Anda"
-                        android:fontFamily="@font/poppins_bold"
-                        android:textSize="18sp"
-                        android:textColor="#1E293B"
-                        android:layout_marginBottom="24dp" />
-
-                    <!-- Pilih Lahan -->
-                    <TextView
-                        android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pilih Lahan"
-                        android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="15sp"
+                        android:textColor="#0D2617" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="12dp"
+                        android:text="Pilih petak lahan untuk melihat detail dan mengelola informasinya"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="12sp"
+                        android:textColor="#64748B" />
+
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="10dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="#F8F9FA"
-                        android:layout_marginBottom="16dp">
+                        app:cardBackgroundColor="#F1F5F9">
                         <Spinner
                             android:id="@+id/spinnerLahan"
                             android:layout_width="match_parent"
@@ -107,16 +110,313 @@
                             android:background="@null" />
                     </androidx.cardview.widget.CardView>
 
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Detail Informasi Lahan -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDetailLahan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header Detail Lahan -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            app:cardBackgroundColor="#E8F5E9"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_map"
+                                app:tint="#1B4D2E"
+                                android:contentDescription="Icon Lahan" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Detail Lahan"
+                                android:fontFamily="@font/poppins_bold"
+                                android:textSize="15sp"
+                                android:textColor="#0D2617" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Informasi lengkap dan lokasi pemetaan"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textSize="11.5sp"
+                                android:textColor="#64748B" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Nama Lahan & Luas Badge -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:id="@+id/tvDetailNamaLahan"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nama Lahan"
+                            android:fontFamily="@font/poppins_bold"
+                            android:textSize="16sp"
+                            android:textColor="#0D2617" />
+
+                        <TextView
+                            android:id="@+id/tvDetailLuasLahan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_spinner"
+                            android:backgroundTint="#E8F5E9"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="- Ha"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="12sp"
+                            android:textColor="#1B4D2E" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F1F5F9"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Detail Items -->
+                    <!-- Lokasi -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Lokasi Lahan"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textSize="11.5sp"
+                            android:textColor="#64748B" />
+
+                        <TextView
+                            android:id="@+id/tvDetailLokasi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="-"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="13.5sp"
+                            android:textColor="#1E293B" />
+                    </LinearLayout>
+
+                    <!-- Koordinat GPS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Titik Koordinat (GPS)"
+                            android:fontFamily="@font/poppins_regular"
+                            android:textSize="11.5sp"
+                            android:textColor="#64748B" />
+
+                        <TextView
+                            android:id="@+id/tvDetailKoordinat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="-"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="13.5sp"
+                            android:textColor="#1E293B" />
+                    </LinearLayout>
+
+                    <!-- 2 Kolom: Tahun Tanam & No Surat -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:layout_marginBottom="14dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tahun Tanam"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textSize="11.5sp"
+                                android:textColor="#64748B" />
+
+                            <TextView
+                                android:id="@+id/tvDetailTahunTanam"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="-"
+                                android:fontFamily="@font/poppins_medium"
+                                android:textSize="13.5sp"
+                                android:textColor="#1E293B" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nomor Surat Lahan"
+                                android:fontFamily="@font/poppins_regular"
+                                android:textSize="11.5sp"
+                                android:textColor="#64748B" />
+
+                            <TextView
+                                android:id="@+id/tvDetailNoSurat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="-"
+                                android:fontFamily="@font/poppins_medium"
+                                android:textSize="13.5sp"
+                                android:textColor="#1E293B" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- Mini Preview Map -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardMapContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="170dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E2E8F0"
+                        app:strokeWidth="1dp"
+                        android:layout_marginBottom="12dp">
+
+                        <WebView
+                            android:id="@+id/mapViewDetailLahan"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Button Buka di Maps -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBukaMaps"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Buka di Google Maps"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="#1B4D2E"
+                        app:icon="@drawable/ic_map"
+                        app:iconGravity="textStart"
+                        app:iconTint="#FFFFFF"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/poppins_semibold" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Form Edit / Perbarui Lahan -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFormEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Perbarui Informasi Lahan"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="15sp"
+                        android:textColor="#0D2617" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="Perbarui data tahun tanam dan nomor legalitas surat lahan"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="12sp"
+                        android:textColor="#64748B" />
+
                     <!-- Tahun Tanam -->
                     <TextView
                         android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tahun Tanam"
-                        android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:textColor="#475569"
+                        android:textSize="12.5sp"
+                        android:layout_marginBottom="6dp" />
+
                     <EditText
                         android:id="@+id/etTahunTanam"
                         android:layout_width="match_parent"
@@ -127,6 +427,7 @@
                         android:inputType="number"
                         android:textColor="#1E293B"
                         android:textSize="14sp"
+                        android:fontFamily="@font/poppins_regular"
                         android:layout_marginBottom="16dp" />
 
                     <!-- No Surat Lahan -->
@@ -134,38 +435,39 @@
                         android:fontFamily="@font/poppins_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No Surat Lahan"
-                        android:textColor="#64748B"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="8dp" />
-                        
+                        android:text="Nomor Surat Lahan"
+                        android:textColor="#475569"
+                        android:textSize="12.5sp"
+                        android:layout_marginBottom="6dp" />
+
                     <EditText
                         android:id="@+id/etNoSurat"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:background="@drawable/bg_input_field"
                         android:paddingHorizontal="16dp"
-                        android:hint="Masukkan No Surat Lahan"
+                        android:hint="Masukkan No Surat / Sertifikat"
                         android:inputType="text"
                         android:textColor="#1E293B"
                         android:textSize="14sp"
-                        android:layout_marginBottom="24dp" />
+                        android:fontFamily="@font/poppins_regular"
+                        android:layout_marginBottom="20dp" />
+
+                    <!-- Save Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimpan"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="Simpan Perubahan"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        app:cornerRadius="12dp"
+                        app:backgroundTint="#1B4D2E"
+                        android:textAllCaps="false"
+                        android:fontFamily="@font/poppins_bold" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Save Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimpan"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:text="Simpan Perubahan"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/agri_green_dark"
-                android:fontFamily="@font/poppins_bold" />
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>

@@ -1,8 +1,12 @@
 package com.example.notasawit.ProfilPetani
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.webkit.JavascriptInterface
+import android.webkit.WebSettings
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,8 +21,8 @@ import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
-import android.webkit.WebSettings
 import java.io.IOException
+import java.util.Locale
 
 class ProfilPetaniActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfilPetaniBinding
@@ -66,6 +70,7 @@ class ProfilPetaniActivity : AppCompatActivity() {
             false
         }
         
+        binding.mapViewLahan.addJavascriptInterface(WebAppInterface(), "Android")
         binding.mapViewLahan.loadUrl("file:///android_asset/leaflet_map.html")
     }
 
@@ -174,32 +179,56 @@ class ProfilPetaniActivity : AppCompatActivity() {
 
                             if (dataArray != null) {
                                 for (i in 0 until dataArray.length()) {
-                                    val lahanObj = dataArray.optJSONObject(i)
-                                    val luas = if (lahanObj?.has("lahan_luas") == true && !lahanObj.isNull("lahan_luas")) {
+                                    val lahanObj = dataArray.optJSONObject(i) ?: continue
+                                    val lahanId = lahanObj.optInt("lahan_id", -1)
+                                    val lahanNama = lahanObj.optString("lahan_nama", "Lahan #${i + 1}")
+                                    val lahanLokasi = lahanObj.optString("lahan_lokasi", "-")
+                                    val luas = if (lahanObj.has("lahan_luas") && !lahanObj.isNull("lahan_luas")) {
                                         lahanObj.optDouble("lahan_luas", 0.0)
-                                    } else if (lahanObj?.has("luas_lahan") == true && !lahanObj.isNull("luas_lahan")) {
+                                    } else if (lahanObj.has("luas_lahan") && !lahanObj.isNull("luas_lahan")) {
                                         lahanObj.optDouble("luas_lahan", 0.0)
                                     } else {
                                         0.0
                                     }
                                     totalLuas += luas
 
-                                    val areaLahan = lahanObj?.opt("area_lahan")
-                                    if (areaLahan is JSONObject) {
-                                        geoJsonList.put(areaLahan)
-                                    } else if (areaLahan is String && areaLahan.isNotEmpty() && areaLahan != "null") {
+                                    val areaLahanRaw = lahanObj.opt("area_lahan")
+                                    var polyJson: JSONObject? = null
+                                    if (areaLahanRaw is JSONObject) {
+                                        polyJson = JSONObject(areaLahanRaw.toString())
+                                    } else if (areaLahanRaw is String && areaLahanRaw.isNotEmpty() && areaLahanRaw != "null") {
                                         try {
-                                            geoJsonList.put(JSONObject(areaLahan))
+                                            polyJson = JSONObject(areaLahanRaw)
                                         } catch (e: Exception) {
                                             Log.e("ProfilPetani", "Gagal parse string area_lahan ke JSON: ${e.message}")
                                         }
+                                    }
+
+                                    if (polyJson != null) {
+                                        val featureObj = if (polyJson.optString("type") == "Feature") {
+                                            polyJson
+                                        } else {
+                                            JSONObject().apply {
+                                                put("type", "Feature")
+                                                put("geometry", polyJson)
+                                            }
+                                        }
+                                        val props = featureObj.optJSONObject("properties") ?: JSONObject()
+                                        props.put("lahan_id", lahanId)
+                                        props.put("lahan_nama", lahanNama)
+                                        props.put("lahan_lokasi", lahanLokasi)
+                                        props.put("lahan_luas", if (luas > 0) String.format(Locale.US, "%.2f", luas) else "")
+                                        props.put("petani_nama", sharedPref.getString("namaPetani", "-"))
+                                        featureObj.put("properties", props)
+
+                                        geoJsonList.put(featureObj)
                                     }
                                 }
                             }
 
                             runOnUiThread {
                                 binding.tvJumlahLahan.text = "$jumlahLahan"
-                                binding.tvTotalLuas.text = if (totalLuas > 0) String.format("%.2f", totalLuas) else "-"
+                                binding.tvTotalLuas.text = if (totalLuas > 0) String.format(Locale.US, "%.2f", totalLuas) else "-"
 
                                 if (geoJsonList.length() > 0) {
                                     val jsCommand = "renderPolygons(${geoJsonList.toString()});"
@@ -216,5 +245,43 @@ class ProfilPetaniActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    // Interface untuk aksi dari Popup Leaflet Map
+    inner class WebAppInterface {
+        @JavascriptInterface
+        fun openGoogleMaps(lat: Double, lng: Double, lahanNama: String) {
+            runOnUiThread {
+                try {
+                    val uri = "geo:$lat,$lng?q=$lat,$lng(${Uri.encode(lahanNama)})"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                    intent.setPackage("com.google.android.apps.maps")
+                    if (intent.resolveActivity(packageManager) != null) {
+                        startActivity(intent)
+                    } else {
+                        val browserIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lng")
+                        )
+                        startActivity(browserIntent)
+                    }
+                } catch (e: Exception) {
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lng")
+                    )
+                    startActivity(browserIntent)
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun bukaKelolaLahan(lahanId: Int) {
+            runOnUiThread {
+                val intent = Intent(this@ProfilPetaniActivity, EditLahanActivity::class.java)
+                intent.putExtra("SELECTED_LAHAN_ID", lahanId)
+                startActivity(intent)
+            }
+        }
     }
 }
