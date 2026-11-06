@@ -260,9 +260,9 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Bantuan Cepat WhatsApp -->
+                <!-- Tombol Lupa PIN di Layar 1 -->
                 <LinearLayout
-                    android:id="@+id/btnBantuanWa"
+                    android:id="@+id/btnLupaPin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -277,7 +277,7 @@
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
-                        android:src="@drawable/ic_help"
+                        android:src="@android:drawable/ic_lock_idle_lock"
                         app:tint="@color/agri_green_dark" />
 
                     <TextView
@@ -285,7 +285,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Kendala Masuk? Hubungi Bantuan Admin"
+                        android:text="Lupa PIN akun Anda? Reset di sini"
                         android:textColor="@color/agri_green_dark"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -441,7 +441,7 @@
                     </FrameLayout>
                 </LinearLayout>
 
-                <!-- Opsi Ingat Saya -->
+                <!-- Opsi Ingat Saya & Lupa PIN -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -451,14 +451,27 @@
 
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/cbRememberMe"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:checked="true"
                         android:fontFamily="@font/poppins_regular"
                         android:text="Ingat Saya"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
                         app:buttonTint="@color/agri_green_dark" />
+
+                    <TextView
+                        android:id="@+id/tvLupaPin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="6dp"
+                        android:text="Lupa PIN?"
+                        android:textColor="@color/agri_green_dark"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
                 <!-- Tombol Masuk -->
@@ -588,9 +601,9 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Bantuan WhatsApp di Form -->
+                <!-- Tombol Lupa PIN di Form -->
                 <LinearLayout
-                    android:id="@+id/btnBantuanWaForm"
+                    android:id="@+id/btnLupaPinForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -605,7 +618,7 @@
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
-                        android:src="@drawable/ic_help"
+                        android:src="@android:drawable/ic_lock_idle_lock"
                         app:tint="@color/agri_green_dark" />
 
                     <TextView
@@ -613,7 +626,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:text="Kendala Masuk? Hubungi Bantuan Admin"
+                        android:text="Lupa PIN akun Anda? Reset di sini"
                         android:textColor="@color/agri_green_dark"
                         android:textSize="13sp" />
                 </LinearLayout>

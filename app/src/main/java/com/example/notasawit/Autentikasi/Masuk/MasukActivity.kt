@@ -10,7 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.notasawit.Autentikasi.Daftar.DaftarActivity
 import com.example.notasawit.R
-import com.example.notasawit.Utils.AdminDesaHelper
 import com.example.notasawit.databinding.ActivityMasukBinding
 import android.content.Context
 import android.util.Log
@@ -130,12 +129,16 @@ getJenisKegiatan()
             binding.etPin.text?.let { binding.etPin.setSelection(it.length) }
         }
 
-        binding.btnBantuanWa.setOnClickListener {
-            showBantuanLoginDialog()
+        binding.btnLupaPin.setOnClickListener {
+            startActivity(Intent(this, LupaPinActivity::class.java))
         }
 
-        binding.btnBantuanWaForm.setOnClickListener {
-            showBantuanLoginDialog()
+        binding.tvLupaPin.setOnClickListener {
+            startActivity(Intent(this, LupaPinActivity::class.java))
+        }
+
+        binding.btnLupaPinForm.setOnClickListener {
+            startActivity(Intent(this, LupaPinActivity::class.java))
         }
 
         binding.btnLogin.setOnClickListener {
@@ -192,134 +195,6 @@ getJenisKegiatan()
         binding.btnBackToPilihan.visibility = View.GONE
         binding.layoutPilihanMasuk.visibility = View.VISIBLE
         binding.main.smoothScrollTo(0, 0)
-    }
-
-    private fun showBantuanLoginDialog() {
-        val dialog = android.app.Dialog(this)
-        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_bantuan_login)
-        dialog.window?.apply {
-            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
-            setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-
-        val actvNamaPetani = dialog.findViewById<android.widget.AutoCompleteTextView>(R.id.actvNamaPetani)
-        val tvLabelDesa = dialog.findViewById<android.widget.TextView>(R.id.tvLabelDesa)
-        val tvNamaAdmin = dialog.findViewById<android.widget.TextView>(R.id.tvNamaAdmin)
-        val btnKirimWhatsApp = dialog.findViewById<android.view.View>(R.id.btnKirimWhatsApp)
-        val btnResetPinMandiri = dialog.findViewById<android.view.View>(R.id.btnResetPinMandiri)
-        val btnCloseDialog = dialog.findViewById<android.view.View>(R.id.btnCloseDialog)
-
-        btnCloseDialog.setOnClickListener { dialog.dismiss() }
-        btnResetPinMandiri.setOnClickListener {
-            dialog.dismiss()
-            startActivity(Intent(this, LupaPinActivity::class.java))
-        }
-
-        var listPetaniData = listOf<com.example.notasawit.Room.Petani.PetaniEntity>()
-        var selectedPetani: com.example.notasawit.Room.Petani.PetaniEntity? = null
-
-        // Load data petani dari database lokal Room
-        lifecycleScope.launch(Dispatchers.IO) {
-            val list = database.masterDao().getAllPetani()
-            listPetaniData = list
-            val namaList = list.map { "${it.namaPetani} - ${it.namaDesa}" }
-
-            runOnUiThread {
-                if (!isFinishing && !isDestroyed) {
-                    val adapter = android.widget.ArrayAdapter(
-                        this@MasukActivity,
-                        android.R.layout.simple_dropdown_item_1line,
-                        namaList
-                    )
-                    actvNamaPetani.setAdapter(adapter)
-
-                    // Jika di form login ada username yang mirip nama, coba pre-fill
-                    val currentUsername = binding.etUsername.text.toString().trim()
-                    if (currentUsername.isNotEmpty()) {
-                        val match = list.firstOrNull {
-                            it.namaPetani.contains(currentUsername, ignoreCase = true) ||
-                            currentUsername.contains(it.namaPetani, ignoreCase = true)
-                        }
-                        if (match != null) {
-                            actvNamaPetani.setText(match.namaPetani, false)
-                            selectedPetani = match
-                            val admin = AdminDesaHelper.getAdminByDesaId(match.desaId)
-                            tvLabelDesa.text = "📍 Desa: ${match.namaDesa}"
-                            tvNamaAdmin.text = "Admin Desa: ${admin.namaAdmin}"
-                        }
-                    }
-                }
-            }
-        }
-
-        // Listener saat petani memilih nama dari dropdown
-        actvNamaPetani.setOnItemClickListener { parent, _, position, _ ->
-            val selectedText = parent.getItemAtPosition(position).toString()
-            val parts = selectedText.split(" - ")
-            val namaSaja = parts.firstOrNull() ?: selectedText
-            actvNamaPetani.setText(namaSaja, false)
-
-            selectedPetani = listPetaniData.firstOrNull { it.namaPetani.equals(namaSaja, ignoreCase = true) }
-            selectedPetani?.let {
-                val admin = AdminDesaHelper.getAdminByDesaId(it.desaId)
-                tvLabelDesa.text = "📍 Desa: ${it.namaDesa}"
-                tvNamaAdmin.text = "Admin Desa: ${admin.namaAdmin}"
-            }
-        }
-
-        // Listener saat petani mengetik manual nama mereka
-        actvNamaPetani.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s?.toString()?.trim() ?: ""
-                val match = listPetaniData.firstOrNull { it.namaPetani.equals(query, ignoreCase = true) }
-                if (match != null) {
-                    selectedPetani = match
-                    val admin = AdminDesaHelper.getAdminByDesaId(match.desaId)
-                    tvLabelDesa.text = "📍 Desa: ${match.namaDesa}"
-                    tvNamaAdmin.text = "Admin Desa: ${admin.namaAdmin}"
-                } else {
-                    selectedPetani = null
-                    if (query.isNotEmpty()) {
-                        tvLabelDesa.text = "📍 Menghubungkan Admin Terkait..."
-                        tvNamaAdmin.text = "Admin: Siap membantu"
-                    } else {
-                        tvLabelDesa.text = "📍 Wilayah: Memilih Desa..."
-                        tvNamaAdmin.text = "Admin: Siap menghubungkan..."
-                    }
-                }
-            }
-            override fun afterTextChanged(s: android.text.Editable?) {}
-        })
-
-        btnKirimWhatsApp.setOnClickListener {
-            val inputNama = actvNamaPetani.text.toString().trim()
-            if (inputNama.isEmpty()) {
-                Toast.makeText(this, "Silakan masukkan nama lengkap Anda", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Cari petani berdasarkan nama jika belum terpilih
-            val petani = selectedPetani ?: listPetaniData.firstOrNull {
-                it.namaPetani.equals(inputNama, ignoreCase = true) ||
-                inputNama.contains(it.namaPetani, ignoreCase = true) ||
-                it.namaPetani.contains(inputNama, ignoreCase = true)
-            }
-
-            if (petani != null) {
-                val admin = AdminDesaHelper.getAdminByDesaId(petani.desaId)
-                val pesan = "Halo Admin ${admin.namaAdmin}, saya ${petani.namaPetani} dari Desa ${petani.namaDesa}, mengalami kendala masuk akun SILAUSA. Mohon bantuannya untuk akun saya."
-                AdminDesaHelper.openWhatsApp(this, admin.noHpWa, pesan)
-            } else {
-                // Jika nama tidak terdaftar, tetap arahkan ke kontak pusat dengan nama lengkap yang diketik
-                val pesan = "Halo Admin SILAUSA, saya $inputNama, mengalami kendala masuk akun SILAUSA. Mohon bantuannya untuk akun saya."
-                AdminDesaHelper.openWhatsApp(this, AdminDesaHelper.DEFAULT_ADMIN_PHONE, pesan)
-            }
-            dialog.dismiss()
-        }
-
-        dialog.show()
     }
 
     private fun checkAndShowFingerprint() {
