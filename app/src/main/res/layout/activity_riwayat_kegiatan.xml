@@ -223,44 +223,38 @@
                         android:layout_marginBottom="12dp"
                         android:orientation="horizontal">
 
-                        <AutoCompleteTextView
+                        <Spinner
                             android:id="@+id/spBulan"
                             android:layout_width="0dp"
-                            android:layout_height="46dp"
+                            android:layout_height="44dp"
                             android:layout_marginEnd="4dp"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_spinner"
-                            android:fontFamily="@font/poppins_medium"
-                            android:hint="Bulan"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="#0D2617"
-                            android:textSize="11.5sp" />
+                            android:background="@drawable/bg_dropdown_white"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="26dp"
+                            android:spinnerMode="dropdown" />
 
-                        <AutoCompleteTextView
+                        <Spinner
                             android:id="@+id/spTahun"
                             android:layout_width="0dp"
-                            android:layout_height="46dp"
+                            android:layout_height="44dp"
                             android:layout_marginHorizontal="4dp"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_spinner"
-                            android:fontFamily="@font/poppins_medium"
-                            android:hint="Tahun"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="#0D2617"
-                            android:textSize="11.5sp" />
+                            android:background="@drawable/bg_dropdown_white"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="26dp"
+                            android:spinnerMode="dropdown" />
 
-                        <AutoCompleteTextView
+                        <Spinner
                             android:id="@+id/spLahan"
                             android:layout_width="0dp"
-                            android:layout_height="46dp"
+                            android:layout_height="44dp"
                             android:layout_marginStart="4dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_spinner"
-                            android:fontFamily="@font/poppins_medium"
-                            android:hint="Lahan"
-                            android:paddingHorizontal="10dp"
-                            android:textColor="#0D2617"
-                            android:textSize="11.5sp" />
+                            android:layout_weight="1.1"
+                            android:background="@drawable/bg_dropdown_white"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="26dp"
+                            android:spinnerMode="dropdown" />
 
                     </LinearLayout>
 

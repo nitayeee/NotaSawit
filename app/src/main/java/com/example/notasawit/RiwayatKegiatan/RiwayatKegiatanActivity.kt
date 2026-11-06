@@ -1,4 +1,4 @@
-﻿package com.example.notasawit.RiwayatKegiatan
+package com.example.notasawit.RiwayatKegiatan
 
 import com.example.notasawit.InputKegiatan.InputKegiatanActivity
 import com.example.notasawit.InputKegiatan.KegiatanAdapter
@@ -13,8 +13,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -34,6 +36,7 @@ import com.example.notasawit.Room.Lahan.LahanEntity
 import com.example.notasawit.databinding.ActivityRiwayatKegiatanBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.IOException
+import java.util.Calendar
 import java.util.Locale
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -52,6 +55,28 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     private val allItemsWithLahan = mutableListOf<KegiatanAdapter.ItemWithLahan>()
     private val filteredItems = mutableListOf<KegiatanAdapter.ItemWithLahan>()
     private val listLahan = mutableListOf<LahanEntity>()
+
+    private val bulanList = listOf(
+        "Semua Bulan",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    )
+    private val tahunList = mutableListOf<String>()
+    private val lahanListDropdown = mutableListOf<String>()
+
+    private var bulanAdapter: ArrayAdapter<String>? = null
+    private var tahunAdapter: ArrayAdapter<String>? = null
+    private var lahanAdapter: ArrayAdapter<String>? = null
 
     private val sharedPref by lazy {
         getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
@@ -113,15 +138,95 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
     }
 
     private fun setupDropdownFilters() {
-        val bulanList = listOf("Semua Bulan", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember")
-        val bulanAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, bulanList)
-        binding.spBulan.setAdapter(bulanAdapter)
-        binding.spBulan.setOnItemClickListener { _, _, _, _ -> applyFilters() }
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-        val tahunList = listOf("Semua Tahun", "2026", "2025", "2024")
-        val tahunAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tahunList)
-        binding.spTahun.setAdapter(tahunAdapter)
-        binding.spTahun.setOnItemClickListener { _, _, _, _ -> applyFilters() }
+        // 1. Bulan Dropdown (Default: "Semua Bulan")
+        bulanAdapter = ArrayAdapter(this, R.layout.item_spinner_filter, bulanList).apply {
+            setDropDownViewResource(R.layout.item_spinner_filter_dropdown)
+        }
+        binding.spBulan.adapter = bulanAdapter
+        binding.spBulan.setSelection(0)
+        binding.spBulan.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                applyFilters()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // 2. Tahun Dropdown (Default: Tahun yang sedang berjalan)
+        val initialYears = listOf("Semua Tahun") + (currentYear downTo (currentYear - 3)).map { it.toString() }
+        tahunList.clear()
+        tahunList.addAll(initialYears)
+        tahunAdapter = ArrayAdapter(this, R.layout.item_spinner_filter, tahunList).apply {
+            setDropDownViewResource(R.layout.item_spinner_filter_dropdown)
+        }
+        binding.spTahun.adapter = tahunAdapter
+        val defaultYearIndex = tahunList.indexOf(currentYear.toString())
+        if (defaultYearIndex >= 0) {
+            binding.spTahun.setSelection(defaultYearIndex)
+        }
+        binding.spTahun.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                applyFilters()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // 3. Lahan Dropdown (Default: "Semua Lahan")
+        lahanListDropdown.clear()
+        lahanListDropdown.add("Semua Lahan")
+        lahanAdapter = ArrayAdapter(this, R.layout.item_spinner_filter, lahanListDropdown).apply {
+            setDropDownViewResource(R.layout.item_spinner_filter_dropdown)
+        }
+        binding.spLahan.adapter = lahanAdapter
+        binding.spLahan.setSelection(0)
+        binding.spLahan.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                applyFilters()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+    private fun updateLahanDropdown(allLahan: List<LahanEntity>) {
+        val currentSelection = binding.spLahan.selectedItem?.toString() ?: "Semua Lahan"
+        val newLahanNames = mutableListOf("Semua Lahan")
+        newLahanNames.addAll(allLahan.map { it.lahan_nama }.distinct())
+
+        lahanListDropdown.clear()
+        lahanListDropdown.addAll(newLahanNames)
+        lahanAdapter?.notifyDataSetChanged()
+
+        val pos = lahanListDropdown.indexOf(currentSelection)
+        if (pos >= 0) {
+            binding.spLahan.setSelection(pos)
+        } else {
+            binding.spLahan.setSelection(0)
+        }
+    }
+
+    private fun updateYearDropdown() {
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val currentSelection = binding.spTahun.selectedItem?.toString() ?: currentYear.toString()
+
+        val extractedYears = allItemsWithLahan.mapNotNull {
+            parseDateYearMonth(it.kegiatan.kegiatan_tanggal).first
+        }.distinct()
+
+        val allYears = (extractedYears + (currentYear downTo (currentYear - 3))).distinct().sortedDescending()
+        val newYears = listOf("Semua Tahun") + allYears.map { it.toString() }
+
+        tahunList.clear()
+        tahunList.addAll(newYears)
+        tahunAdapter?.notifyDataSetChanged()
+
+        val pos = tahunList.indexOf(currentSelection)
+        if (pos >= 0) {
+            binding.spTahun.setSelection(pos)
+        } else {
+            val curPos = tahunList.indexOf(currentYear.toString())
+            binding.spTahun.setSelection(if (curPos >= 0) curPos else 0)
+        }
     }
 
     private fun isOnline(): Boolean {
@@ -152,11 +257,7 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                 listLahan.clear()
                 listLahan.addAll(allLahan)
 
-                val lahanNamesDropdown = mutableListOf("Semua Lahan")
-                lahanNamesDropdown.addAll(allLahan.map { it.lahan_nama })
-                val lahanAdapter = ArrayAdapter(this@RiwayatKegiatanActivity, android.R.layout.simple_dropdown_item_1line, lahanNamesDropdown)
-                binding.spLahan.setAdapter(lahanAdapter)
-                binding.spLahan.setOnItemClickListener { _, _, _, _ -> applyFilters() }
+                updateLahanDropdown(allLahan)
 
                 val lahanMap = allLahan.associate { it.lahan_id to it.lahan_nama }
 
@@ -194,7 +295,7 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                                 Toast.makeText(this@RiwayatKegiatanActivity, "Anda sedang offline / Gagal terhubung ke server", Toast.LENGTH_SHORT).show()
                                 allItemsWithLahan.clear()
                                 allItemsWithLahan.addAll(localItems)
-                                applyFilters()
+                                sortAndApplyFilters()
                             }
                         }
 
@@ -318,20 +419,65 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                 .thenByDescending { !it.kegiatan.isSynced }
                 .thenByDescending { it.kegiatan.localId }
         )
+        updateYearDropdown()
         applyFilters()
     }
 
+    private fun parseDateYearMonth(dateStr: String): Pair<Int?, Int?> {
+        val s = dateStr.trim()
+        if (s.isEmpty() || s == "-") return Pair(null, null)
+
+        val m1 = Regex("""^(\d{4})-(\d{1,2})-(\d{1,2})""").find(s)
+        if (m1 != null) {
+            val y = m1.groupValues[1].toIntOrNull()
+            val m = m1.groupValues[2].toIntOrNull()
+            return Pair(y, m)
+        }
+
+        val m2 = Regex("""^(\d{1,2})[-/](\d{1,2})[-/](\d{4})""").find(s)
+        if (m2 != null) {
+            val y = m2.groupValues[3].toIntOrNull()
+            val m = m2.groupValues[2].toIntOrNull()
+            return Pair(y, m)
+        }
+
+        val m3 = Regex("""^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})""").find(s)
+        if (m3 != null) {
+            val y = m3.groupValues[3].toIntOrNull()
+            val mStr = m3.groupValues[2].lowercase(Locale.getDefault())
+            val m = when {
+                mStr.startsWith("jan") -> 1
+                mStr.startsWith("feb") -> 2
+                mStr.startsWith("mar") -> 3
+                mStr.startsWith("apr") -> 4
+                mStr.startsWith("mei") || mStr.startsWith("may") -> 5
+                mStr.startsWith("jun") -> 6
+                mStr.startsWith("jul") -> 7
+                mStr.startsWith("agu") || mStr.startsWith("aug") -> 8
+                mStr.startsWith("sep") -> 9
+                mStr.startsWith("okt") || mStr.startsWith("oct") -> 10
+                mStr.startsWith("nov") -> 11
+                mStr.startsWith("des") || mStr.startsWith("dec") -> 12
+                else -> null
+            }
+            return Pair(y, m)
+        }
+
+        return Pair(null, null)
+    }
+
     private fun applyFilters() {
-        val query = binding.etSearch.text.toString().trim().lowercase(Locale.getDefault())
-        val selectedBulan = binding.spBulan.text.toString().trim()
-        val selectedTahun = binding.spTahun.text.toString().trim()
-        val selectedLahan = binding.spLahan.text.toString().trim()
+        val query = binding.etSearch.text?.toString()?.trim()?.lowercase(Locale.getDefault()) ?: ""
+        val selectedBulanPos = binding.spBulan.selectedItemPosition // 0 = Semua Bulan, 1..12 = Jan..Des
+        val selectedTahun = binding.spTahun.selectedItem?.toString()?.trim() ?: "Semua Tahun"
+        val selectedLahan = binding.spLahan.selectedItem?.toString()?.trim() ?: "Semua Lahan"
 
         filteredItems.clear()
 
         for (item in allItemsWithLahan) {
             val k = item.kegiatan
 
+            // 1. Filter Pencarian Text
             val matchesQuery = query.isEmpty() ||
                     k.nama_kegiatan.lowercase(Locale.getDefault()).contains(query) ||
                     k.nama_bahan.lowercase(Locale.getDefault()).contains(query) ||
@@ -339,18 +485,38 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                     k.jenis_limbah.lowercase(Locale.getDefault()).contains(query) ||
                     item.lahanNames.lowercase(Locale.getDefault()).contains(query)
 
+            // 2. Filter Lahan
             val matchesLahan = selectedLahan.isEmpty() ||
                     selectedLahan == "Semua Lahan" ||
                     item.lahanNames.contains(selectedLahan, ignoreCase = true)
 
-            var matchesDate = true
-            if (selectedTahun.isNotEmpty() && selectedTahun != "Semua Tahun") {
-                if (!k.kegiatan_tanggal.contains(selectedTahun)) {
-                    matchesDate = false
+            // 3. Filter Tanggal (Tahun dan Bulan)
+            val (itemYear, itemMonth) = parseDateYearMonth(k.kegiatan_tanggal)
+
+            val matchesTahun = if (selectedTahun.isEmpty() || selectedTahun == "Semua Tahun") {
+                true
+            } else {
+                if (itemYear != null) {
+                    itemYear.toString() == selectedTahun
+                } else {
+                    k.kegiatan_tanggal.contains(selectedTahun)
                 }
             }
 
-            if (matchesQuery && matchesLahan && matchesDate) {
+            val matchesBulan = if (selectedBulanPos <= 0) {
+                true
+            } else {
+                if (itemMonth != null) {
+                    itemMonth == selectedBulanPos
+                } else {
+                    val monthName = bulanList.getOrNull(selectedBulanPos)?.lowercase(Locale.getDefault()) ?: ""
+                    val monthPad = String.format(Locale.US, "-%02d-", selectedBulanPos)
+                    k.kegiatan_tanggal.lowercase(Locale.getDefault()).contains(monthName) ||
+                            k.kegiatan_tanggal.contains(monthPad)
+                }
+            }
+
+            if (matchesQuery && matchesLahan && matchesTahun && matchesBulan) {
                 filteredItems.add(item)
             }
         }
