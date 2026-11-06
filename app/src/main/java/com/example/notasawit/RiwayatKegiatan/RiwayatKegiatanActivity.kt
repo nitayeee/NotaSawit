@@ -82,10 +82,18 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
         getSharedPreferences("NOTASAWIT_PREF", MODE_PRIVATE)
     }
 
-    private val spPetaniId by lazy {
-        val id = sharedPref.getInt("petani_id", 0)
-        if (id != 0) id else sharedPref.getInt("user_id", 0)
-    }
+    private val spPetaniId: Int
+        get() {
+            val id = sharedPref.getInt("petani_id", 0)
+            if (id != 0) return id
+            val uid = sharedPref.getInt("user_id", 0)
+            if (uid != 0) return uid
+            val strId = sharedPref.getString("petani_id", null)?.toIntOrNull()
+            if (strId != null && strId != 0) return strId
+            val strUid = sharedPref.getString("user_id", null)?.toIntOrNull()
+            if (strUid != null && strUid != 0) return strUid
+            return 0
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -235,15 +243,74 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
+    private fun loadUserLahan(petaniId: Int) {
+        if (petaniId == 0) return
+        PetaniApi.getLahanByPetani(petaniId, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Ignore failure, rely on local data
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string() ?: return
+                if (!response.isSuccessful) return
+                try {
+                    val lahanList = mutableListOf<LahanEntity>()
+                    val trimmed = responseData.trim()
+                    val dataArray = if (trimmed.startsWith("[")) {
+                        JSONArray(trimmed)
+                    } else {
+                        val jsonObject = JSONObject(trimmed)
+                        jsonObject.optJSONArray("data")
+                    }
+
+                    if (dataArray != null) {
+                        for (i in 0 until dataArray.length()) {
+                            val obj = dataArray.getJSONObject(i)
+                            val id = obj.optInt("lahan_id", obj.optInt("id", 0))
+                            val nama = obj.optString("lahan_nama", obj.optString("nama", ""))
+                            val luas = obj.optDouble("lahan_luas", obj.optDouble("luas_lahan", 0.0))
+                            if (id != 0 && nama.isNotEmpty()) {
+                                lahanList.add(
+                                    LahanEntity(
+                                        lahan_id = id,
+                                        petani_id = petaniId,
+                                        lahan_nama = nama,
+                                        lahan_luas = luas
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    if (lahanList.isNotEmpty()) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            database.LahanDao().insertLahan(lahanList)
+                        }
+                        runOnUiThread {
+                            listLahan.clear()
+                            listLahan.addAll(lahanList)
+                            updateLahanDropdown(lahanList)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("LAHAN_LOAD", "Error parsing lahan: ${e.message}")
+                }
+            }
+        })
+    }
+
     private fun loadData() {
         binding.swipeRefresh.isRefreshing = true
 
         triggerKegiatanSync()
 
+        val currentPetaniId = spPetaniId
+        if (currentPetaniId != 0 && isOnline()) {
+            loadUserLahan(currentPetaniId)
+        }
+
         lifecycleScope.launch {
             try {
-                val currentPetaniId = spPetaniId
-
                 // 1. Load data lokal (yang belum tersinkron) dari Room DB
                 val rawLocalKegiatan = database.KegiatanDao().getAll()
                 val localKegiatanFiltered = if (currentPetaniId != 0) {
@@ -254,10 +321,17 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                 }
 
                 val allLahan = database.LahanDao().getAllLahan()
-                listLahan.clear()
-                listLahan.addAll(allLahan)
+                val userLahan = if (currentPetaniId != 0) {
+                    val byPetani = database.LahanDao().getLahanByPetani(currentPetaniId)
+                    if (byPetani.isNotEmpty()) byPetani else allLahan.filter { it.petani_id == currentPetaniId }
+                } else {
+                    allLahan
+                }
 
-                updateLahanDropdown(allLahan)
+                listLahan.clear()
+                listLahan.addAll(userLahan)
+
+                updateLahanDropdown(userLahan)
 
                 val lahanMap = allLahan.associate { it.lahan_id to it.lahan_nama }
 
@@ -420,6 +494,25 @@ class RiwayatKegiatanActivity : AppCompatActivity() {
                 .thenByDescending { it.kegiatan.localId }
         )
         updateYearDropdown()
+
+        // Fallback: jika dropdown lahan masih kosong (hanya "Semua Lahan"),
+        // ambil nama lahan unik dari riwayat kegiatan milik user yang sedang tampil
+        if (lahanListDropdown.size <= 1) {
+            val distinctActivityLahan = allItemsWithLahan.flatMap { item ->
+                item.lahanNames.split(",").map { it.trim() }
+            }.filter { it.isNotEmpty() && it != "-" && it != "null" }.distinct()
+
+            if (distinctActivityLahan.isNotEmpty()) {
+                val currentSelection = binding.spLahan.selectedItem?.toString() ?: "Semua Lahan"
+                lahanListDropdown.clear()
+                lahanListDropdown.add("Semua Lahan")
+                lahanListDropdown.addAll(distinctActivityLahan)
+                lahanAdapter?.notifyDataSetChanged()
+                val pos = lahanListDropdown.indexOf(currentSelection)
+                if (pos >= 0) binding.spLahan.setSelection(pos)
+            }
+        }
+
         applyFilters()
     }
 
